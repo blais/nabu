@@ -1,0 +1,105 @@
+====================================
+  nabu: Personal Publishing System
+====================================
+
+.. contents:: Table of Contents
+
+
+Description
+===========
+
+   "Nabu is the Babylonian god of wisdom and writing, worshipped by
+   Babylonians as the son of Marduk and his consort, Sarpanitum, and as
+   the grandson of Ea."
+                      ---From `Wikipedia <http://en.wikipedia.org/wiki/Nabu>`_
+
+
+Nabu is a system for allowing users to easily create large amounts of
+relevant information and publish this information in a semantically
+meaningful way on a remote server, which can then be accessed by various
+services with the intent to build useful services on top of this
+semantically rich storage.
+
+Concretely, Nabu allows you to keep various types of information into
+simple text files (in `restructuredtext
+<http://docutils.sourceforge.net>`_ format, with simple added
+directives), and to have these informations parsed, organized and
+available remotely, and to have a web server display the information in
+various ways.  For example, you can have files with text, links, contact
+info, etc. in them and this information gets extracted and becomes
+available for a blog system to use.
+
+For more details, see the design document and project proposal under the
+``doc`` subdirectory.
+
+
+Documentation
+=============
+
+- `Design and Proposal <doc/design.txt>`_
+
+Components
+----------
+
+Nabu Client
+   Contains a publisher that reads files on the local client filesystem and that
+   figures out which ones are meant for publication, connects to the Nabu Server
+   and asks for comparison of the files and incrementally uploads the files that
+   have changed to update the content on the server.
+   The client code may also contain a easy-to-use editor for source files.
+
+Nabu Server
+   Receives updates of the source files from the publisher client, figures out
+   which files have changed since the last update by serving MD5 sums of the
+   files it has processed, and makes the necessary updates.  The content is
+   stored in a database after having been parsed.
+
+Nabu Web Application
+   Uses the content stored on the database by the server, and provides a web
+   front to the data by providing various services, like a blog, an addressbook,
+   etc.  It also provides a web application with users, and various levels of
+   access to the various chunks of data.
+
+
+Download
+========
+
+This software is not released yet, and it might never make it to the open
+source world.  We're just not sure what we're going to do with this at
+this point (2005-06-04).
+
+
+Reporting Bugs
+==============
+
+Send email to <blais@furius.ca>.
+
+
+Installation
+============
+
+- *client*: you need Python-2.4 and some kind of shell environment
+   (cmd.exe can do, on Windows);
+
+- *server*: you need apache and mod_python, Python-2.4 and the PostgreSQL
+   database server;
+
+- *app*: you need the hume web application framework, which itself runs
+   on apache and mod_python.
+
+
+Copyright and License
+=====================
+
+Copyright (C) 2005  Martin Blais.  All Rights Reserved.
+
+This code is NOT distributed publicly.  It is very copyrighted and
+definitive action will be taken if you steal it in any way.  Those are
+the rules for now.  Use by permission only.
+
+
+Author
+======
+
+Martin Blais <blais@furius.ca>
+
