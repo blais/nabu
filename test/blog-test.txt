@@ -94,27 +94,6 @@ Other separator.
   ---The New New Thing, Michael Lewis, p.332
 
 
-Book Entries to read (short reviews)
-------------------------------------
-
-- "Everything Bad Is Good for You: How Today's Popular Culture Is Actually
-  Making Us Smarter", Steven Johnson
-
-  http://www.amazon.com/o/ASIN/1573223077
-
-    The author aims at convincing us that pop culture, modern television and
-    video games have grown in complexity and are making us smarter.  He does
-    this mainly by looking at the amount of facts to work in one's mind in
-    today's entertainment vs. what used to be.  He claims that we should
-    recognize that non-reading abilities are increasingly gaining value in the
-    world.  I bought this book because I was puzzled by the question, and
-    opposed to his point-of-view, and I must admit after reading the book I am
-    still very much opposed to his point-of-view.  His reduction of the the
-    number of cognitive abilities to simple acts of probing and telescoping does
-    not convince me.  Pop culture *is* dumb.  Maybe the author has been watching
-    too much t.v. himself.
-
-
 Movies Lists
 ------------
 
@@ -141,4 +120,62 @@ Can I do this? YEAH!
 I could add the date like this too:
 
 - :Movie 2005-06-15: Crash
+
+
+
+Book Entries to read (short reviews)
+------------------------------------
+
+- "Everything Bad Is Good for You: How Today's Popular Culture Is Actually
+  Making Us Smarter", Steven Johnson
+
+  http://www.amazon.com/o/ASIN/1573223077
+
+    The author aims at convincing us that pop culture, modern television and
+    video games have grown in complexity and are making us smarter.  He does
+    this mainly by looking at the amount of facts to work in one's mind in
+    today's entertainment vs. what used to be.  He claims that we should
+    recognize that non-reading abilities are increasingly gaining value in the
+    world.  I bought this book because I was puzzled by the question, and
+    opposed to his point-of-view, and I must admit after reading the book I am
+    still very much opposed to his point-of-view.  His reduction of the the
+    number of cognitive abilities to simple acts of probing and telescoping does
+    not convince me.  Pop culture *is* dumb.  Maybe the author has been watching
+    too much t.v. himself.
+
+
+:Book:
+:Title: Everything Bad Is Good for You: 
+	How Today's Popular Culture Is Actually Making Us Smarter"
+:Author: Steven Johnson
+:ISBN: 1573223077
+:Review:
+
+    The author aims at convincing us that pop culture, modern television and
+    video games have grown in complexity and are making us smarter.  He does
+    this mainly by looking at the amount of facts to work in one's mind in
+    today's entertainment vs. what used to be.  He claims that we should
+    recognize that non-reading abilities are increasingly gaining value in the
+    world.  I bought this book because I was puzzled by the question, and
+    opposed to his point-of-view, and I must admit after reading the book I am
+    still very much opposed to his point-of-view.  His reduction of the the
+    number of cognitive abilities to simple acts of probing and telescoping does
+    not convince me.  Pop culture *is* dumb.  Maybe the author has been watching
+    too much t.v. himself.
+
+
+- :Book:
+  :Title: Everything Bad Is Good for You: 
+  	How Today's Popular Culture Is Actually Making Us Smarter"
+  :Author: Steven Johnson
+  :ISBN: 1573223077
+  :Review:
+  
+      The author aims at convincing us that pop culture, modern television and
+      video games have grown in complexity and are making us smarter.  He does
+      this mainly by looking at the amount of facts to work in one's mind in
+      today's entertainment vs. what used to be.  He claims that we should
+
+
+
 
