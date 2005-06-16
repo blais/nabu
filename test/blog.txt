@@ -1,0 +1,144 @@
+=========================
+  Some Blog Entry Title
+=========================
+
+:Date: 2005-06-15
+:Location: Montreal, Québec, Canada
+:Category: Zwiii
+:Serie: Montreal
+
+
+Some text that is being used here.
+
+Address Book Entries / Contact Information
+------------------------------------------
+
+Some contact information.
+
+     	   :Address:  
+           :n: Thomas Ohanian
+           :p: (direct/mobile) 401.935.5410
+           :e: tom_ohanian@yahoo.com
+           :e: thomas.ohanian@autodesk.com
+           :c: MED consulting senior guy / Mr. AVID no.8
+   
+Bookmarks
+---------
+
+Some bookmark to a link.
+
+:link:     Jumpstart Montreal -- Japanese and Montreal
+:URL:  	   http://www.jumpstartmontreal.com/
+:keywords: montreal, classified, ads, japan
+
+| Jumpstart Montreal -- Japanese and Montreal
+| http://www.jumpstartmontreal.com/
+| montreal, classified, ads, japan
+
+Jumpstart Montreal -- Japanese and Montreal
+http://www.jumpstartmontreal.com/
+montreal, classified, ads, japan
+
+
+:Link: | Jumpstart Montreal -- Japanese and Montreal
+       | http://www.jumpstartmontreal.com/
+       | montreal, classified, ads, japan
+
+We would like to be able to attach longer information to an URL, e.g.
+
+http://www.jumpstartmontreal.com/
+
+:Link: Jumpstart Montreal -- Japanese and Montreal site that does
+  a lot of things, well, you know, oh, whatever text here.
+  more than one line?
+:keywords: montreal, classified, ads, japan
+
+
+
+
+http://www.jumpstartmontreal.com/
+  :keywords: montreal, classified, ads, japan
+
+  Jumpstart Montreal -- Japanese and Montreal site that does a lot of things,
+  well, you know, oh, whatever text here.  more than one line?
+
+
+Other Stuff
+-----------
+
+some literal block::
+
+  this ihjrs dis di jsdj
+  djs 
+  djs d
+  sjd sds
+
+
+Quotes
+------
+
+Some pargijsds.
+
+ "With computer people, the appearance of inaction masks the drama of their
+ thoughts.  They were maybe the first tyrants to attempt to conquer the world
+ logically."
+
+                              ---The New New Thing, Michael Lewis, p.332
+
+Other separator.
+
+  "With computer people, the appearance of inaction masks the drama of their
+  thoughts.  They were maybe the first tyrants to attempt to conquer the world
+  logically."
+
+  ---The New New Thing, Michael Lewis, p.332
+
+
+Book Entries to read (short reviews)
+------------------------------------
+
+- "Everything Bad Is Good for You: How Today's Popular Culture Is Actually
+  Making Us Smarter", Steven Johnson
+
+  http://www.amazon.com/o/ASIN/1573223077
+
+    The author aims at convincing us that pop culture, modern television and
+    video games have grown in complexity and are making us smarter.  He does
+    this mainly by looking at the amount of facts to work in one's mind in
+    today's entertainment vs. what used to be.  He claims that we should
+    recognize that non-reading abilities are increasingly gaining value in the
+    world.  I bought this book because I was puzzled by the question, and
+    opposed to his point-of-view, and I must admit after reading the book I am
+    still very much opposed to his point-of-view.  His reduction of the the
+    number of cognitive abilities to simple acts of probing and telescoping does
+    not convince me.  Pop culture *is* dumb.  Maybe the author has been watching
+    too much t.v. himself.
+
+
+Movies Lists
+------------
+
+2005-06
+~~~~~~~
+
+- Walk on Water *
+- Star Wars III: Revenge of the Sith
+- Capturing the Friedmans
+
+2005-05
+~~~~~~~
+
+- Mad Hot Ballroom
+- Kung-Fu Hustle
+- Crash *
+
+
+Can I do this? YEAH!
+
+- :Movie: Mad Hot Ballroom
+- :Movie: Kung-Fu Hustle
+
+I could add the date like this too:
+
+- :Movie 2005-06-15: Crash
+
