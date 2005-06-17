@@ -41,6 +41,9 @@ from docutils.core import publish_cmdline, default_description
 # LOCAL DECLARATIONS
 #===============================================================================
 
+
+
+
 #===============================================================================
 # MAIN
 #===============================================================================
@@ -52,13 +55,11 @@ def main():
 
     description = ('Nabu Publisher and Extractor program')
 
-    publish_cmdline(reader_name='pep', writer_name='pep_html',
-                    description=description)
+##     publish_cmdline(reader_name='pep', writer_name='pep_html',
+##                     description=description)
 
-    publish_cmdline(writer_name='xml', description=description)
-
+    publish_cmdline(writer_name='pseudoxml', description=description)
 
 
 if __name__ == '__main__':
     main()
-
