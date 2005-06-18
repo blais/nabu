@@ -1,0 +1,25 @@
+=========================
+  Test input for Quotes
+=========================
+
+Valid quote
+-----------
+
+  "And he gave the boy his blessing.  The boy could see in his fathers gaze a
+  desire to be able, himself, to travel the world--a desire that was still alive,
+  despite his father's having had to bury it, over dozens of years, under the
+  burden of struggling for water to drink, food to eat, and the same place to
+  sleep every night of his life.
+ 
+  ---The Alchemist, Paulo Coelho
+
+
+Same, but without the attribution
+---------------------------------
+
+  "And he gave the boy his blessing.  The boy could see in his fathers gaze a
+  desire to be able, himself, to travel the world--a desire that was still alive,
+  despite his father's having had to bury it, over dozens of years, under the
+  burden of struggling for water to drink, food to eat, and the same place to
+  sleep every night of his life.
+
