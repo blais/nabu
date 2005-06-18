@@ -6,6 +6,6 @@
 # used as an example for your own settings for development.
 
 USERPATH=$USERPATH:$PROJDIR/nclient/bin
-PYTHONPATH=$PYTHONPATH:$PROJDIR/nclient/lib/python
+PYTHONPATH=$PYTHONPATH:$PROJDIR/lib/python
 
 
