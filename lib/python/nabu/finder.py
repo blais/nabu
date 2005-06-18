@@ -79,9 +79,20 @@ def find_and_publish( fnordns, recurse=True, verbose=False ):
     # process the files that need to
     print
     for pfile in proclist:
-        print '== Processing:', pfile.fn
-        doctree = process.process_source(contents)
-        print '  ', doctree
+        print '== Processing: %s [%s]' % (pfile.fn, pfile.unid)
+        entries = process.process_source(contents)
+##         print '  ', doctree.encode('latin1', 'ignore')
+
+        # pickle the doctree and return it
+        doctree_pickle = pickle.dumps(entries['document'])
+
+
+    
+
+        
+        
+
+
 
 
 

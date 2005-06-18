@@ -100,10 +100,18 @@ class NabuReader(Reader):
 
 def process_source( contents ):
     """
-    Process a source document into a document tree.
+    Process a source document into a document tree, extract various kinds of
+    entries from the document and return a map of all those extracted entries,
+    including the document itself.
     """
+    reader = NabuReader()
+    parts = publish_parts(source=contents, reader=reader)
 
-    return publish_parts(source=contents, reader=NabuReader())
+    entries = {
+        'document': parts['whole'],
+        }
+    
+    return entries
 
 
 if __name__ == '__main__':
