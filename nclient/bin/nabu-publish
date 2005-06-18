@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+#
+# $Source$
+# $Id$
+#
+
+"""
+Nabu restructuredText Reader Extractor.
+
+Usage:
+   nabu-publish [<options>] <dir-or-file> [<dir-or-file> ...]
+
+This program read some input text files, identifies and extracts meaningful
+information chunks from them, such as addresses and contact info, bookmarks and
+links, quotes, and much more.  The goal is for the automatic extraction and
+classification of this information in order to publish it in a database, on top
+of which various specialized views can be made available.
+
+We want this extraction and publication system to work incrementally, to speed
+up the process.  Also, the organization of the source files should be
+independent of the organization of the data in the database.
+
+For more details, see the design document that comes with Nabu.
+"""
+
+try: # set the locale to the user settings.
+    import locale
+    locale.setlocale(locale.LC_ALL, '')
+except:
+    pass
+
+# nabu imports
+from nabu.finder import find_and_publish
+
+
+def main():
+    """
+    Main program.
+    """
+    # parse options.
+    import optparse
+    parser = optparse.OptionParser(__doc__.strip())
+
+    parser.add_option('-v', '--verbose', action='store_true',
+                      help="Increase verbosity")
+
+    parser.add_option('-N', '--no-recurse', '--dont-recurse',
+                      action='store_false', dest='recursive', default=True,
+                      help="Disable recursion for directories.")
+
+    opts, args = parser.parse_args()
+
+    find_and_publish(args, opts.recursive, opts.verbose)
+
+
+if __name__ == '__main__':
+    main()
