@@ -42,7 +42,7 @@ except:
 from nabu.finder import find_to_publish
 from nabu import history, process
 
-server_def = 'http://furius.local.biz/nabu-server.cgi'
+server_def = 'http://furius.local.biz/nabu/cgi-bin/nabu-publish-handler.cgi'
 
 def main():
     """
@@ -64,6 +64,9 @@ def main():
     parser.add_option('-f', '--force', action='store_true',
                       help="Force sending/processing all files regardless "
                       "of history.")
+
+    parser.add_option('-l', '--process-locally', action='store_true',
+                      help="Process documents in the publisher.")
 
 ## FIXME add user/password options, maybe query for password?
 
@@ -95,10 +98,15 @@ def main():
                 proclist.append(candidate)
 
     # process selected files
-    processor = process.NetworkProcessor(server) 
     for pfile in proclist:
-        print '== processing', pfile.fn
-        processor.process(pfile.fn, pfile.unid, pfile.contents)
+        if not opts.process_locally:
+            print '== sending for processing', pfile.fn
+            server.process_file(pfile.unid, pfile.fn,
+                                xmlrpclib.Binary(pfile.contents))
+        else:
+            from nabu import process
+            contents_uni = pfile.contents.decode('utf-8')
+            entries = process.process_source(contents_uni)
 
 
 if __name__ == '__main__':

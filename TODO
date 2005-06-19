@@ -2,6 +2,11 @@
  TODO: nabu
 ============
 
-- add uuidgen function for emacs for users who don't have it
+- separate content extractors from process.py to allow people to add their own
+  easily (like a plugin system);
+
+- create home page to describe what it is;
+
+
 
 

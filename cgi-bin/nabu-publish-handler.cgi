@@ -22,7 +22,7 @@ import cgi, cgitb
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
 # add the nabu libraries to load path
-root = dirname(dirname(dirname(sys.argv[0])))
+root = dirname(dirname(sys.argv[0]))
 sys.path.append(join(root, 'lib', 'python'))
 
 # nabu and other imports

@@ -8,72 +8,22 @@
 Process the restructuredtext files.
 """
 
+import sys
 import xmlrpclib
 import pickle
+from pprint import pprint, pformat
 
-from docutils.core import publish_parts
-from docutils.readers.standalone import Reader
-from docutils.transforms import Transform
+import docutils.readers.standalone
+import docutils.writers.null
+import docutils.transforms
+import docutils.io
+from docutils.core import publish_programmatically
 from docutils import nodes
 
 __all__ = ['process_source']
 
-#-------------------------------------------------------------------------------
-# PROCESSORS
 
-class IProcessor:
-    """
-    Interface for processor classes.  Processors are classes whose role is to
-    take the source file and insert it into the system, either via a network
-    request, or by processing it directly and sending the extracted results over
-    the network.
-    """
-    def process( self, fn, unid, contents=None ):
-        """
-        Process a single file identified by filename 'fn', unique id 'unid',
-        which has a digest or 'digest' and contents 'contents'.  If 'contents'
-        is None, we read the file from filename, otherwise we use the given
-        contents (this is just for efficiency, to allow the client to cache the
-        contents if he did that).
-        """
-
-class NetworkProcessor(IProcessor):
-    """
-    Processor that simply sends the file over a network connection.  The server
-    is expected to perform the parsing itself (asynchronously) and to somehow
-    provide a way to display errors to the client (if he wants it).
-    """
-    def __init__( self, server ):
-        self.server = server
-
-    def process( self, fn, unid, contents ):
-        self.server.process_file(unid, fn, xmlrpclib.Binary(contents))
-
-
-class ClientProcessor(IProcessor):
-    """
-    Processor that parses the file on the client side and then sends the parsed
-    results over to the server to include (the original contents file is never
-    sent).
-    """
-    def __init__( self, server ):
-        self.server = server
-
-    def process( self, fn, unid, contents ):
-        pass
-##         print '== Processing: %s [%s]' % (fn, unid)
-## FIXME TODO process in the client code
-
-##         entries = process_source(pfile.contents)
-
-##         # pickle the doctree and return it
-##         doctree_pickle = pickle.dumps(entries['document'])
-
-
-    
-
-
-class LinkTransform(Transform):
+class LinkTransform(docutils.transforms.Transform):
     """
     Transform that finds links represented as line-blocks of less than lines,
     where if it has three lines, the first line is taken to be a description,
@@ -129,30 +79,66 @@ class LinkTransform(Transform):
         self.document.walk(v)
 
 
-class NabuReader(Reader):
+class NabuReader(docutils.readers.standalone.Reader):
     """
     Nabu restructured text reader.
     This is used to add our transforms.
     """
-    default_transforms = Reader.default_transforms + (
+    default_transforms = docutils.readers.standalone.Reader.default_transforms + (
         LinkTransform,
         )
 
+class NoopWriter(docutils.writers.null.Writer):
+    """
+    Writer that translates the document tree into itself, i.e. does nothing at
+    all.
+    """
+    def translate( self ):
+        self.output = self.document
+
+class CatcherDestination(docutils.io.NullOutput):
+    """
+    Simple destination class that catches the document tree.
+    """
+    def write( self, data ):
+        self.destination.append(data)
 
 def process_source( contents ):
     """
     Process a source document into a document tree, extract various kinds of
     entries from the document and return a map of all those extracted entries,
     including the document itself.
-    """
-    reader = NabuReader()
-    parts = publish_parts(source=contents, reader=reader)
 
-    import sys
-    print >> sys.stderr, parts['whole'].encode('latin-1', 'replace')
+    This method is expecting the contents to be a Unicode string.
+    """
+    docreceiver = []
+
+    output, pub = publish_programmatically(
+        source_class=docutils.io.StringInput, source=contents, source_path=None,
+        destination_class=CatcherDestination,
+        destination=docreceiver, destination_path=None,
+        reader=NabuReader(), reader_name='standalone',
+        parser=None, parser_name='restructuredtext',
+        writer=NoopWriter(), writer_name=None,
+        settings=None, settings_spec=None,
+        settings_overrides={'input_encoding': 'unicode'},
+        config_section=None,
+        enable_exit_status=None)
+
+    document = docreceiver[0]
+    
+    # remove stuff for pickling
+    transformer = document.transformer
+    
+    document.transformer = None
+    document.reporter = None
+
+##     print >> sys.stderr, pformat(document)
+##     print >> sys.stderr, type(parts['whole'])
+##     print >> sys.stderr, parts['whole'].encode('latin-1', 'replace')
 
     entries = {
-        'Document': {'contents': pickle.dumps(parts['whole'])}
+        'Document': {'contents': pickle.dumps(document)}
         }
     
     return entries

@@ -5,7 +5,7 @@
 # My environment initialization for this project.  This could or could not be
 # used as an example for your own settings for development.
 
-USERPATH=$USERPATH:$PROJDIR/nclient/bin
+USERPATH=$USERPATH:$PROJDIR/bin
 PYTHONPATH=$PYTHONPATH:$PROJDIR/lib/python
 
 
