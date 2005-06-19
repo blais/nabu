@@ -8,14 +8,15 @@
 Process the restructuredtext files.
 """
 
+import xmlrpclib
+import pickle
+
 from docutils.core import publish_parts
 from docutils.readers.standalone import Reader
 from docutils.transforms import Transform
 from docutils import nodes
 
-#===============================================================================
-# PUBLIC DECLARATIONS
-#===============================================================================
+__all__ = ['process_source']
 
 #-------------------------------------------------------------------------------
 # PROCESSORS
@@ -27,7 +28,7 @@ class IProcessor:
     request, or by processing it directly and sending the extracted results over
     the network.
     """
-    def process( self, fn, unid, digest, contents=None ):
+    def process( self, fn, unid, contents=None ):
         """
         Process a single file identified by filename 'fn', unique id 'unid',
         which has a digest or 'digest' and contents 'contents'.  If 'contents'
@@ -42,24 +43,27 @@ class NetworkProcessor(IProcessor):
     is expected to perform the parsing itself (asynchronously) and to somehow
     provide a way to display errors to the client (if he wants it).
     """
-    def __init__( self, connection ):
-        self.connection = connection
+    def __init__( self, server ):
+        self.server = server
 
-    def process( self, fn, unid, digest, contents ):
-        pass
-        # FIXME TODO
-    
+    def process( self, fn, unid, contents ):
+        self.server.process_file(unid, fn, xmlrpclib.Binary(contents))
+
+
 class ClientProcessor(IProcessor):
     """
     Processor that parses the file on the client side and then sends the parsed
     results over to the server to include (the original contents file is never
     sent).
     """
-    def __init__( self, connection ):
-        self.connection = connection
+    def __init__( self, server ):
+        self.server = server
 
-    def process( self, fn, unid, digest, contents ):
-        print '== Processing: %s [%s]' % (fn, unid)
+    def process( self, fn, unid, contents ):
+        pass
+##         print '== Processing: %s [%s]' % (fn, unid)
+## FIXME TODO process in the client code
+
 ##         entries = process_source(pfile.contents)
 
 ##         # pickle the doctree and return it
@@ -125,10 +129,6 @@ class LinkTransform(Transform):
         self.document.walk(v)
 
 
-
-
-
-
 class NabuReader(Reader):
     """
     Nabu restructured text reader.
@@ -148,14 +148,12 @@ def process_source( contents ):
     reader = NabuReader()
     parts = publish_parts(source=contents, reader=reader)
 
+    import sys
+    print >> sys.stderr, parts['whole'].encode('latin-1', 'replace')
+
     entries = {
-        'document': parts['whole'],
+        'Document': {'contents': pickle.dumps(parts['whole'])}
         }
     
     return entries
 
-
-## #
-## # New node types.
-## #
-## class bookmark(node.line_block): pass

@@ -33,6 +33,11 @@ try: # set the locale to the user settings.
 except:
     pass
 
+## FIXME we want to make it so that the find_to_publish algorithm is inside this
+## file, so that we can distribute just a single script with no libraries for
+## those who will not process locally (simpler, no need for any third party
+## libraries).  FIXME TODO
+
 # nabu imports
 from nabu.finder import find_to_publish
 from nabu import history, process
@@ -56,6 +61,10 @@ def main():
     parser.add_option('-s', '--server-url', action='store', default=server_def,
                       help="URL to server handler.")
 
+    parser.add_option('-f', '--force', action='store_true',
+                      help="Force sending/processing all files regardless "
+                      "of history.")
+
 ## FIXME add user/password options, maybe query for password?
 
     opts, args = parser.parse_args()
@@ -64,12 +73,32 @@ def main():
     # create server connection
     server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
 
-    history_getter = history.NetworkHistoryGetter(server)
-    processor = process.ClientProcessor(None) 
-    
-    proclist = find_to_publish(history_getter, args, opts.recursive, opts.verbose)
+    # find candidate files to consider
+    candidates = find_to_publish(args, opts.recursive, opts.verbose)
+
+    # check candidates against history (if not suppressed)
+    if opts.force:
+        proclist = candidates
+    else:
+        history_getter = history.NetworkHistoryGetter(server)
+        idhistory = history_getter.gethistory([x.unid for x in candidates])
+
+        # compare digests and figure out which files to process
+        proclist = []
+        for candidate in candidates:
+            try:
+                hist_digest = idhistory[candidate.unid]
+            except KeyError:
+                hist_digest = None
+
+            if candidate.digest != hist_digest:
+                proclist.append(candidate)
+
+    # process selected files
+    processor = process.NetworkProcessor(server) 
     for pfile in proclist:
-        processor.process(pfile.fn, pfile.unid, pfile.digest, pfile.contents)
+        print '== processing', pfile.fn
+        processor.process(pfile.fn, pfile.unid, pfile.contents)
 
 
 if __name__ == '__main__':

@@ -18,6 +18,8 @@ import re
 # nabu imports
 from nabu import history, utils
 
+__all__ = ['find_to_publish']
+
 
 class File:
     """
@@ -30,18 +32,19 @@ class File:
         self.contents = contents
 
    
-def find_to_publish( history_getter, fnordns, recurse=True, verbose=False ):
+codingre = re.compile('.*-\\*-\s*coding:\s*(\S+)\s*.*-\\*-')
+
+def find_to_publish( fnordns, recurse=True, verbose=False ):
     """
-    Discover files, figure out which ones need to be processed, and returns a
-    list of those objects.  The 'history_getter' is an object that can be used
-    to query a server for digests for specific documents (identified by id).
-    'fnordns' is a list of files and/directories to look into.
+    Discover files, figure out which ones are candidates to be processed, and
+    returns a list of those objects.  'fnordns' is a list of files
+    and/directories to look into.
     """
     # process files.
     candidates = []
     for fn in utils.process_dirs_or_files(fnordns, recurse):
         if verbose:
-            print 'reading...', fn
+            print '== reading...', fn
 
         # read the beginnings of the file
         f = open(fn)
@@ -54,16 +57,39 @@ def find_to_publish( history_getter, fnordns, recurse=True, verbose=False ):
             continue
         
         # we publish it
-        print '== Probing for Publish:', fn
-        print '  ', unid
+        if verbose:
+            print '   publish id: {%s}' % unid
             
         # read the rest of the file and compute md5 contents
-        contents = header + f.read()
+        contents_enc = header + f.read()
         f.close()
+        
+        # decode into Unicode, try to guess which format, if we cannot guess,
+        # assume Latin-1
+        mo = codingre.match(contents_enc)
+        if mo:
+            encoding = mo.group(1)
+        else:
+            encoding = 'latin-1'
+
+        try:
+            contents_uni = contents_enc.decode(encoding)
+            contents = contents_uni.encode('UTF-8')
+        except UnicodeDecodeError, e:
+            raise SystemExit( ("Decoding error in file '%s' "
+                               "(trying to decode with encoding '%s'): %s") %
+                              (fn, encoding, e))
+        except UnicodeEncodeError, e:
+            raise SystemExit( ("Encoding error in file '%s' "
+                               "(trying to encode with encoding '%s'): %s") %
+                              (fn, 'UTF-8', e))
 
         m = md5.new(contents)
-        digest = m.digest()
-        
+        digest = m.hexdigest()
+
+## FIXME remove
+##         print contents.decode('utf-8').encode('latin-1', 'replace')
+
         # Note: for now we keep all the contents in memory, but when the number
         # of files will get large we will want to do something about it.  We
         # will have to decide between making a single network query for all of
@@ -72,26 +98,7 @@ def find_to_publish( history_getter, fnordns, recurse=True, verbose=False ):
         # winning candidate files immediately.
         candidates.append( File(fn, unid, digest, contents) )
 
-    # check candidates against history
-    # Note: this should be a network call.
-    idhistory = history_getter.gethistory([x.unid for x in candidates])
-
-    from pprint import pprint, pformat
-    pprint(idhistory)
-
-    # compare digests and figure out which files to process
-    proclist = []
-    for candidate in candidates:
-        try:
-            hist_digest = idhistory[candidate.unid]
-        except KeyError:
-            hist_digest = None
-
-        if candidate.digest != hist_digest:
-            proclist.append(candidate)
-
-    return proclist
-
+    return candidates
 
 
 pubmarkre = re.compile('^:Id:\s*(\S*)\s*$', re.M)
