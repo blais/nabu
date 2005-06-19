@@ -14,11 +14,9 @@ web application framework.
 """
 
 # stdlib imports
-from pprint import pprint, pformat
 import sys
 from os.path import dirname, join
-import cgi, cgitb
-#cgitb.enable(display=0, logdir="/tmp") # for debugging
+import cgitb; cgitb.enable(display=0, logdir="/tmp") # for debugging
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
 # add the nabu libraries to load path
@@ -33,7 +31,7 @@ from nabu import server
 #
 def main():
     """
-    CGI handler. 
+    CGI handler for XML-RPC server.
     """
     # connect to the database
     params = {

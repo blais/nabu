@@ -88,6 +88,16 @@ class ServerHandler:
 
         return ret
 
+    def dumpdb( self ):
+        """
+        Clear the entire database.
+        This is requested from the client interface.
+        """
+        # drop the tables.  We're bold.
+        for cls in sqlobject_classes:
+            cls.dropTable(ifExists=True, cascade=True)
+        return 0
+
     def process_file( self, unid, filename, contents_bin ):
         """
         Process a single file.

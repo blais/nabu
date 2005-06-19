@@ -6,7 +6,7 @@
 #
 
 """
-Nabu test HTML conversion from pickled document.
+Nabu test content list and server.
 
 This script simply attempts to get the pickled document stored in the database
 and runs the writer on it to produce the HTML document and returns that.
@@ -14,7 +14,7 @@ and runs the writer on it to produce the HTML document and returns that.
 
 # stdlib imports
 from pprint import pprint, pformat
-import sys, os
+import sys, os, urlparse
 from os.path import dirname, join
 import cgi, cgitb; cgitb.enable()
 import cPickle as pickle
@@ -26,6 +26,7 @@ sys.path.append(join(root, 'lib', 'python'))
 # nabu and other imports
 from sqlobject.postgres.pgconnection import PostgresConnection
 from nabu.server import init_connection, Document
+import nabu.process
 
 # docutils imports
 import docutils.io
@@ -80,36 +81,17 @@ def main():
     doc = sr[0]
     document = pickle.loads(sr[0].contents)
 
-    # create writer and destination
+    # render document in HTML
     writer = docutils.writers.html4css1.Writer()
-    destination = docutils.io.StringOutput(encoding='UTF-8')
-
-    # setup settings for writer
-    option_parser = OptionParser( components=(writer,),
-                                  defaults={}, read_config_files=0)
-    document.settings = option_parser.get_default_values()
-
-    # create a reporter
-    document.reporter = docutils.utils.Reporter(
-        '<string>',
-        document.settings.report_level,
-        document.settings.halt_level,
-        stream=document.settings.warning_stream,
-        debug=document.settings.debug,
-        encoding=document.settings.error_encoding,
-        error_handler=document.settings.error_encoding_error_handler)
-    ## source <string>, report_level 2, halt_level 4, stream None
-    ## debug None, encoding ascii, error_handler backslashreplace
-    
-    output = writer.write(document, destination)
-    writer.assemble_parts()
+    scheme, netloc, path, parameters, query, fragid = \
+            urlparse.urlparse(os.environ['SCRIPT_URI'])
+    settings = {'stylesheet': '%s://%s/docutils-style.css' % (scheme, netloc)}
+    output = nabu.process.render_doctree(document, writer, 'UTF-8', settings)
 
     print 'Content-type:', 'text/html'
     print
     print output
 
-##     output = self.writer.write(document, self.destination)
-##     self.writer.assemble_parts()
 
 if __name__ == '__main__':
     main()

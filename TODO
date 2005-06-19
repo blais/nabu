@@ -2,11 +2,29 @@
  TODO: nabu
 ============
 
+- add users to the storage and contents fetching script
+
+  - setup CGI on my server
+  - write a script to add databases for new users
+  - send script to friends to try it out
+
+- find a good strategy to deal with errors gracefully
+
+- find a way for the entryforms to be "loosely coupled" with the data model on
+  the server.
+
+- remove Id bibliographic field from file
+
+- test with other encodings than utf-8 in source files
+
+- finish implementing server, to allow client-side parsing to enter content directly
+
+
 - separate content extractors from process.py to allow people to add their own
   easily (like a plugin system);
 
 - create home page to describe what it is;
 
+- support encrypted files from the publisher
 
-
-
+- warn on files that have no titles (add minimum requirements entryform)
