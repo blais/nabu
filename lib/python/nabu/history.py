@@ -13,19 +13,36 @@ about these documents to allow the finder to check whether a document has
 changed or not.
 """
 
-#-------------------------------------------------------------------------------
-#
-def get_md5_history( idlist=None ):
+class IHistoryGetter:
     """
-    Given a list of document ids to check for, return a mapping of md5sums for
-    these documents at the time they were last stored in the database.
-
-    This is meant to be used by the finder algorithm to figure out which files
-    to reprocess or not.
-
-    If not id list is given, all the md5sums in the system are returned.
+    History getter interface.
     """
+    def gethistory( idlist ):
+        """
+        Given a list of document ids to check for, return a mapping of md5sums for
+        these documents at the time they were last stored in the database.
+
+        This is meant to be used by the finder algorithm to figure out which files
+        to reprocess or not.
+
+        If not id list is given, all the md5sums in the system are returned.
+        """
+
+class NullHistoryGetter(IHistoryGetter):
+    """
+    History getter that always returns no history.
+    """
+    def gethistory( self, idlist ):
+        # FIXME TODO: implement something real to save and return history
+        return dict( (x, None) for x in idlist )
+
+class NetworkHistoryGetter(IHistoryGetter):
+    """
+    History getter that queries the network to find results.
+    """
+    def __init__( self, server ):
+        self.server = server
     
-    # FIXME TODO: implement something real to save and return history
-    return dict( (x, None) for x in idlist )
-    
+    def gethistory( self, idlist ):
+        return self.server.gethistory(idlist)
+

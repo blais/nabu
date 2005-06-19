@@ -23,6 +23,10 @@ independent of the organization of the data in the database.
 For more details, see the design document that comes with Nabu.
 """
 
+# stdlib imports
+import pickle
+import xmlrpclib
+
 try: # set the locale to the user settings.
     import locale
     locale.setlocale(locale.LC_ALL, '')
@@ -30,14 +34,15 @@ except:
     pass
 
 # nabu imports
-from nabu.finder import find_and_publish
+from nabu.finder import find_to_publish
+from nabu import history, process
 
+server_def = 'http://furius.local.biz/nabu-server.cgi'
 
 def main():
     """
-    Main program.
+    Main program of publisher client.
     """
-    # parse options.
     import optparse
     parser = optparse.OptionParser(__doc__.strip())
 
@@ -48,9 +53,23 @@ def main():
                       action='store_false', dest='recursive', default=True,
                       help="Disable recursion for directories.")
 
+    parser.add_option('-s', '--server-url', action='store', default=server_def,
+                      help="URL to server handler.")
+
+## FIXME add user/password options, maybe query for password?
+
     opts, args = parser.parse_args()
 
-    find_and_publish(args, opts.recursive, opts.verbose)
+
+    # create server connection
+    server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+
+    history_getter = history.NetworkHistoryGetter(server)
+    processor = process.ClientProcessor(None) 
+    
+    proclist = find_to_publish(history_getter, args, opts.recursive, opts.verbose)
+    for pfile in proclist:
+        processor.process(pfile.fn, pfile.unid, pfile.digest, pfile.contents)
 
 
 if __name__ == '__main__':

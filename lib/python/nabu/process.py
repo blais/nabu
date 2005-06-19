@@ -17,15 +17,56 @@ from docutils import nodes
 # PUBLIC DECLARATIONS
 #===============================================================================
 
-#===============================================================================
-# LOCAL DECLARATIONS
-#===============================================================================
+#-------------------------------------------------------------------------------
+# PROCESSORS
 
-## #
-## # New node types.
-## #
-## class bookmark(node.line_block): pass
+class IProcessor:
+    """
+    Interface for processor classes.  Processors are classes whose role is to
+    take the source file and insert it into the system, either via a network
+    request, or by processing it directly and sending the extracted results over
+    the network.
+    """
+    def process( self, fn, unid, digest, contents=None ):
+        """
+        Process a single file identified by filename 'fn', unique id 'unid',
+        which has a digest or 'digest' and contents 'contents'.  If 'contents'
+        is None, we read the file from filename, otherwise we use the given
+        contents (this is just for efficiency, to allow the client to cache the
+        contents if he did that).
+        """
 
+class NetworkProcessor(IProcessor):
+    """
+    Processor that simply sends the file over a network connection.  The server
+    is expected to perform the parsing itself (asynchronously) and to somehow
+    provide a way to display errors to the client (if he wants it).
+    """
+    def __init__( self, connection ):
+        self.connection = connection
+
+    def process( self, fn, unid, digest, contents ):
+        pass
+        # FIXME TODO
+    
+class ClientProcessor(IProcessor):
+    """
+    Processor that parses the file on the client side and then sends the parsed
+    results over to the server to include (the original contents file is never
+    sent).
+    """
+    def __init__( self, connection ):
+        self.connection = connection
+
+    def process( self, fn, unid, digest, contents ):
+        print '== Processing: %s [%s]' % (fn, unid)
+##         entries = process_source(pfile.contents)
+
+##         # pickle the doctree and return it
+##         doctree_pickle = pickle.dumps(entries['document'])
+
+
+    
 
 
 class LinkTransform(Transform):
@@ -114,6 +155,7 @@ def process_source( contents ):
     return entries
 
 
-if __name__ == '__main__':
-    main()
-
+## #
+## # New node types.
+## #
+## class bookmark(node.line_block): pass

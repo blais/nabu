@@ -14,17 +14,28 @@ special marker that indicates that they should be processed and published.
 # stdlib imports
 import md5
 import re
-from pprint import pprint, pformat ## FIXME remove
 
 # nabu imports
-from nabu import history, utils, process
+from nabu import history, utils
 
 
-    
-def find_and_publish( fnordns, recurse=True, verbose=False ):
+class File:
     """
-    Discover files, figure out which ones need to be processed, and process them
-    if necessary.
+    Struct to hold information about a candidate.
+    """
+    def __init__( self, fn, unid, digest, contents ):
+        self.fn = fn
+        self.unid = unid
+        self.digest = digest
+        self.contents = contents
+
+   
+def find_to_publish( history_getter, fnordns, recurse=True, verbose=False ):
+    """
+    Discover files, figure out which ones need to be processed, and returns a
+    list of those objects.  The 'history_getter' is an object that can be used
+    to query a server for digests for specific documents (identified by id).
+    'fnordns' is a list of files and/directories to look into.
     """
     # process files.
     candidates = []
@@ -63,7 +74,10 @@ def find_and_publish( fnordns, recurse=True, verbose=False ):
 
     # check candidates against history
     # Note: this should be a network call.
-    idhistory = history.get_md5_history(x.unid for x in candidates)
+    idhistory = history_getter.gethistory([x.unid for x in candidates])
+
+    from pprint import pprint, pformat
+    pprint(idhistory)
 
     # compare digests and figure out which files to process
     proclist = []
@@ -76,23 +90,7 @@ def find_and_publish( fnordns, recurse=True, verbose=False ):
         if candidate.digest != hist_digest:
             proclist.append(candidate)
 
-    # process the files that need to
-    print
-    for pfile in proclist:
-        print '== Processing: %s [%s]' % (pfile.fn, pfile.unid)
-        entries = process.process_source(contents)
-##         print '  ', doctree.encode('latin1', 'ignore')
-
-        # pickle the doctree and return it
-        doctree_pickle = pickle.dumps(entries['document'])
-
-
-    
-
-        
-        
-
-
+    return proclist
 
 
 
@@ -108,12 +106,3 @@ def has_publish_marker( text ):
         return mo.group(1)
     return None
         
-class File:
-    """
-    Struct to hold information about a candidate.
-    """
-    def __init__( self, fn, unid, digest, contents ):
-        self.fn = fn
-        self.unid = unid
-        self.digest = digest
-        self.contents = contents
