@@ -28,3 +28,7 @@
 - support encrypted files from the publisher
 
 - warn on files that have no titles (add minimum requirements entryform)
+
+- setup automated publish on commit using
+  - CVS
+  - Subversion
