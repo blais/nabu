@@ -267,7 +267,7 @@ def find_to_publish( fnordns, recurse=True, verbose=False ):
     return candidates
 
 
-pubmarkre = re.compile(':Id:\s*(\S*)', re.M)
+pubmarkre = re.compile(':Id:\s+(\S*)', re.M)
 
 def has_publish_marker( text ):
     """

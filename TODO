@@ -4,18 +4,25 @@
 
 
 :docutils branch:
-- implement a PickleWriter in the main branch
 - add tests for my new publish functions
 
 
 :publisher:
 - detect if two source documents have the same id, split out error
 
+- restrict finder to certain extensions (default is all files)
+  - test with .txt extensions
+
+
 - find a good strategy to deal with errors gracefully
+  - do we even bother entering partial data when there are errors?
+    make it an option on the server.
 
 - support :Id: anywhere, including in a comment
 - remove Id bibliographic field from contents before sending/processing
   - add option to leave it there
+
+- detect duplicate Id and split out error if this is happens.
 
 - add a remove function, to remove content from files that are gone
   - this offers a way to cleanup by considering only the files that are present 
