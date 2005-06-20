@@ -50,6 +50,9 @@ def init_connection( connection ):
     for cls in sqlobject_classes:
         cls._connection = connection
 
+    # Checks that the database tables exist and if they don't, creates them.
+    for cls in sqlobject_classes:
+        cls.createTable(ifNotExists=True)
 
 class ServerHandler:
     """
@@ -59,16 +62,6 @@ class ServerHandler:
         self.connection = connection
 
         init_connection(connection)
-
-        "A DBAPI-2.0 open connection to a database."
-        self.__checktables()
-
-    def __checktables( self ):
-        """
-        Checks that the database tables exist and if they don't, creates them.
-        """
-        for cls in sqlobject_classes:
-            cls.createTable(ifNotExists=True)
 
     def gethistory( self, idlist=None ):
         """
@@ -103,8 +96,6 @@ class ServerHandler:
         Process a single file.
         We assume that the file comes wrapped in a Binary, encoded in UTF-8.
         """
-        print >> sys.stderr, 'Processing %s' % unid
-
         # convert XML-RPC Binary into string
         contents_utf8 = contents_bin.data
 

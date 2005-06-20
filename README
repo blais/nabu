@@ -33,6 +33,57 @@ For more details, see the design document and project proposal under the
 ``doc`` subdirectory.
 
 
+
+
+Nabu is cool, because:
+
+- you edit files locally, with your favourite editor.  
+
+- the organization of the files in subdirectories has nothing to do with how the
+  content is presented.  It effectively offers you a sandbox for creating
+  content, and then how you organize or present the content is dictated by ways
+  that *you* decide, potentially independent of the file organization structure;
+
+- the valuable source of the information, the text files, remains with you, and
+  you are free to manage them in any way you prefer, with any version control
+  system you like (if you want to do that);
+
+- it does not dictate how the information is presented/served to the clients;
+
+- various semantic things are automatically extracted from your document.  These
+  semantic things are easily written with little code and are configurable.
+  Nabu comes with many content extractors (generic and specific ones);
+
+- a light-weight program with little dependencies is used to upload the files on
+  the server.  The server parses the content.  This maximizes the potential that
+  you will be able to use Nabu anywhere;
+
+
+
+Nabu is not:
+
+- a Wiki
+
+- a Blogging system
+
+- a word processing system
+
+
+
+Nabu is:  a way to add content and extract semantic from this content-- no
+presentation layer.  You can build the presentation with any web development
+framework that can access an SQL database.
+
+
+
+
+
+
+
+
+
+
+
 Documentation
 =============
 

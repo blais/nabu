@@ -2,10 +2,6 @@
  TODO: nabu
 ============
 
-:urgent:
-- clean up documentation, and setup files to start entering relevant info when
-  needed
-
 
 :docutils branch:
 - implement a PickleWriter in the main branch
@@ -29,6 +25,7 @@
 - test with other encodings than utf-8 in source files
 
 - support encrypted files from the publisher
+  - problem: how do we identify documents to be published without decrypting?
 
 - the regular expression used for the Id should be configurable
 - the number of characters read to find the Id should be configurable too
@@ -64,6 +61,9 @@
   directly
 
 - add upload date to all material stored in the database
+- add upload user to all material stored in the database
+  - this way, multiple users can fill in the same "nabu" storage to 
+    produce shared content
 
 - automatically adding columns for entry "fields" that are not currently
   in the database, makes the data model looser
@@ -77,6 +77,16 @@
 
 - find a way for the entryforms to be "loosely coupled" with the data model on
   the server.
+
+- add a generic field list parser for creating new types of records without
+  code: the entry type is the first field list, if it matches some pattern
+  (e.g. if it's empty);
+
+- comment nodes could be stripped off complete
+
+- there should be and .. end directive to stop the processing from that point on.
+  - .. disclosure:: private directive could achieve something similar
+
 
 
 :documentation:

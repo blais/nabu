@@ -70,8 +70,8 @@ def publish():
         if server is None:
             server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
 
-        if opts.verbose:
-            print '== clearing database.'
+        # important message, always print.
+        print '(clearing entire database.)'
         server.dumpdb()
 
     # find candidate files to consider

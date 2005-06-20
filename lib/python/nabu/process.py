@@ -8,9 +8,6 @@
 Process the restructuredtext files.
 """
 
-# stdlib imports
-import pickle
-
 # docutils imports
 import docutils.io
 import docutils.utils
@@ -49,12 +46,7 @@ def process_source( contents ):
         settings_overrides={'input_encoding': 'unicode'}
         )
     
-    # remove stuff for pickling
-    transformer = document.transformer
-    
-    document.transformer = None
-    document.reporter = None
-
+    import cPickle as pickle
     entries = {
         'Document': {'contents': pickle.dumps(document)}
         }
