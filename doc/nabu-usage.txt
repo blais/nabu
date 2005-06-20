@@ -1,0 +1,137 @@
+==============================
+  Usage Intructions for Nabu
+==============================
+
+:Id: b08ac706-7ff5-4311-9549-bb6c0421a545
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2005-06-20
+:Abstract:
+
+   Instructions for Nabu users. Intended audience: people writing content to be
+   published.  This document does not contain information about setting up the
+   server nor about the various kinds of entries.
+
+What is Nabu?
+=============
+
+Nabu is a framework for the publication of documents and automated extraction of
+semantically meaningful parts of documents to populate a database on a server.
+It is intended for the users to only have to write simple text files on their
+local computer disk, and to have a minimum of software dependencies to rely on
+to be able to publish those incrementally to a server.  It provides an easy way
+to maintain and create a collection of documents.  
+
+The extracted data be presented on the server in various ways, by any available
+web framework of your preference.  The goal of this project limits itself to the
+publishing mechanism, the extraction of meaningful document parts, and to the
+storage of this data in a generic way.
+
+
+Creating Files
+==============
+
+Create text files as you normally would.  The location or directory organization
+of those text files is not very important; make it the most convenient for you,
+the writer.  The server may offer features to let you organize and categorize
+files in a way that lets it present them coherently (this depends on the code
+that will present the information and is outside the scope of Nabu).
+
+
+RestructuredText
+----------------
+
+The files should be in valid reStructuredText format.  You can find out more
+about RestructuredText at http://docutils.sourceforge.net/rst.html .
+
+Files that do not validate the rst format may not be able to fully populate all
+the data contained in them to the database.  See the section on `Dealing with
+Errors` for more details.
+
+
+Marking Files for Publication
+-----------------------------
+
+Files that will be published need to be marked with a unique string identifier,
+so that the source document can be matched against the data entries in the
+database.  This marker will be automatically removed by the publisher before the
+document is sent for processing to the server.
+
+The default scheme is to add a marker like this, anywhere in the first 2048
+characters of the document::
+
+  :Id: ffb7d2cd-efce-43da-8aa0-fdb1a104dde6
+
+or::
+
+  :Id: branching-instructions
+
+You can also put the string in a comment along with other things, for example,
+as the first line of a file::
+
+  .. -*- coding: utf-8 -*-   :Id: branching-instructions
+
+This string depends on the publisher and you can customize it.  There is a
+regular expression in the publisher configuration that can be changed to
+recognize a different pattern for unique id.
+
+.. important::
+
+   The identifiers that you use should be unique in the entire set of files that
+   will be published in the database;
+
+The author likes to use universally unique identifiers (UUIDs_) for that
+purpose.  Those have unique guarantees.
+
+.. _UUID: http://en.wikipedia.org/wiki/UUID
+
+
+Entry Types
+-----------
+
+One of the powerful ideas behind this publishing system, is that the publisher
+handler will automatically recognize certain patterns in the source files and
+populate a database with those.
+
+The kinds of entries recognized depend on the server configuration.  Consult the
+person who is responsible for that server to find out which text patterns are
+recognized (there should be an available document for these).
+
+
+Version Control
+---------------
+
+If you would like to put the files under version control.
+
+
+
+
+Publishing Files
+================
+
+Pointing to a Server
+--------------------
+
+You publish files to a Nabu publishing handler URL.  This needs to already have
+been setup.
+
+
+
+Dealing with Errors
+-------------------
+
+FIXME TODO
+
+
+
+
+Triggers
+--------
+
+When should you run the publisher?
+
+- whenever you want to publish, from the command-line;
+- as a hook on a repository server.  The repository server could update a
+  checkout on a commit trigger and then publish to the Nabu server from that;
+- you could run it from emacs;
+- you could even bind it to an emacs save hook;
+
