@@ -47,6 +47,6 @@ def main():
     handler = CGIXMLRPCRequestHandler()
     handler.register_instance(server_handler)
     handler.handle_request()
-
+    
 if __name__ == '__main__':
     main()

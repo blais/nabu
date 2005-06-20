@@ -32,23 +32,21 @@ class NabuReader(docutils.readers.standalone.Reader):
                         tuple(nabu.entryforms.registry.values())
 
 
-def process_source( contents ):
+def extract( doctree ):
     """
-    Process a source document into a document tree, extract various kinds of
-    entries from the document and return a map of all those extracted entries,
-    including the document itself.
-
-    This method is expecting the contents to be a Unicode string.
+    Runs the Nabu transforms on an existing document tree, extracting various
+    kinds of entries from the document and return a map of all those extracted
+    entries, including the document itself.
     """
-    document, parts = docutils.core.publish_doctree(
-        source=contents,
-        reader=NabuReader(),
-        settings_overrides={'input_encoding': 'unicode'}
-        )
+##     document, parts = docutils.core.publish_doctree(
+##         source=contents,
+##         reader=NabuReader(),
+##         settings_overrides={'input_encoding': 'unicode'}
+##         )
     
     import cPickle as pickle
     entries = {
-        'Document': {'contents': pickle.dumps(document)}
+        'Document': {}
         }
     
     return entries

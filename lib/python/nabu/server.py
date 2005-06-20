@@ -9,37 +9,51 @@ Server-side handlers for requests.
 """
 
 # stdlib imports
-import sys
 import md5
 import datetime
+import threading
+import cPickle as pickle
 from pprint import pprint, pformat
+
+# docutils imports
+import docutils.core
 
 # other imports
 from sqlobject import *
 
 # nabu imports
-from nabu.process import process_source
+from nabu.process import extract
 
-class History(SQLObject):
+class NabuSource(SQLObject):
     """
-    History of uploads.
+    Source and history of uploads.
     This is used to figure out what needs to be refreshed.
+
+    We also keep a copy of the original document tree, before our extraction was
+    run, so that we can reprocess the extraction on the server without having to
+    reparse nor upload the documents.
     """
     unid = StringCol(alternateID=1, length=36, notNull=1)
     filename = StringCol(length=256)
     digest = StringCol(length=32, notNull=1)
+    username = StringCol()
     time = DateTimeCol()
+    doctree = BLOBCol() # pickled doctree, before Nabu transforms.
 
+
+
+## FIXME move this into being simply the result of one of the transforms
 class Document(SQLObject):
     """
     Stored document.
     """
     unid = StringCol(alternateID=1, length=36, notNull=1)
-    contents = BLOBCol() # pickled document
+    contents = BLOBCol() # pickled doctree, after Nabu transforms.
 
 
-sqlobject_classes = [History, Document]
 
+
+sqlobject_classes = [NabuSource, Document]
 
 def init_connection( connection ):
     """
@@ -70,11 +84,11 @@ class ServerHandler:
         ret = {}
 
         if idlist is None:
-            for r in History.select():
+            for r in NabuSource.select():
                 ret[r.unid] = r.digest
         else:
             for unid in idlist:
-                r = History.select(History.q.unid == unid)
+                r = NabuSource.select(NabuSource.q.unid == unid)
                 if r.count() > 0:
                     rr = r[0]
                     ret[rr.unid] = rr.digest
@@ -91,7 +105,7 @@ class ServerHandler:
             cls.dropTable(ifExists=True, cascade=True)
         return 0
 
-    def process_file( self, unid, filename, contents_bin ):
+    def process_source( self, unid, filename, username, contents_bin ):
         """
         Process a single file.
         We assume that the file comes wrapped in a Binary, encoded in UTF-8.
@@ -104,8 +118,36 @@ class ServerHandler:
         digest = m.hexdigest()
 
         # process and store contents as a Unicode string
-        contents = contents_utf8.decode('UTF-8')
-        del contents_utf8
+        doctree, parts = docutils.core.publish_doctree(
+            source=contents_utf8,
+            settings_overrides={'input_encoding': 'UTF-8'}
+            )
+
+        return self.__process(unid, filename, digest, username,
+                              doctree, None)
+
+    def process_doctree( self, unid, filename, digest, username, doctree_bin ):
+        """
+        Process a single file.
+        We assume that the file comes wrapped in a Binary, encoded in UTF-8.
+        """
+        docpickled = doctree_bin.data
+        doctree = pickle.loads(docpickled)
+## FIXME return error to the client if there is an exception in unpickling here.
+
+        return self.__process(unid, filename, digest, username,
+                              doctree, docpickled)
+
+    def __process( self, unid, filename, digest, username, doctree, docpickled ):
+        """
+        Process the given tree, extracting the information entries from it and
+        replacing the existing entries with the newly extracted ones.
+
+        :Parameters:
+          ...
+          - `docpickled`: an optimization because we might already have a
+            pickled version of the tree.  If left to None we create our own.
+        """
 
         # remove all previous objects that were previously extracted from this
         # document
@@ -114,14 +156,36 @@ class ServerHandler:
             for r in sr:
                 cls.delete(id=r.id)
 
-        # process the new file
-        entries = process_source(contents)
+        # create a new history for the document
+        if docpickled is None:
+            docpickled = pickle.dumps(doctree)
 
-        try:
-            del entries['History']
-        except KeyError:
-            pass
+        newhist = NabuSource(unid=unid,
+                             filename=filename,
+                             digest=digest,
+                             username=username,
+                             time=datetime.datetime.now(),
+                             doctree=docpickled)
 
+
+##         # process the Nabu transforms.
+##         entries = process_source(contents)
+## FIXME how do I detect errors here?
+
+
+
+## FIXME this should be in the "whole document" transform
+        entries = {
+            'Document': {'contents': pickle.dumps(doctree)}
+            }
+
+## FIXME entries should be the result of running all the transforms
+        assert 'NabuSource' not in entries
+
+## FIXME create tables dynamically depending on what entries are returned
+
+
+        # For each available schema
         for cls in sqlobject_classes:
             try:
                 entry = entries[cls.__name__]
@@ -132,10 +196,6 @@ class ServerHandler:
 
             params = dict( (k._name, entry[k._name]) for k in cls._columns )
             newinst = cls(**params)
-
-        # finally, create a new history for the document
-        newhist = History(unid=unid, filename=filename, digest=digest,
-                          time=datetime.datetime.now())
 
         return 0
 

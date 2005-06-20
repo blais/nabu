@@ -3,56 +3,48 @@
 ============
 
 :publisher:
-
-- finder:
-
-  - detect duplicate Id and spit out error if this is happens.
-  
-  - support :Id: anywhere, including in a comment
-  - remove Id bibliographic field from contents before sending/processing
-    - add option to leave it there
-  
-  - restrict finder to certain extensions (default is all files)
-    - test with .txt extensions
-
-  - the regular expression used for the Id should be configurable
-  - the number of characters read to find the Id should be configurable too
-  
-
 - find a good strategy to deal with errors gracefully
   - do we even bother entering partial data when there are errors?
-    make it an option on the server.
+    make it an option on the server?
 
+  - errors should be stored in the NabuSource table
 
-- implement local verification with docutils w/out writer, without nabu
-  transforms, just parsing
+    - provide a way to retrieve the errors from the command-line tool
+
+  - some servers process immediately, return error description
+
+  - we need to find out if it is possible from a CGI script to let the client
+    know that we're done, and to keep running on the server, while letting the
+    client exit?  note that there might be some options in the client for that
+    purpose. find out.
+
 
 
 - removing files:
   - add a remove function, to remove content from files that are gone
-    - this offers a way to cleanup by considering only the files that are present 
-      (could be fast, like another clean method, but just for the files that
-      aren't found in this pass)
 
-- support encrypted files from the publisher
-  - problem: how do we identify documents to be published without decrypting?
-
+    - this offers a way to cleanup by considering only the files that are
+      present (could be fast, like another clean method, but just for the files
+      that aren't found in this pass)
 
 - setup automated publish on commit using
   - CVS
   - Subversion
   ---> and document!
 
-- test with other encodings than utf-8 in source files
+- support encrypted files from the publisher
 
+  - problem: how do we identify documents to be published without decrypting?
 
-
-
-:source files:
-- uniformize the :Id: tags
 
 
 :server setup and beta users:
+- separate the nabu transforms from the standalone reader transforms and keep
+  that as the source documents
+
+  * eventually we could reprocess the entire documents without uploading again,
+    just having to run the nabu transforms/extractors
+
 - add parameters to the nabu-contents.cgi script:
   - user (required)
   - type (optional, if not present print list)
@@ -63,9 +55,6 @@
   - write a script to add databases for new users
   - send script to friends to try it out
 
-- finish implementing server, and allow client-side parsing to enter content
-  directly
-
 - add upload date to all material stored in the database
 - add upload user to all material stored in the database
   - this way, multiple users can fill in the same "nabu" storage to 
@@ -74,6 +63,12 @@
 - automatically adding columns for entry "fields" that are not currently
   in the database, makes the data model looser
 
+  - find out how to programmatically add columns to the database
+
+- make the server run with multiple threads to process all files after
+  communication
+
+- database locking issues?
 
 
 
@@ -105,3 +100,33 @@
   * NABO: Not A Blog Only
 
 
+
+
+:tests:
+  - test with other encodings than utf-8 in source files
+  - duplicate Id error test
+
+
+:source files:
+- uniformize the :Id: tags
+
+
+Rejected or Indefinitely-postponed Ideas
+----------------------------------------
+
+- ``include-only`` option in the publisher:
+
+    - restrict finder to certain extensions (default is all files)
+      - test with .txt extensions
+
+  For now, we think that the ``exclude`` option combined with the
+  discrimintation of having markers in only certain files is sufficient for most
+  usage.  And you can customize the marker.  Also, since we're just reading the
+  header of the files, it is still really fast even when there are a lot of
+  large binary files.
+
+- extend the server to allow the publisher to send already parsed doctree as
+  pickled to the server.
+
+  We can do this later: this is only an optimization to ease the load on the
+  server.

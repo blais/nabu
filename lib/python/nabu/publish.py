@@ -34,16 +34,17 @@ without pushing new files to the server.
 
 ## Design Note About Dependencies
 ## ------------------------------
-## We want to make it so that the find_to_publish algorithm fits inside this
-## file, so that we can distribute just a single script file with no libraries
-## to setup or install, at least for those who will not process locally.  The
-## reason is that it's really just much simpler to demo or setup for other
-## people.  However, it the user wants to process locally, we require an install
-## of the nabu system; this is where we draw the line.
+##
+## We want to make it so that all to code to publish fits inside this file, so
+## that we can distribute just a single script file with no libraries to setup
+## or install, at least for those who will not process locally.  The reason is
+## that it's really just much simpler to demo or setup for other people.
+## However, it the user wants to process locally, we require an install of the
+## nabu system; this is where we draw the line.
 
 # stdlib imports
-import sys, os, re, md5, xmlrpclib
-from os.path import isdir, isfile, islink, join, exists
+import sys, os, re, md5, xmlrpclib, fnmatch
+from os.path import *
 from pprint import pprint, pformat ## FIXME remove
 
 #-------------------------------------------------------------------------------
@@ -75,7 +76,10 @@ def publish():
         server.dumpdb()
 
     # find candidate files to consider
-    candidates = find_to_publish(args, opts.recursive, opts.verbose)
+    try:
+        candidates = find_to_publish(args, opts)
+    except IOError, e:
+        raise SystemExit('Error: %s' % e)
 
     if not candidates:
         if opts.verbose:
@@ -105,25 +109,70 @@ def publish():
 
     # process selected files
     for pfile in proclist:
-        if opts.process_locally:
-            # Local processing.
-            # This is used to validate the files before sending them.
-            # Note: here we require a Nabu install
+        if opts.process_locally == 0:
+            print '======= sending source document to server:  %s  {%s}' % \
+                  (pfile.fn, pfile.unid)
+
+            server.process_source(pfile.unid, pfile.fn, opts.user,
+                                  xmlrpclib.Binary(pfile.contents))
+            continue
+        
+        elif opts.process_locally >= 1:
+            #
+            # Local processing with docutils.
+            #
+            # Note: we require at least a docutils install.
+            # Note2: this assumes that the tree structure is compatible with
+            #        that which is installed on the server.
+            #
+            print '======= processing file locally:  %s' % pfile.fn
+
             try:
-                import nabu.process
+                import docutils.core
             except ImportError:
                 raise SystemExit(
-                    "Error: you must have installed Nabu in order to "
+                    "Error: you must have installed docutils in order to "
                     "process files locally.")
-                    
-            contents_uni = pfile.contents.decode('utf-8')
-            entries = nabu.process.process_source(contents_uni)
 
-        # FIXME eventually we will want to send the processed data to the server
-        # because it is already parsed!
-        print '== sending to server:', pfile.fn
-        server.process_file(pfile.unid, pfile.fn,
-                            xmlrpclib.Binary(pfile.contents))
+            doctree, parts = docutils.core.publish_doctree(
+                source=pfile.contents,
+                settings_overrides={'input_encoding': 'UTF-8'}
+                )
+
+## FIXME how do I detect errors here?
+
+            if opts.process_locally == 1:
+                print '======= sending parsed document to server: {%s}' % \
+                      pfile.unid
+                import cPickle as pickle
+                docpickled = pickle.dumps(doctree)
+
+                server.process_doctree(pfile.unid, pfile.fn, pfile.digest,
+                                       opts.user,
+                                       xmlrpclib.Binary(docpickled))
+
+            elif opts.process_locally == 2:
+                # do nothing, all we were asked to do is validate and don't send.
+                pass
+
+            elif opts.process_locally == 3:
+                print ('======= validating file with docutils and "'
+                       'extraction:  %s') % pfile.fn
+                try:
+                    import nabu.process
+                    
+                    raise NotImplementedError(
+                        "Local Nabu validation not implemented yet.")
+## FIXME finish extract method in Nabu and call it here and then
+##       print out the extracted fields.
+##
+##                     contents_uni = pfile.contents.decode('utf-8')
+##                     entries = nabu.process.process_source(contents_uni)
+                except ImportError:
+                    raise SystemExit(
+                        "Error: you must have installed Nabu in order to "
+                        "process files with locally with extraction.")
+
 
 #-------------------------------------------------------------------------------
 # Config / Command-line
@@ -141,28 +190,89 @@ def parse_options():
     parser.add_option('-v', '--verbose', action='store_true',
                       help="Increase verbosity")
 
-    parser.add_option('-N', '--no-recurse', '--dont-recurse',
-                      action='store_false', dest='recursive', default=True,
-                      help="Disable recursion for directories.")
+    # finder options
+    group = optparse.OptionGroup(parser, "Finder options",
+                                 """These options affect how the publisher
+                                 finds and recognizes files.""")
 
-    parser.add_option('-s', '--server-url', action='store',
+    group.add_option('-R', '--no-recurse', '--dont-recurse',
+                     action='store_false', dest='recursive', default=True,
+                     help="Disable recursion for directories.")
+    group.add_option('-r', '--recurse', '--recurse',
+                     action='store_true', dest='recursive',
+                     help="Disable recursion for directories.")
+
+    group.add_option('-e', '--exclude', action='append', metavar='PATTERN',
+                     default=[],
+                     help="Ignore files and subdirectories whose basenames "
+                     "match the given globbing pattern.  You can append "
+                     "many of these options.  Typically you would ignore "
+                     "something like ['.svn', 'CVS'].  You do not need to "
+                     "bother setting up patterns to ignore binary files, we "
+                     "process those very efficiently.")
+
+    group.add_option('--marker-regexp', action='store', metavar='REGEXP',
+                     default=':Id:\s+(\S*)',
+                     help="Regular expression to search for marker. "
+                     "It must contain a single group. Note that the entire "
+                     "matched contents may be removed from source.")
+
+    group.add_option('--header-length', action='store', type='int',
+                     metavar='LENGTH', default=1024,
+                     help="Length of the header (in characters) to look "
+                     "for the marker at the top of each file "
+                     "(the default is roughly 20 lines).")
+
+    parser.add_option_group(group)
+
+    # server options
+    group = optparse.OptionGroup(parser, "Server options",
+                                 """These options specify where to upload
+                                 the files on the server.""")
+
+    group.add_option('-s', '--server-url', action='store', metavar='URL',
                       help="URL to server handler.")
 
-    parser.add_option('-f', '--force', action='store_true',
-                      help="Force sending/processing all files regardless "
-                      "of history.")
-
-    parser.add_option('-l', '--process-locally', action='store_true',
-                      help="Process documents in the publisher.")
-    
-    parser.add_option('-u', '--user', action='store',
+    group.add_option('-u', '--user', action='store',
                       help="Username to use to publish.")
-    parser.add_option('-p', '--password', action='store',
+
+    group.add_option('-p', '--password', action='store', metavar='PASSWD',
                       help="Password to use to publish (will query if not set).")
-    
-    parser.add_option('-c', '--clear', '--clean', action='store_true',
+
+    parser.add_option_group(group)
+
+    # processing options
+    group = optparse.OptionGroup(parser, "Processing options",
+                                 """These options specify where to upload
+                                 the files on the server.""")
+
+    group.add_option('-c', '--clear', '--clean', action='store_true',
                       help="Clear the entire contents database "
                       "before publishing the new files.")
+
+    group.add_option('-f', '--force', action='store_true',
+                     help="Force sending/processing all files regardless "
+                     "of history.")
+
+    group.add_option('-l', '--process-locally', '--local',
+                     action='count', default=0,
+                     help="Process documents locally.  If you omit the option, "
+                     "the documents get sent to and processed on the server "
+                     "(this is the default).  If you specify it once, the "
+                     "documents get processed locally and the results gets sent "
+                     "to the server;  twice is for validation, the "
+                     "documents get processed locally but do not get sent to "
+                     "the server;  three times is for debugging only: local "
+                     "extraction of Nabu entries is attempted by the local "
+                     "installation of Nabu.")
+
+    group.add_option('--dont-remove-marker', '--leave-marker',
+                     action='store_true',
+                     help="Leave the markers in the source files when uploading. "
+                     "You would use this if it makes sense for the markers "
+                     "appear in your published documents somehow.")
+
+    parser.add_option_group(group)
 
     # parse config file, if present
     try:
@@ -175,13 +285,19 @@ def parse_options():
     else:
         values = parser.get_default_values()
         values.read_file(rcfile) # this reads the config file as Python
-    
+
     # parse command-line (takes precedence over config file)
     opts, args = parser.parse_args(values=values)
 
     if opts.server_url is None:
-        raise SystemExit("Error: you must specify a server url.")
-        
+        parser.error("You must specify a server url.")
+
+    # compile regular expression
+    try:
+        opts.marker_regexp = re.compile(opts.marker_regexp, re.M)
+    except re.error, e:
+        parser.error("Compiling marker regexp: %s" % str(e))
+
     return opts, args
 
 #-------------------------------------------------------------------------------
@@ -197,39 +313,73 @@ class File:
         self.unid = unid
         self.digest = digest
         self.contents = contents
-   
+
 codingre = re.compile('.*-\\*-\s*coding:\s*(\S+)\s*.*-\\*-')
 
-def find_to_publish( fnordns, recurse=True, verbose=False ):
+def find_to_publish( fnordns, opts ):
     """
     Discover files, figure out which ones are candidates to be processed, and
-    returns a list of those objects.  'fnordns' is a list of files
-    and/directories to look into.
+    returns a list of those objects.
+
+    :Parameters:
+       - `fnordns`: is a list of files and/directories to look into.
+       - `opts`: program options.
     """
     # process files.
     candidates = []
-    for fn in process_dirs_or_files(fnordns, recurse):
-        if verbose:
-            print '== reading...', fn
+    fileids = set()
+    files = set()
+    for fn in process_dirs_or_files(fnordns, opts.exclude, opts.recursive):
+        afn = abspath(normpath(fn))
+        if afn in files:
+            print >> sys.stderr, \
+                  "Warning: Skipping file '%s' that was seen twice." % fn
+            continue
+        files.add(afn)
+
+        if opts.verbose:
+            print '======= reading...', fn
 
         # read the beginnings of the file
         f = open(fn)
-        header = f.read(2048)
+        header = f.read(opts.header_length)
 
         # find if it should be published
-        unid = has_publish_marker(header)
-        if not unid:
+        mo = opts.marker_regexp.search(header)
+        if mo:
+            unid = mo.group(1)
+
+            # if the marker was partially cut by the header being too short,
+            # don't publish (we don't know if we have the entire marker).
+            if mo.end() == opts.header_length:
+                print >> sys.stderr, \
+                      ("Warning: Skipping file '%s' with marker found at " \
+                       "header boundary: '%s'.") % (fn, unid)
+                continue
+        else:
             f.close()
             continue
-        
+
+        # remove the marker found from the file
+        if not opts.dont_remove_marker:
+            header = header[:mo.start()] + header[mo.end():]
+
+        # check if the id has been seen before in another input file
+        if unid in fileids:
+            print >> sys.stderr, \
+                  "Warning: Skipping file '%s' with duplicate id: '%s'." % \
+                  (fn, unid)
+            continue
+        fileids.add(unid)
+
         # we publish it
-        if verbose:
-            print '   publish id: {%s}' % unid
-            
+        if opts.verbose:
+            print '======= publish id: {%s}' % unid
+
         # read the rest of the file and compute md5 contents
         contents_enc = header + f.read()
         f.close()
-        
+
         # decode into Unicode, try to guess which format, if we cannot guess,
         # assume Latin-1
         mo = codingre.match(contents_enc)
@@ -253,9 +403,6 @@ def find_to_publish( fnordns, recurse=True, verbose=False ):
         m = md5.new(contents)
         digest = m.hexdigest()
 
-## FIXME remove
-##         print contents.decode('utf-8').encode('latin-1', 'replace')
-
         # Note: for now we keep all the contents in memory, but when the number
         # of files will get large we will want to do something about it.  We
         # will have to decide between making a single network query for all of
@@ -267,28 +414,36 @@ def find_to_publish( fnordns, recurse=True, verbose=False ):
     return candidates
 
 
-pubmarkre = re.compile(':Id:\s+(\S*)', re.M)
-
-def has_publish_marker( text ):
-    """
-    Returns the unique publish marker in the file, if the given text contains
-    the special publish marker within the starting lines of the document.
-    """
-    mo = pubmarkre.search(text)
-    if mo:
-        return mo.group(1)
-    return None
-
-
 #-------------------------------------------------------------------------------
 # Utils
 #-------------------------------------------------------------------------------
 
-def process_dirs_or_files( args, recurse=True ):
+def exclude_list( names, exclude ):
+    """
+    Returns a list of the names which do not match any of the given exclude
+    patterns.
+    """
+    newnames = []
+    for n in names:
+        for excl in exclude:
+            if fnmatch.fnmatch(n, excl):
+                break
+        else:
+            newnames.append(n)
+    return newnames
+
+def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
     """
     From a list of directories or filenames, yield filenames.
     (This is a generic function and you can reuse it in other places.)
     """
+    # first check for existence of the given files
+    if not ignore_error:
+        missing = filter(lambda x: not exists(x), args)
+        if missing:
+            raise IOError("files or directories do not exist: %s" %
+                          ', '.join(missing))
+                
     for arg in args:
         if isdir(arg):
             if recurse:
@@ -303,11 +458,15 @@ def process_dirs_or_files( args, recurse=True ):
                 fgen = ((arg, dirs, files),)
 
             for root, dirs, files in fgen:
+                if exclude:
+                    dirs[:] = exclude_list(dirs, exclude)
+                    files[:] = exclude_list(files, exclude)
                 for fn in files:
                     yield join(root, fn)
         elif isfile(arg) or islink(arg):
+            if exclude and not exclude_list([arg], exclude):
+                continue
             yield arg
-
 
 if __name__ == '__main__':
     publish()

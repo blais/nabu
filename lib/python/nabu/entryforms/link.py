@@ -47,6 +47,7 @@ class LinkTransform(docutils.transforms.Transform):
     default_priority = 900
 
     class Visitor(nodes.SparseNodeVisitor):
+
         def visit_line_block( self, node ):
             # check the number of lines
             if len(node.children) not in (1, 2, 3):
@@ -68,9 +69,9 @@ class LinkTransform(docutils.transforms.Transform):
             
             node.attributes['classes'].append('bookmark')
 
-##             print node.children[0].astext()
-##             print node.children[1].children[0]
-##             print node.children[2].astext()
+            print node.children[0].astext()
+            print node.children[1].children[0]
+            print node.children[2].astext()
             
 
     def apply( self ):
