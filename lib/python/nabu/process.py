@@ -43,7 +43,7 @@ def process_source( contents ):
 
     This method is expecting the contents to be a Unicode string.
     """
-    document = docutils.core.publish_document(
+    document, parts = docutils.core.publish_doctree(
         source=contents,
         reader=NabuReader(),
         settings_overrides={'input_encoding': 'unicode'}
@@ -62,42 +62,49 @@ def process_source( contents ):
     return entries
 
 
-def render_doctree( document, writer, encoding='UTF-8', settings_overrides={} ):
-    """
-    Renders a docutils document tree with an existing writer.
-    """
-## FIXME the contents of this should go in the docutils code itself.
 
 
-    destination = docutils.io.StringOutput(encoding=encoding)
+## FIXME move this into docutils/core.py
+##  Note: this has become publish_from_doctree
 
-    # setup settings for writer
-    option_parser = OptionParser( components=(writer,),
-                                  defaults={}, read_config_files=0)
-    document.settings = option_parser.get_default_values()
-
-    # add our settings overrides
-    document.settings.update(settings_overrides, option_parser)
-##     from pprint import pprint, pformat ## FIXME remove
-##     import sys
-##     print >> sys.stderr, pformat(document.settings)
-
-    
-    # create a reporter
-    document.reporter = docutils.utils.Reporter(
-        '<string>',
-        document.settings.report_level,
-        document.settings.halt_level,
-        stream=document.settings.warning_stream,
-        debug=document.settings.debug,
-        encoding=document.settings.error_encoding,
-        error_handler=document.settings.error_encoding_error_handler)
-    ## source <string>, report_level 2, halt_level 4, stream None
-    ## debug None, encoding ascii, error_handler backslashreplace
-    
-    output = writer.write(document, destination)
-    writer.assemble_parts()
-
-    return output
-
+## def render_doctree_old( document, writer, settings_overrides={} ):
+##     """
+##     Renders a docutils document tree with an existing writer.
+##     """
+## ## FIXME how do we setup the encoding here?  maybe after creating the settings
+## 
+## 
+##     # setup settings for writer
+##     option_parser = OptionParser( components=(writer,),
+##                                   defaults={}, read_config_files=0)
+##     document.settings = option_parser.get_default_values()
+## 
+##     # add our settings overrides
+##     document.settings.update(settings_overrides, option_parser)
+## ##     from pprint import pprint, pformat ## FIXME remove
+## ##     import sys
+## ##     print >> sys.stderr, pformat(document.settings)
+## 
+##     
+##     # create a reporter
+##     document.reporter = docutils.utils.Reporter(
+##         '<string>',
+##         document.settings.report_level,
+##         document.settings.halt_level,
+##         stream=document.settings.warning_stream,
+##         debug=document.settings.debug,
+##         encoding=document.settings.error_encoding,
+##         error_handler=document.settings.error_encoding_error_handler)
+##     ## source <string>, report_level 2, halt_level 4, stream None
+##     ## debug None, encoding ascii, error_handler backslashreplace
+##     
+##     destination = docutils.io.StringOutput(encoding=encoding)
+## 
+##     output = writer.write(document, destination)
+##     writer.assemble_parts()
+## 
+## ## FIXME return the parts writer.parts
+## 
+##     return output
+## 
     

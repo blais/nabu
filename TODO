@@ -2,33 +2,90 @@
  TODO: nabu
 ============
 
-- add users to the storage and contents fetching script
+:urgent:
+- clean up documentation, and setup files to start entering relevant info when
+  needed
 
-  - setup CGI on my server
-  - write a script to add databases for new users
-  - send script to friends to try it out
+
+:docutils branch:
+- implement a PickleWriter in the main branch
+- add tests for my new publish functions
+
+
+:publisher:
+- detect if two source documents have the same id, split out error
 
 - find a good strategy to deal with errors gracefully
 
-- find a way for the entryforms to be "loosely coupled" with the data model on
-  the server.
+- support :Id: anywhere, including in a comment
+- remove Id bibliographic field from contents before sending/processing
+  - add option to leave it there
 
-- remove Id bibliographic field from file
+- add a remove function, to remove content from files that are gone
+  - this offers a way to cleanup by considering only the files that are present 
+    (could be fast, like another clean method, but just for the files that
+    aren't found in this pass)
 
 - test with other encodings than utf-8 in source files
 
-- finish implementing server, to allow client-side parsing to enter content directly
-
-
-- separate content extractors from process.py to allow people to add their own
-  easily (like a plugin system);
-
-- create home page to describe what it is;
-
 - support encrypted files from the publisher
 
-- warn on files that have no titles (add minimum requirements entryform)
+- the regular expression used for the Id should be configurable
+- the number of characters read to find the Id should be configurable too
+
+- implement local verification with docutils w/out writer, without nabu
+  transforms, just parsing
 
 - setup automated publish on commit using
   - CVS
   - Subversion
+  ---> and document!
+
+
+
+
+
+:source files:
+- uniformize the :Id: tags
+
+
+:server setup and beta users:
+- add parameters to the nabu-contents.cgi script:
+  - user (required)
+  - type (optional, if not present print list)
+  - rendering is for debugging: generic field/value style
+
+- add users to the storage and contents fetching script
+  - setup CGI on my server
+  - write a script to add databases for new users
+  - send script to friends to try it out
+
+- finish implementing server, and allow client-side parsing to enter content
+  directly
+
+- add upload date to all material stored in the database
+
+- automatically adding columns for entry "fields" that are not currently
+  in the database, makes the data model looser
+
+
+
+
+
+:entries:
+- warn on files that have no titles (add minimum requirements entryform)
+
+- find a way for the entryforms to be "loosely coupled" with the data model on
+  the server.
+
+
+:documentation:
+- create home page to describe what it is;
+
+- naming: 
+
+  * Tinba: Tinba Is Not a Blog A...
+  * xNB: x is not a blog
+  * NABO: Not A Blog Only
+
+

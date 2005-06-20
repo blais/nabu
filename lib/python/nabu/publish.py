@@ -42,7 +42,7 @@ without pushing new files to the server.
 ## of the nabu system; this is where we draw the line.
 
 # stdlib imports
-import os, re, md5, xmlrpclib
+import sys, os, re, md5, xmlrpclib
 from os.path import isdir, isfile, islink, join, exists
 from pprint import pprint, pformat ## FIXME remove
 
@@ -62,17 +62,29 @@ def publish():
 
     opts, args = parse_options()
 
-    # create server connection
-    server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+    server = None
 
     # clear the database if requested.
     if opts.clear:
+        # create server lazily, because we might not have any candidates.
+        if server is None:
+            server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+
         if opts.verbose:
             print '== clearing database.'
         server.dumpdb()
 
     # find candidate files to consider
     candidates = find_to_publish(args, opts.recursive, opts.verbose)
+
+    if not candidates:
+        if opts.verbose:
+            print >> sys.stderr, '(no local files to visit.)'
+        return
+
+    # create server lazily, because we might not have any candidates.
+    if server is None:
+        server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
 
     # check candidates against history (if not suppressed)
     if opts.force:
@@ -255,7 +267,7 @@ def find_to_publish( fnordns, recurse=True, verbose=False ):
     return candidates
 
 
-pubmarkre = re.compile('^:Id:\s*(\S*)\s*$', re.M)
+pubmarkre = re.compile(':Id:\s*(\S*)', re.M)
 
 def has_publish_marker( text ):
     """

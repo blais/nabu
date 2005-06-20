@@ -22,17 +22,16 @@ import cPickle as pickle
 # add the nabu libraries to load path
 root = dirname(dirname(sys.argv[0]))
 sys.path.append(join(root, 'lib', 'python'))
+sys.path.insert(0, '/home/blais/src/docutils.blais_interrupt_render')
+## FIXME remove for testing only
 
 # nabu and other imports
 from sqlobject.postgres.pgconnection import PostgresConnection
 from nabu.server import init_connection, Document
-import nabu.process
+## import nabu.process
 
 # docutils imports
-import docutils.io
-import docutils.utils
-import docutils.writers.html4css1
-from docutils.frontend import OptionParser
+import docutils.core
 
 #-------------------------------------------------------------------------------
 #
@@ -82,11 +81,13 @@ def main():
     document = pickle.loads(sr[0].contents)
 
     # render document in HTML
-    writer = docutils.writers.html4css1.Writer()
     scheme, netloc, path, parameters, query, fragid = \
             urlparse.urlparse(os.environ['SCRIPT_URI'])
-    settings = {'stylesheet': '%s://%s/docutils-style.css' % (scheme, netloc)}
-    output = nabu.process.render_doctree(document, writer, 'UTF-8', settings)
+    settings = {'stylesheet': '%s://%s/docutils-style.css' % (scheme, netloc),
+                'output_encoding': 'UTF-8'}
+
+    output = docutils.core.publish_from_doctree(
+        document, writer_name='html4css1', settings_overrides=settings)
 
     print 'Content-type:', 'text/html'
     print
@@ -95,4 +96,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
