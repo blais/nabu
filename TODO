@@ -2,49 +2,48 @@
  TODO: nabu
 ============
 
-
-:docutils branch:
-- add tests for my new publish functions
-
-
 :publisher:
-- detect if two source documents have the same id, split out error
 
-- restrict finder to certain extensions (default is all files)
-  - test with .txt extensions
+- finder:
 
+  - detect duplicate Id and spit out error if this is happens.
+  
+  - support :Id: anywhere, including in a comment
+  - remove Id bibliographic field from contents before sending/processing
+    - add option to leave it there
+  
+  - restrict finder to certain extensions (default is all files)
+    - test with .txt extensions
+
+  - the regular expression used for the Id should be configurable
+  - the number of characters read to find the Id should be configurable too
+  
 
 - find a good strategy to deal with errors gracefully
   - do we even bother entering partial data when there are errors?
     make it an option on the server.
 
-- support :Id: anywhere, including in a comment
-- remove Id bibliographic field from contents before sending/processing
-  - add option to leave it there
 
-- detect duplicate Id and split out error if this is happens.
+- implement local verification with docutils w/out writer, without nabu
+  transforms, just parsing
 
-- add a remove function, to remove content from files that are gone
-  - this offers a way to cleanup by considering only the files that are present 
-    (could be fast, like another clean method, but just for the files that
-    aren't found in this pass)
 
-- test with other encodings than utf-8 in source files
+- removing files:
+  - add a remove function, to remove content from files that are gone
+    - this offers a way to cleanup by considering only the files that are present 
+      (could be fast, like another clean method, but just for the files that
+      aren't found in this pass)
 
 - support encrypted files from the publisher
   - problem: how do we identify documents to be published without decrypting?
 
-- the regular expression used for the Id should be configurable
-- the number of characters read to find the Id should be configurable too
-
-- implement local verification with docutils w/out writer, without nabu
-  transforms, just parsing
 
 - setup automated publish on commit using
   - CVS
   - Subversion
   ---> and document!
 
+- test with other encodings than utf-8 in source files
 
 
 
