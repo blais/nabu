@@ -1,0 +1,710 @@
+==========================================
+   A Text-Based Content Creation System
+==========================================
+
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2005-04-25
+:Abstract:
+
+  We describe a system that aims at making it possible for users to create
+  relevance in their content and allow building ways to serve it intelligently
+  by providing a semantically rich access to this data.
+
+
+Introduction
+------------
+
+We are considering a system for easing the management and publishing of various
+kinds of information personal to a single producer with a system that is "as
+simple as possible".
+
+By personal information, we mean:
+
+- contacts list, address book, birthday lists;
+- list(s) of links (bookmarks);
+- personal notes on specific themes (e.g. shopping for a new barbecue grill);
+- essays, journal and blog entries;
+- personal photographs;
+- calendar and events;
+- todo lists;
+
+
+Motivation / Angles
+-------------------
+
+We present differing angles to various problems of information management"
+
+* *Relevance of Information*.  Not all information that transits in a user's
+  computer, or that is created by that user, is relevant.  There is a *great
+  value* in getting rid of junk.
+
+  We believe that at this point, this task can only be performed manually: there
+  is no artificial intelligence algorithm that can be decide what is important
+  for you.  This is a key assumption in the motivation for this system:
+  ultimately, the user is not just a producer of information, but is also an
+  editor.
+
+  There is no search algorithm that will be able to automatically create value.
+  However, we recognize that filtering technologies will play an important role
+  in helping us become more efficient editors, but we do not believe that they
+  of themselves will become able to create "the valuable" automatically anytime
+  soon;
+
+
+* *Disparate Storage and Unaccessible Source Data*.  Information is stored in
+  various bits that have an associated meaning to them--let us call them
+  "chunks" for now.  All information chunks are stored in different places, for
+  example, all addresses are stored in an address book manager program, all
+  email in a contacts list program.  Contacts lists are stored in PDAs, and
+  despite the availability of synchronization programs (you're lucky if it even
+  works), ultimately the data lives in different places and there are multiple
+  copies of it.
+
+  Also, these data storages used different methods, often specific to the data
+  model that they choose, and only readable by the specific software that
+  created them.  This makes them difficult to access this data, to build
+  independent services on top.
+
+  Services that allow you to enter some of that data online fall in the same
+  trap: they store the data on their machines in a format that is not accessible
+  for you, the user, to get it back.  You create value by publishing your data
+  using their system but you do not have a way to get it back in a form suitable
+  for reuse! ;
+
+
+* *Data Entry*.  It is difficult to enter the information, for many reasons:
+
+  - every time you need to enter a new type of information, you need to start a
+    program specific to that information storage.  These programs change over
+    time, and this means that you must learn a plethora of programs, just to
+    enter the data;
+
+  - more importantly, many times you would want to mix different types of data
+    together in one logical unit.  For example, you might want to open a text
+    file when you're researching a specific issue, for example, all information
+    you find about a recently announced illness by your doctor, and you would
+    want to store links to URLs of interest, contact information about local
+    specialists may be able to help you, as well as text that you write yourself
+    about the illness, or notes that you make on your condition, whatever.
+
+    Personally, whenever I embark on any substantial task, I create a new small
+    document for it--in the form of a text file-- and jot down notes as I
+    discover more and more aspects of the problem that I'm working on.  I think
+    many people do the same, or would do the same if they found a use for the
+    document.  For example, you might want to share some of this knowledge.
+    Right now, there is no easy way to do that;
+
+
+* *Publishing is Difficult*.  Publishing much of the information you accumulate
+   is still very hard.  There are many different systems out there which attempt
+   to provide a way for you to publish certain types of data, in a specialized
+   way.  These require much cusomization, and a market for specialized services
+   (such as blogger) has emerged for specific uses of the data.
+
+   Would it not be great if we could build services on top of all your data,
+   rather than attempting to solve one specific use of the data?
+
+   Also of note: online publishing systems store the data remotely, which make
+   it difficult to build client software to edit it efficiently.  Making it
+   possible to upload the data in a digested form once it's authored locally has
+   some potential.
+
+
+Simplicity
+~~~~~~~~~~
+
+One central value behind our views, and one that you must keep in mind when
+considering the proposition that we're about to make, is that of the importance
+of simplicity.  There is *great value* in keeping things *as simple as they need
+to be*, because it allows the most flexible reuse of the information.
+
+Much of the rewards of keeping design and data simple can be observed in the
+power of the UNIX tools and operating system, which is built upon simple but
+very powerful ideas, sockets and files that consist in generic streams of bytes,
+and small tools that perform one task really well, and a simple and generic way
+to connect those tools together (See "The Art of UNIX Programming",
+E.S.Raymond).  This has made possible the creation of complex tools without
+having to reinvent the small tools, but rather by improving those small tools in
+a generic way, that would henceforth allow more possibilities for connecting
+them in yet more different ways.  Keeping things generic and as simple as
+possible is a potent idea.
+
+This idea of designing systems as simple as they need be is also prevalent in
+the practice of software development.  Over the past ten years, we are seeing
+methodologies of development convergence towards this idea.  Extreme
+programming, agile methodologies, and the growing adoption of dynamic languages
+are a direct expression of the quest for reaching closer and closer to the
+essence of the problems we're trying to solve while trying to get rid of
+unneeded complications.  In many ways, software development is in the business
+of creating complexity.  We are essentially recognizing that keeping our designs
+and data models as simple as possible is the most efficient way of controlling
+the growth of this complexity.
+
+
+Goal
+----
+
+Simply stated, our goal is the following:
+
+  *To make it possible for users to create relevant content and allow building
+  ways to serve it intelligently by providing a semantically rich access to his
+  data.*
+
+We want to make it possible to build services on top of the user's valuable
+resource: information.  In order to do this, we have to make it possible for any
+user to build this meaningful source of his information, to add relevance to it.
+We want to:
+
+1. make it easy to enter the information in a way that allows an automated
+   system to extract the meaningful chunks of data and associate them with
+   pre-defined (and extensible) semantics.
+
+   This may involve some form of simple markup (e.g. "create new document",
+   "insert contact info", "insert bookmark").  Easy means simple.  The interface
+   and data format has to be *simple*, if not trivial;
+
+2. provide a service that will store this extracted information in a way that is
+   accessible by various publishing services;
+
+3. create services that will offer creative views on this data.
+
+   You can think of a blog interface, image galleries, a birthday notifier
+   system, a system to sync your data store with your PDA, to serve your
+   personal bookmarks as RSS feeds, to publish your travel log, to show your
+   calendar of events, etc.
+
+   These views would create value by providing convenient access and novelty on
+   top of the user's data source.  Each of these views would use as its basis
+   the parsed data source, stored and access in an efficient manner (i.e. in a
+   database).
+
+
+Our aim is clearly **NOT** to:
+
+- create yet another specialized personal information management system.  For
+  example, we do not want to manage email data.  We want to enable the creation
+  of *relevant* data, for the user to create value by identifying *relevance* in
+  his info, and we need to make this easy;
+
+- create a desktop search system.  We do not want to deal with unorganized
+  information on a user's system, but to provide a convenient space where a user
+  can consciously organize most of his textual data.  Using all the unorganized
+  information is difficult and a mistake, because there is a lot of non-relevant
+  junk data;
+
+We believe that relevance in information is the result of a certain amount of
+conscious effort from the part of the user, and that search technologies have an
+inherent limit in the quality of the information that they can provide, in terms
+of filtering and organizing the data that navigates in a user's system.  This is
+a key aspect of this document and the scope of what we're trying to achieve.
+Search can help in organizing, but cannot organize for you.  Better search can
+alleviate some of the need for organization, but we recognize that ultimately,
+to create high-quality content, a conscious effort has to be made.
+
+
+Requirements
+------------
+
+The problem is threefold:
+
+1. input and organization the information: the process of creating, editing,
+   entering, storing the information in the system;
+
+2. extracting semantic chunks from it: parsing the input data and extracting
+   meaning from its various components, meaning "across" the main organizational
+   structure of input (for example, various input files may contain bookmarks,
+   these bookmarks should be accessible in a global list of bookmarks);
+
+3. publishing the information: making selected views of the information
+   accessible over the networks, with specialized interfaces.
+
+
+Input
+~~~~~
+
+- we will need to be able to edit the data offline, this is often the case for
+  people who work with laptops or who are on the road;
+
+- the data lives in "files", where files consist in logical and convenient units
+  of organization of information for the user to input and edit, e.g.
+
+  * my bookmarks file specific to my workplace;
+  * a contacts/address list that relates to a specific trip;
+  * a blog entry, perhaps with a snippet of code in it and some links/bookmarks.
+  * book reviews, which contain quotes, and a short public blurb and a link to
+    the book (say, to amazon);
+
+- the information needs to have levels of disclosure, including the possibility
+  of being hidden completely (i.e. not published nor extracted at all), and the
+  possibility of being entirely public, and various levels in between.  Each
+  file, but also each entry must be able to specify its level of disclosure
+  individually as well;
+
+- we want to have a system that is as simple as possible, therefore we will
+  prefer text files that can be created in a normal editor, like emacs or vi,
+  but that does not prevent the creation of client programs to generate these
+  input files;
+
+- we assume that not all "data" a user produces and consumes is revelant, data
+  that gets included in the system is subject to revision and a minimal effort
+  has been made on the part of the user to clean it up and select it.  The user
+  has to "write" it, or somehow take a conscious step to request that certain
+  information be included in the system;
+
+- optional: many people must be able to edit the data concurrently, or a single
+  user be able to work using various independent copies of the data;
+
+
+Extraction
+~~~~~~~~~~
+
+- we must extract meaningful chunks of information from the input files;
+
+- all information chunks that are extracted must be tracked to their input file,
+  so that we can implement an incremental extraction algorithm that looks at the
+  input and figures out:
+
+  * which chunks are obsolete;
+  * a list of only new chunks to be integrated.
+
+- the kinds of "chunks" must be extensible or generic, so that the system is
+  very flexible;
+
+- input "files" may change location, therefore we should not rely on their
+  filename as unique identifiers for the chunks of information;
+
+- the extraction should make the data available in a data store (e.g. a SQL
+  database), in a way that makes it possible to perform incremental updates,
+  full updates, and in a way that makes it flexibly accessible to various
+  publishing interfaces.
+
+
+Publishing
+~~~~~~~~~~
+
+- we need to be able to provide the various chunks of information in various
+  ways, and to organize them in various ways, for example:
+
+  * a blog, organized by dates and/or categories;
+  * a travel journal;
+  * lists of bookmarks, served up as RSS to browsers can integrate them;
+  * a gallery of images, by trip;
+  * notes taken about a certain task, e.g. setting up incremental backups,
+    setting up software on a particular laptop;
+  * a preferred wine list, a reading list;
+  * project ideas, essays;
+
+- a pluggable architecture should be developed to make it possible to render
+  each type of info chunk with a specific rendering system.  We should be able
+  to extend the system so that a new type of entry can be rendered in the
+  existing publishing system;
+
+
+
+
+================================================================================
+
+=====================
+  High-Level Design
+=====================
+
+Components
+----------
+
+There are three main phases:
+
+1. recursively searching for all the files that have an appropriate marker for
+   publication in them (e.g. :Id:); compute md5sum of these files and query the
+   server for md5sums of the files which were last updated for it.
+
+2. parse the files with docutils and transform then; stop before the writer
+   phase; 
+
+3. pickle the document trees and store them in a database, and store all the
+   other extracted elements as well;
+
+4. build code that can query the data;
+
+
+
+================================================================================
+
+
+Web Publishing
+++++++++++++++
+
+Unique Identifiers
+``````````````````
+
+- how do we create permanent links?
+
+  - files may change locations
+  - titles may change
+
+  Unique identifiers fix the problem.  You can even use them to link between the
+  files (e.g. build a transform for the reader that looks at the references and
+  than transforms certain target URL patterns).  Those unique identifiers can be
+  any type of string and is unique, not just UUIDs.
+
+
+
+Comparisons to Other Systems of Information Organization
+--------------------------------------------------------
+
+
+Wiki
+
+
+
+
+LiveJournal -- personal publishing platform written in PHP
+http://www.livejournal.com/site/about.bml
+php, blog, pim
+
+
+
+
+
+
+Conclusion
+----------
+
+The key ideas driving our design are:
+
+- not all information a user produces is relevant, there is a lot of junk;
+
+- a user's editorial involvement can create a higher-quality, semantically rich
+  and valuable source of information;
+
+- it is possible to make this editorial participation simple for most people;
+
+- creating views on top of this semantically rich source of data allows the
+  possibility for value added services and easier personal publishing;
+
+
+
+
+--------------------------------------------------------------------------------
+
+
+
+
+
+The idea is to unite my techdoc, zwiii-src/contents and priv notes projects to
+become the unique source of my personal and public documents.  A web application
+that would replace zwiii would become the way to publish various types of
+documents.  Only documents marked as public would appear on the blog.
+Organization of the documents would be by category, but each document would
+nevertheless have a date, location, and potentially link to some of my
+photographs.
+
+
+
+
+Bookmarks could be search by examining the keywords, the content of the
+enclosing document.  No need to mark keywords at all!
+
+
+
+
+Other
+-----
+
+Rename
+~~~~~~
+
+Rename it to either:
+
+- Furious Wanderlust
+- Politburo Wanderlust or Wanderlust for the Politburo
+
+
+Projects/Documents Reorganization
+---------------------------------
+
+- priv/notes/opportunities.asc
+  - put all opportunities together
+- techdoc/future.txt
+- techdoc/projects
+- priv/notes
+- priv/travel.d -> zwiii
+- priv/notes-books -> zwiii
+- priv/bookmarks -> (nil)
+- priv/addrbook -> (nil)
+- todo.asc
+- zwiii-rsc/contents
+- languages -> zwiii
+
+- put old and new emacs tricks in priv, and publicly published on blog
+- add new emacs trick: X selection thing
+
+Note: some project ideas should be public, some should not.
+- levels of disclosure, associated with access privileges
+
+
+- reorganize my priv directory completely in line with this
+
+
+
+
+Ideas
+-----
+
+Q: would a Wiki be a better way to organize the information?
+   -> related to linking and organization
+
+Q: how will I bind the pages in the application?
+
+
+- rewrite zwiii to have a web interface, but still save content in files
+- integrate media items, each media item with text, link, etc.:
+
+  - book reviews (on the web)
+    - the book list should be automatically extracted from the book reviews
+      files, sorted with dates, rather than having to live in a single file
+  - movies, with associated review and link
+  - photo entries
+  - private and shared entries
+  - recently looked-up words and their associated definitions
+  - entirely public blog
+  - each entry should have a public and private portion, for taking personal
+    notes
+
+- media items could be typed?
+- no tree hierarchy: i would prefer categories, then a tree can map onto it
+- blog entries, need to be able link to photographs
+  - how do we insert photo groups?
+- accounts? yes and on, privileges and permissions per file would be great
+- simplified authentication, e.g. enter email, confirm email, that's it
+- shared calendar of upcoming events?
+- add rss feed
+- techdoc should become integrated in zwiii, minus the projects
+- backend should be text files that I can edit in emacs and update
+
+- allow parts of the same source document to be public, parts to be private, in
+  the same media item/document;
+
+- allow the creation of temporary tokens to send links to people, links that
+  will work on specific sections and that will only work temporarily, with
+  limited permissions
+
+  - restrict by images
+  - restrict by series
+  - restrict by date
+
+- look at hooking directly into a subversion repository,
+  see greg stein's wiki
+
+- add a special mode for slide shows that renders without borders or nothing,
+  perhaps just a CSS or just a totally separate mode.
+
+- support rss
+
+- I need to be able to put links within the text files that will be
+  automatically added to my bookmarks file
+
+  - do the same with addrbook entries
+
+  - make this generic: special entries can be "pulled" from files and viewed and
+    searched globally, e.g. ::
+
+       .. entry:: bookmark
+       .. entry:: addrbook
+       .. entry:: ...
+
+    This processing could be performed when filling up the database with the
+    texts.
+
+
+Misc
+----
+
+- automatically detect words that could be found on Wikipedia and create links
+  automatically.
+
+
+- entries extracted from the text should really be generic. ::
+
+  .. entry:: bib
+
+      BibTeX entry, extracted for use with BibTeX, converted to HTML automatically
+
+
+- bookmarks entries should be served as RSS just like delicious!!!
+
+- design a protocol between the information server to be able to easily write
+  clients
+
+
+
+The TODO list
+-------------
+
+Currently, my TODO list lies in 3 places:
+  - in a text file
+  - in my email (Starred)
+  - bugs on SF
+
+Problems:
+- time is being spent replicating or moving entries around
+- it is not available from work
+
+It would be truly awesome to find a way to integrate all of this in a bug
+tracking system of some kind, with:
+
+- priorities
+- quick to modify
+- available from anywhere
+- with categories
+
+
+What kinds of media elements to I want to share?
+------------------------------------------------
+
+  - book reviews
+  - movie reviews
+  - blog entries (links to photographs)
+  - photographs (public and private)
+  - calendar, shared with rachel
+  - project ideas, some public, some private
+  - technical documents (encrypt, shipcds, thinkpad)
+
+Basically, priv should contains mostly just technical stuff, config.
+
+All other documents should be in a blog space, in which zwiii would
+automatically become just a subset.  Should this space contain my bookmarks and
+addressbook?
+
+I think I got it: join all of priv and zwiii-src together. All documents that
+should be public should have a special tag in them, otherwise they will not be
+served at all.  Remove the templates and email list from zwiii-src, that shall
+become part of the application server that will serve those documents.
+
+
+
+Design Ideas
+------------
+
+- nice fonts:
+
+  * readable: http://www.jorendorff.com/articles/unicode/intro.html
+
+- support next/previous html navigation in the head
+
+- random images on top header, like flickr
+
+- provide a nice, lean, printable view
+
+:thumbnails:
+
+- add funky rotated Thumbscrew for rendering, this is really cool
+- better images could have larger thumbnails
+
+
+
+
+
+
+Example Source File
+-------------------
+
+
+::
+
+    ==================
+     Bar-B-Q Shopping
+    ==================
+
+    :Id: ec87d535-9236-48e4-9630-741831abdb9c   <-- unique file id
+    :Disclosure: public
+    :Expire: 2005-09-04
+
+    Some text.
+
+    Some Section
+    ------------
+
+    Some more text.
+    http://furius.ca/barbecue-grills       <-- a bookmark
+
+    .. disclosure:: private        <-- change the default disclosure level
+
+    Some personal notes that aren't published anywhere.
+
+
+
+
+Summary of Talking with Dave Goodger about how to go about this
+---------------------------------------------------------------
+
+Ideas:
+
+- implement boxquote parser to replace .. note
+
+- emacs: try table.el
+
+- over-and-under titles are considered DIFFERENT than single underline titles,
+  just as if they were using a new character, e.g. they can open a new level.
+
+- try subtitles
+
+- S5 reader: count words or lines in each slide/section and output a warning if
+  too long
+
+- try csv-tables
+
+
+Nabu
+~~~~
+
+- I could define new directives
+
+- or I could use classes.  Class directives apply to the "next thing". Then I
+  could use a transform to extract those bits of things.  They also work
+  recursively.
+
+- Another option: I could write my own reader (simple, small) to find field
+  lists, and interpret certain field list values to make the entries into
+  specific types, e.g.
+
+     :Address:
+     :Name: Martin Blais
+     :Email: blais@furius.ca
+     ...
+
+     or even
+
+     :Address: | ksjdjds
+     	       | sjds djsjdsdjs
+	       | sjdhsdsjhdjshdshs
+
+     (it's recursive, remember!)
+
+     :Link:
+     :desc:	Classifieds in Montreal
+     :url: 	http://kijiji.montreal.com
+     :keywords: montreal, classifieds
+
+  This actually would probably be the best approach.
+
+
+- transforms: are registered for the document either via a directive or in a
+  reader component.  The reader knows the "context" of a document, e.g. PEP is a
+  PEP.
+
+- the docutils document structure is not meant to be serialized and then
+  revived.  It would be necessary to preprocess the output and store that if I
+  don't want to lose the processing time.
+
+
+
+Docutils TODO
+=============
+
+- comment nodes should be stripped off complete
+
+- there should be and .. end directive to stop the processing from that point on.
+
+  - .. disclosure:: private directive could achieve something similar
+
+
