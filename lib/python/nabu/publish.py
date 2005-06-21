@@ -8,16 +8,11 @@
 Nabu reStructuredText Reader Extractor.
 
 Usage::
-   nabu [<global-opts>] <cmd> [<cmd-opts>]
+   nabu [<options>] <file-or-dir> [<file-or-dir> ...]
 
-Available commands:
-
-   `publish`: Find and publish files that have changed against the database.
-              Takes a list of files and/or directories to publish;
-
-   `clean`:   Removes data from the database (by default all data);
-
-   `errors`:  Fetches error messages from previous processing on the server.
+Find and publish files that have changed against the database.  Takes a list of
+files and/or directories to publish.  If none is specified, the current
+directory is assumed.
 
 This program's publish functionality reads some input text files, identifies and
 extracts meaningful information chunks from them, such as addresses and contact
@@ -29,8 +24,10 @@ We want this extraction and publication system to work incrementally, to speed
 up the process.  Also, the organization of the source files should be
 independent of the organization of the data in the database.
 
-For more details, see the design document that comes with Nabu, or use the
-`--help` switch.
+To remove files, see the clear options.  To get the processing errors stored on
+the server, or to get a contents dump, see the other actions options.  For more
+details, see the design document that comes with Nabu, or use the `--help`
+switch.
 
 Configuration
 -------------
@@ -53,10 +50,9 @@ without pushing new files to the server.
 ## nabu system; this is where we draw the line.
 
 # stdlib imports
-import sys, os, re, md5, xmlrpclib, fnmatch
+import sys, os, re, md5, xmlrpclib, fnmatch, urlparse
 import optparse
 from os.path import *
-from pprint import pprint, pformat ## FIXME remove
 
 #-------------------------------------------------------------------------------
 # Publish
@@ -67,19 +63,17 @@ def get_server( opts ):
     """
     Create server lazily, because we might not have any candidates.
     """
+    global _server
     if _server is None:
+        # if opts.verbose:
+        #     print '======= connecting to %s' % opts.server_url
         _server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
     return _server
 
-    ## FIXME add this
-    ## Both the HTTP and HTTPS transports support the URL syntax extension for HTTP
-    ## Basic Authentication: http://user:pass@host:port/path
-
-
-def opts_publish( lparser ):
+def opts_publish( parser ):
     # processing options
-    group = optparse.OptionGroup(lparser,
-        "Publish command processing options",
+    group = optparse.OptionGroup(parser,
+        "Processing options",
         "These options specify where/how to upload or"
         "process the files on the server.")
 
@@ -105,25 +99,22 @@ def opts_publish( lparser ):
         "You would use this if it makes sense for the markers "
         "appear in your published documents somehow.")
 
-    lparser.add_option_group(group)
+    parser.add_option_group(group)
 
-def opts_clear( lparser ):
-    group = optparse.OptionGroup(lparser,
+def opts_clear( parser ):
+    group = optparse.OptionGroup(parser,
         "Clear/remove options",
         "These options specify which files to remove (if any)")
 
     group.add_option('-c', '--clear-not-found', '--clear-others', '--complete',
                      action='store_true',
-                     help="Clear documents that were not found during publish.")
+                     help="Clear documents that were not found.")
 
     group.add_option('-C', '--clear-found', '--clear-found-only',
                      action='store_true',
-                     help="Clear documents are found, that would be published.")
+                     help="Clear documents are found, instead of publish.")
 
-    group.add_option('-X', '--clear-all', action='store_true',
-                     help="Clear all documents for this user.")
-
-    lparser.add_option_group(group)
+    parser.add_option_group(group)
 
 def publish( candidates, opts, args ):
     """
@@ -133,20 +124,17 @@ def publish( candidates, opts, args ):
 
     # remove documents that were found (if requested)
     if opts.clear_found:
-        print '======= clearing documents that were found for publish'
         idlist = [x.unid for x in candidates]
-        if opts.verbose:
-            for iid in idlist:
-                print '   {%s}' % iid
+        for iid in idlist:
+            print '======= clearing {%s}' % iid
         server.clearids(idlist)
         return # nothing more to do
-    elif opts.clear_all:
-        print "== clearing entire database for user '%s'." % opts.user
-        server.clearuser()
         
     # check candidates against history (if not suppressed)
     if opts.force:
         proclist = candidates
+    elif not candidates:
+        proclist = []
     else:
         idhistory = server.gethistory([x.unid for x in candidates])
 
@@ -160,11 +148,15 @@ def publish( candidates, opts, args ):
 
             if candidate.digest != hist_digest:
                 proclist.append(candidate)
+            else:
+                if opts.verbose:
+                    print '======= unchanged {%s}' % candidate.unid
+
 
     # process selected files
     for pfile in proclist:
         if opts.process_locally == 0:
-            print '======= sending source document to server:  %s  {%s}' % \
+            print '======= sending source for processing:  %s  {%s}' % \
                   (pfile.fn, pfile.unid)
 
             errors = server.process_source(pfile.unid, pfile.fn, 
@@ -236,133 +228,90 @@ def publish( candidates, opts, args ):
 
     # remove documents that were not found (if requested)
     if opts.clear_not_found:
-        print '======= clearing other document that were not found'
         allids = server.getallids()
         foundids = [x.unid for x in candidates]
         idlist = [x for x in allids if x not in foundids]
+        for iid in idlist:
+            print '======= clearing {%s}' % iid
         server.clearids(idlist)
 
+#-------------------------------------------------------------------------------
+# Other Actions
+#-------------------------------------------------------------------------------
 
+def opts_others( parser ):
+    group = optparse.OptionGroup(parser,
+        "Other actions",
+        "Alternative actions, other than publish. "
+        "These don't find nor publish.")
 
+    group.add_option('-e', '--errors', action='store_true',
+                      help="Don't publish, fetch error status from the server.")
 
-class CmdFinder:
-    """
-    Base class for commands that find files.
-    """
-    def addopts( self, lparser ):
-        opts_finder(lparser)
+    group.add_option('-d', '--dump', '--debug', action='store_true',
+                      help="Don't publish, print server contents for debugging.")
 
-    def execute( self, opts, args ):
-        candidates = find_candidates(opts, args)
+    group.add_option('-X', '--clear-all', action='store_true',
+                      help="Clear the entire database for this user.")
 
-class CmdPublish(CmdServerUser, CmdFinder):
-    """
-    Publish files.
-    """
-    names = ('publish',)
-
-    def addopts( self, lparser ):
-        CmdFinder.addopts(self, lparser)
-        opts_publish(lparser)
-
-    def execute( self, opts, args ):
-        candidates = CmdFinder.execute(self, opts, args)
-        if not candidates:
-            return
-        publish(candidates, opts, args)
+    parser.add_option_group(group)
         
-
-
-class CmdClear(CmdServerUser, CmdFinder):
+def errors( opts ):
     """
-    Clear/remove stuff in the database.
+    Print last errors in the server.
     """
-    names = ('clear', 'clean',)
+    errors_info = get_server(opts).geterrors()
+    for e in errors_info:
+        print '=== From %s {%s}' % (e['filename'], e['unid'])
+        print e['errors']
 
-    def addopts( self, lparser ):
-        CmdFinder.addopts(self, lparser)
-        lparser.add_option('-t', '--found-only', action='store_true',
-                           help="Only remove documents that were found.")
-        lparser.add_option('-T', '--not-found-only', action='store_true',
-                           help="Only remove documents that were NOT found.")
-## FIXME this is obsolete
-        
-    def execute( self, opts, args ):
-        server = get_server(opts)
-
-## FIXME this is obsolete
-
-        if opts.found_only:
-            CmdFinder.execute(self, opts, args)
-            if not candidates:
-                return
-
-            idlist = [x.unid for x in candidates]
-            for iid in idlist:
-                print "== clearing {%s}" % iid
-            server.clearids(idlist)
-        else:
-            print "== clearing entire database for user '%s'." % opts.user
-            server.clearuser()
-
-
-class CmdErrors(CmdServerUser):
+def dump( opts ):
     """
-    Report parsing errors.
+    Dump/debug server contents.
     """
-    names = ('errors',)
+    attrs = ['unid', 'filename', 'username', 'time', 'errors']
+    headers = [dict( (x, x.capitalize()) for x in attrs )]
+    sources_info = get_server(opts).dump()
+    countcols = dict( (x, 0) for x in attrs )
+    for s in headers + sources_info:
+        for a in attrs:
+            countcols[a] = max(countcols[a], len(str(s[a])))
 
-    def execute( self, opts, args ):
-        errors_info = get_server(opts).geterrors()
-        for e in errors_info:
-            print '=== From %s {%s}' % (e['filename'], e['unid'])
-            print e['errors']
+    headers.append( dict( (x, '-' * countcols[x]) for x in attrs ) )
 
-class CmdDump(CmdServerUser):
-    """
-    Report parsing errors.
-    """
-    names = ('list', 'contents', 'dump',)
+    sfmt = '%%(%(name)s)-%(count)ds'
+    fmt = '   '.join(
+        map(lambda a: sfmt % {'name': a, 'count': countcols[a]}, attrs))
 
-    def execute( self, opts, args ):
-        attrs = ['unid', 'filename', 'username', 'time', 'errors']
-        headers = [dict( (x, x.capitalize()) for x in attrs )]
-        sources_info = get_server(opts).dump()
-        countcols = dict( (x, 0) for x in attrs )
-        for s in headers + sources_info:
-            for a in attrs:
-                countcols[a] = max(countcols[a], len(str(s[a])))
-        
-        headers.append( dict( (x, '-' * countcols[x]) for x in attrs ) )
+    for s in headers + sources_info:
+        print fmt % s
 
-        sfmt = '%%(%(name)s)-%(count)ds'
-        fmt = '   '.join(
-            map(lambda a: sfmt % {'name': a, 'count': countcols[a]}, attrs))
-
-        for s in headers + sources_info:
-            print fmt % s
+def clear( opts ):
+    print "======= clearing entire database for user '%s'." % opts.user
+    # note: this might be faster
+    get_server(opts).clearuser()
 
 
 #-------------------------------------------------------------------------------
 # Finder
 #-------------------------------------------------------------------------------
 
-def opts_finder( lparser ):
+def opts_finder( parser ):
     # finder options
-    group2 = optparse.OptionGroup(lparser,
-                                  "Publish command finder options",
+    group = optparse.OptionGroup(parser,
+                                  "Finder options",
                                   """These options affect how the publisher
                                   finds and recognizes files.""")
 
-    group2.add_option('-r', '--recurse', '--recurse',
+    group.add_option('-r', '--recurse', '--recurse',
                       action='store_true', dest='recursive', default=True,
                       help="Disable recursion for directories.")
 
-    group2.add_option('-R', '--no-recurse', '--dont-recurse',
+    group.add_option('-R', '--no-recurse', '--dont-recurse',
                       action='store_false', dest='recursive',
                       help="Disable recursion for directories.")
 
-    group2.add_option('-e', '--exclude', action='append', metavar='PATTERN',
+    group.add_option('-E', '--exclude', action='append', metavar='PATTERN',
                       default=[],
                       help="Ignore files and subdirectories whose basenames "
                       "match the given globbing pattern.  You can append "
@@ -371,19 +320,19 @@ def opts_finder( lparser ):
                       "bother setting up patterns to ignore binary files, we "
                       "process those very efficiently.")
 
-    group2.add_option('--marker-regexp', action='store', metavar='REGEXP',
+    group.add_option('--marker-regexp', action='store', metavar='REGEXP',
                       default=':Id:\s+(\S*)',
                       help="Regular expression to search for marker. "
                       "It must contain a single group. Note that the entire "
                       "matched contents may be removed from source.")
 
-    group2.add_option('--header-length', action='store', type='int',
+    group.add_option('--header-length', action='store', type='int',
                       metavar='LENGTH', default=1024,
                       help="Length of the header (in characters) to look "
                       "for the marker at the top of each file "
                       "(the default is roughly 20 lines).")
 
-    lparser.add_option_group(group2)
+    parser.add_option_group(group)
 
 class File:
     """
@@ -632,14 +581,7 @@ def parse_subcommands( gparser, subcmds, configvars, defcmd=None ):
 
     return sc, opts, subsubargs
 
-def parse_options( configvars ):
-    """
-    Parse the command-line and config file options and return a pair of opts,
-    args like optparse.
-    """
-    # global parser
-    parser = optparse.OptionParser(__doc__.strip())
-
+def opts_global( parser ):
     parser.add_option('-v', '--verbose', action='store_true',
                       help="Increase verbosity")
 
@@ -660,14 +602,54 @@ def parse_options( configvars ):
 
     parser.add_option_group(group1)
 
-    subcmds = (CmdPublish(), CmdClear(), CmdErrors(), CmdDump(),)
-    sc, opts, args = parse_subcommands(parser, subcmds, configvars, 'publish')
+def parse_options( configvars ):
+    """
+    Parse the command-line and config file options and return a pair of opts,
+    args like optparse.
+    """
+    
+    # global parser
+    parser = optparse.OptionParser(__doc__.strip())
+    opts_global(parser)
+    opts_finder(parser)
+    opts_publish(parser)
+    opts_clear(parser)
+    opts_others(parser)
+
+    for option in parser._get_all_options():
+        if option.dest in configvars:
+            parser.defaults[option.dest] = configvars[option.dest]
+
+    opts, args = parser.parse_args()
 
     # some server url is necessary
     if opts.server_url is None:
         parser.error("You must specify a server url.")
+    
+    # cook up server url with user and password, thus supporting both syntaxes
+    # (separate user/pass or xml-rpc module syntax).  Final syntax is:
+    # http://user:pass@host:port/path".
+    purl = list(urlparse.urlparse(opts.server_url)) # note: does this ever fail?
+    mo = re.match('(.+)@(.+)', purl[1])
+    if mo:
+        purl[1] = mo.group(2)
+        userpass = mo.group(1).split(':')
+        if len(userpass) == 1:
+            fuser, = userpass
+        elif len(userpass) == 2:
+            fuser, fpass = userpass
+        else:
+            raise SystemExit("Error: invalid server URL.")
+        if not opts.user:
+            opts.user = fuser
+        if not opts.password:
+            opts.password = fpass
 
-    return sc, opts, args
+    ## FIXME query for password?
+    purl[1] = '%s:%s@%s' % (opts.user, opts.password, purl[1])
+    opts.server_url = urlparse.urlunparse(purl)
+
+    return opts, args
 
 def read_config():
     """
@@ -681,7 +663,7 @@ def read_config():
         rcfile = join(os.environ['HOME'], '.naburc')
     if exists(rcfile):
         execfile(rcfile, defvars)
-        # FIXME: maybe catch exceptions here.
+        # FIXME: catch exceptions here.
     return defvars
 
 #-------------------------------------------------------------------------------
@@ -690,7 +672,7 @@ def read_config():
 
 def main():
     """
-    Main program of publisher client.
+    Main program for publisher client.
     """
     try: # set the locale to the user settings.
         import locale
@@ -699,9 +681,21 @@ def main():
         pass
 
     configvars = read_config()
-    sc, opts, args = parse_options(configvars)
-    return sc.execute(opts, args)
-
+    opts, args = parse_options(configvars)
+    if opts.errors:
+        errors(opts)
+    elif opts.dump:
+        dump(opts)
+    elif opts.clear_all:
+        clear(opts)
+    else:
+        # if we're not requesting a complete clear of the database,
+        # process files from current directory.  this is a bit of a special
+        # behaviour to allow us to clear the entire database.
+        if not args:
+            args = ['.']
+        candidates = find_candidates(opts, args)
+        publish(candidates, opts, args)
 
 if __name__ == '__main__':
     main()

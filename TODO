@@ -3,14 +3,6 @@
 ============
 
 :publisher:
-- complete errors strategy
-
-  - do we even bother entering partial data when there are errors?
-    make it an option on the server?
-
-  - errors should be stored in the NabuSource table
-    - rename the NabuSource table to be without the Nabu in the name
-
 - errors: print processing/pending queue (server must provide that information)
 
 - setup automated publish on commit using
@@ -137,3 +129,10 @@ Rejected or Indefinitely-postponed Ideas
 - do we require a user/password?  
 
   For now, yes.
+
+
+- do we even bother entering partial data when there are errors?
+  make it an option on the server?
+
+  Do this later.
+

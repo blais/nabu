@@ -27,7 +27,7 @@ sys.path.insert(0, '/home/blais/src/docutils.blais_interrupt_render')
 
 # nabu and other imports
 from sqlobject.postgres.pgconnection import PostgresConnection
-from nabu.server import init_connection, Document
+from nabu.server import init_connection, Document, Source
 ## import nabu.process
 
 # docutils imports
@@ -59,12 +59,27 @@ def main():
         print
         print '<html><body>'
 
-        print '<h1>Document</h1>'
-        print '<ul>'
+        print '<h1>(Sources)</h1>'
+        print '<table width="100%">'
+        sr = Source.select()
+        for s in sr:
+            print '<tr>'
+            print '<td>%s</td>' % s.unid
+            print '<td>%s</td>' % s.filename
+            print '<td>%s</td>' % s.username
+            print '<td>%s</td>' % s.time
+            print '<td>%s</td>' % (s.errors and True or False)
+            print '</tr>'
+        print '</table>'
+
+        print '<h2>Documents</h2>'
+        print '<table width="100%">'
         sr = Document.select()
         for s in sr:
-            print '<li><a href="%s">%s</a></li>' % (linkfmt % s.unid, s.unid)
-        print '</ul>'
+            print '<tr>'
+            print '<td><a href="%s">%s</a></td>' % (linkfmt % s.unid, s.unid)
+            print '</tr>'
+        print '</table>'
         return
 
     # select the document from the database
@@ -96,5 +111,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
