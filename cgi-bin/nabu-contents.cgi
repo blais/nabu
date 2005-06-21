@@ -57,10 +57,14 @@ def main():
         linkfmt = '%s?id=%%s' % os.environ['SCRIPT_URI']
         print 'Content-type:', 'text/html'
         print
-        print '<html><body>'
+        print '<html>'
+        print '<head><style>'
+        print 'table.dump { font-size: x-small; }'
+        print '</style></head>'
 
+        print '<body>'
         print '<h1>(Sources)</h1>'
-        print '<table width="100%">'
+        print '<table width="100%" class="dump">'
         sr = Source.select()
         for s in sr:
             print '<tr>'
