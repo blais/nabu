@@ -12,6 +12,7 @@ Server-side handlers for requests.
 import md5
 import datetime
 import threading
+import StringIO
 import cPickle as pickle
 from pprint import pprint, pformat
 
@@ -95,7 +96,7 @@ class ServerHandler:
 
         return ret
 
-    def dumpdb( self ):
+    def clearuser( self, username ):
         """
         Clear the entire database.
         This is requested from the client interface.
@@ -103,6 +104,18 @@ class ServerHandler:
         # drop the tables.  We're bold.
         for cls in sqlobject_classes:
             cls.dropTable(ifExists=True, cascade=True)
+## FIXME implement clearing for user only
+        return 0
+
+    def clearids( self, username, idlist ):
+        """
+        Clear all entries for a set of ids.
+        """
+## FIXME implement clearing of specific ids only
+
+##         # drop the tables.  We're bold.
+##         for cls in sqlobject_classes:
+##             cls.dropTable(ifExists=True, cascade=True)
         return 0
 
     def process_source( self, unid, filename, username, contents_bin ):
@@ -118,13 +131,18 @@ class ServerHandler:
         digest = m.hexdigest()
 
         # process and store contents as a Unicode string
+        errstream = StringIO.StringIO()
         doctree, parts = docutils.core.publish_doctree(
-            source=contents_utf8,
-            settings_overrides={'input_encoding': 'UTF-8'}
+            source=contents_utf8, source_path=filename,
+            settings_overrides={'input_encoding': 'UTF-8',
+                                'warning_stream': errstream}
             )
 
-        return self.__process(unid, filename, digest, username,
-                              doctree, None)
+
+        self.__process(unid, filename, digest, username,
+                       doctree, None)
+
+        return errstream.getvalue() or ''
 
     def process_doctree( self, unid, filename, digest, username, doctree_bin ):
         """
@@ -135,9 +153,10 @@ class ServerHandler:
         doctree = pickle.loads(docpickled)
 ## FIXME return error to the client if there is an exception in unpickling here.
 
-        return self.__process(unid, filename, digest, username,
-                              doctree, docpickled)
-
+        self.__process(unid, filename, digest, username,
+                       doctree, docpickled)
+        return 0
+    
     def __process( self, unid, filename, digest, username, doctree, docpickled ):
         """
         Process the given tree, extracting the information entries from it and

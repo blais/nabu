@@ -3,29 +3,15 @@
 ============
 
 :publisher:
-- find a good strategy to deal with errors gracefully
+- complete errors strategy
+
   - do we even bother entering partial data when there are errors?
     make it an option on the server?
 
   - errors should be stored in the NabuSource table
+    - rename the NabuSource table to be without the Nabu in the name
 
-    - provide a way to retrieve the errors from the command-line tool
-
-  - some servers process immediately, return error description
-
-  - we need to find out if it is possible from a CGI script to let the client
-    know that we're done, and to keep running on the server, while letting the
-    client exit?  note that there might be some options in the client for that
-    purpose. find out.
-
-
-
-- removing files:
-  - add a remove function, to remove content from files that are gone
-
-    - this offers a way to cleanup by considering only the files that are
-      present (could be fast, like another clean method, but just for the files
-      that aren't found in this pass)
+  - document error behaviour
 
 - setup automated publish on commit using
   - CVS
@@ -36,9 +22,14 @@
 
   - problem: how do we identify documents to be published without decrypting?
 
+- handle authorization failure gracefully
+
 
 
 :server setup and beta users:
+- important!  in the server, we *must* get the username from the authentication,
+  not as given, change to always use 'REMOTE_USER' for this purpose.
+
 - separate the nabu transforms from the standalone reader transforms and keep
   that as the source documents
 
@@ -130,3 +121,12 @@ Rejected or Indefinitely-postponed Ideas
 
   We can do this later: this is only an optimization to ease the load on the
   server.
+
+
+- we need to find out if it is possible from a CGI script to let the client
+  know that we're done, and to keep running on the server, while letting the
+  client exit?  note that there might be some options in the client for that
+  purpose. find out.
+
+  Do this later. This could be interesting.
+

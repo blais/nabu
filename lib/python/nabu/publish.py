@@ -7,20 +7,30 @@
 """
 Nabu reStructuredText Reader Extractor.
 
-Usage:
-   publish [<options>] <dir-or-file> [<dir-or-file> ...]
+Usage::
+   nabu [<global-opts>] <cmd> [<cmd-opts>]
 
-This program read some input text files, identifies and extracts meaningful
-information chunks from them, such as addresses and contact info, bookmarks and
-links, quotes, and much more.  The goal is for the automatic extraction and
-classification of this information in order to publish it in a database, on top
-of which various specialized views can be made available.
+Available commands:
+
+   `publish`: Find and publish files that have changed against the database.
+              Takes a list of files and/or directories to publish;
+
+   `clean`:   Removes data from the database (by default all data);
+
+   `errors`:  Fetches error messages from previous processing on the server.
+
+This program's publish functionality reads some input text files, identifies and
+extracts meaningful information chunks from them, such as addresses and contact
+info, bookmarks and links, quotes, and much more.  The goal is for the automatic
+extraction and classification of this information in order to publish it in a
+database, on top of which various specialized views can be made available.
 
 We want this extraction and publication system to work incrementally, to speed
 up the process.  Also, the organization of the source files should be
 independent of the organization of the data in the database.
 
-For more details, see the design document that comes with Nabu.
+For more details, see the design document that comes with Nabu, or use the
+`--help` switch.
 
 Configuration
 -------------
@@ -44,6 +54,7 @@ without pushing new files to the server.
 
 # stdlib imports
 import sys, os, re, md5, xmlrpclib, fnmatch
+import optparse
 from os.path import *
 from pprint import pprint, pformat ## FIXME remove
 
@@ -51,254 +62,257 @@ from pprint import pprint, pformat ## FIXME remove
 # Main
 #-------------------------------------------------------------------------------
 
-def publish():
+class CmdServerUser:
     """
-    Main program of publisher client.
+    Base class for commands that use a server.
     """
-    try: # set the locale to the user settings.
-        import locale
-        locale.setlocale(locale.LC_ALL, '')
-    except:
-        pass
+    _server = None
 
-    opts, args = parse_options()
+    def get_server( self, opts ):
+        """
+        Create server lazily, because we might not have any candidates.
+        """
+        if self._server is None:
+            self._server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+        return self._server
 
-    server = None
+## FIXME add this
+## Both the HTTP and HTTPS transports support the URL syntax extension for HTTP
+## Basic Authentication: http://user:pass@host:port/path
 
-    # clear the database if requested.
-    if opts.clear:
-        # create server lazily, because we might not have any candidates.
-        if server is None:
-            server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
 
-        # important message, always print.
-        print '(clearing entire database.)'
-        server.dumpdb()
+class CmdFinder:
+    """
+    Base class for commands that find files.
+    """
+    def addopts( self, lparser ):
+        # finder options
+        group2 = optparse.OptionGroup(lparser,
+                                      "Publish command finder options",
+                                      """These options affect how the publisher
+                                      finds and recognizes files.""")
 
-    # find candidate files to consider
-    try:
-        candidates = find_to_publish(args, opts)
-    except IOError, e:
-        raise SystemExit('Error: %s' % e)
+        group2.add_option('-r', '--recurse', '--recurse',
+                          action='store_true', dest='recursive', default=True,
+                          help="Disable recursion for directories.")
 
-    if not candidates:
-        if opts.verbose:
-            print >> sys.stderr, '(no local files to visit.)'
-        return
+        group2.add_option('-R', '--no-recurse', '--dont-recurse',
+                          action='store_false', dest='recursive',
+                          help="Disable recursion for directories.")
 
-    # create server lazily, because we might not have any candidates.
-    if server is None:
-        server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+        group2.add_option('-e', '--exclude', action='append', metavar='PATTERN',
+                          default=[],
+                          help="Ignore files and subdirectories whose basenames "
+                          "match the given globbing pattern.  You can append "
+                          "many of these options.  Typically you would ignore "
+                          "something like ['.svn', 'CVS'].  You do not need to "
+                          "bother setting up patterns to ignore binary files, we "
+                          "process those very efficiently.")
 
-    # check candidates against history (if not suppressed)
-    if opts.force:
-        proclist = candidates
-    else:
-        idhistory = server.gethistory([x.unid for x in candidates])
+        group2.add_option('--marker-regexp', action='store', metavar='REGEXP',
+                          default=':Id:\s+(\S*)',
+                          help="Regular expression to search for marker. "
+                          "It must contain a single group. Note that the entire "
+                          "matched contents may be removed from source.")
 
-        # compare digests and figure out which files to process
-        proclist = []
-        for candidate in candidates:
-            try:
-                hist_digest = idhistory[candidate.unid]
-            except KeyError:
-                hist_digest = None
+        group2.add_option('--header-length', action='store', type='int',
+                          metavar='LENGTH', default=1024,
+                          help="Length of the header (in characters) to look "
+                          "for the marker at the top of each file "
+                          "(the default is roughly 20 lines).")
 
-            if candidate.digest != hist_digest:
-                proclist.append(candidate)
+        lparser.add_option_group(group2)
 
-    # process selected files
-    for pfile in proclist:
-        if opts.process_locally == 0:
-            print '======= sending source document to server:  %s  {%s}' % \
-                  (pfile.fn, pfile.unid)
+    def execute( self, opts, args ):
+        # validate options
+        try:
+            opts.marker_regexp = re.compile(opts.marker_regexp, re.M)
+        except re.error, e:
+            raise SystemExit("Error: Compiling marker regexp: %s" % str(e))
 
-            server.process_source(pfile.unid, pfile.fn, opts.user,
-                                  xmlrpclib.Binary(pfile.contents))
-            continue
-        
-        elif opts.process_locally >= 1:
-            #
-            # Local processing with docutils.
-            #
-            # Note: we require at least a docutils install.
-            # Note2: this assumes that the tree structure is compatible with
-            #        that which is installed on the server.
-            #
-            print '======= processing file locally:  %s' % pfile.fn
+        # find candidate files to consider
+        try:
+            if not hasattr(opts, 'dont_remove_marker'):
+                opts.dont_remove_marker = True
+            self.candidates = find_to_publish(args, opts)
+        except IOError, e:
+            raise SystemExit('Error: %s' % e)
 
-            try:
-                import docutils.core
-            except ImportError:
-                raise SystemExit(
-                    "Error: you must have installed docutils in order to "
-                    "process files locally.")
+        if not self.candidates:
+            if opts.verbose:
+                print >> sys.stderr, '(no local files to visit.)'
 
-            doctree, parts = docutils.core.publish_doctree(
-                source=pfile.contents,
-                settings_overrides={'input_encoding': 'UTF-8'}
-                )
+class CmdPublish(CmdServerUser, CmdFinder):
+    """
+    Publish files.
+    """
+    names = ['publish']
 
-## FIXME how do I detect errors here?
+    def addopts( self, lparser ):
+        CmdFinder.addopts(self, lparser)
 
-            if opts.process_locally == 1:
-                print '======= sending parsed document to server: {%s}' % \
-                      pfile.unid
-                import cPickle as pickle
-                docpickled = pickle.dumps(doctree)
+        # processing options
+        group3 = optparse.OptionGroup(lparser,
+            "Publish command processing options",
+            "These options specify where/how to upload or"
+            "process the files on the server.")
 
-                server.process_doctree(pfile.unid, pfile.fn, pfile.digest,
-                                       opts.user,
-                                       xmlrpclib.Binary(docpickled))
+        group3.add_option('-f', '--force', action='store_true',
+                          help="Force sending/processing all files regardless "
+                          "of history.")
 
-            elif opts.process_locally == 2:
-                # do nothing, all we were asked to do is validate and don't send.
-                pass
+        group3.add_option('-l', '--process-locally', '--local',
+            action='count', default=0,
+            help="Process documents locally.  If you omit the option, "
+            "the documents get sent to and processed on the server "
+            "(this is the default).  If you specify it once, the "
+            "documents get processed locally and the results gets sent "
+            "to the server;  twice is for validation, the "
+            "documents get processed locally but do not get sent to "
+            "the server;  three times is for debugging only: local "
+            "extraction of Nabu entries is attempted by the local "
+            "installation of Nabu.")
 
-            elif opts.process_locally == 3:
-                print ('======= validating file with docutils and "'
-                       'extraction:  %s') % pfile.fn
+        group3.add_option('--dont-remove-marker', '--leave-marker',
+            action='store_true',
+            help="Leave the markers in the source files when uploading. "
+            "You would use this if it makes sense for the markers "
+            "appear in your published documents somehow.")
+
+        lparser.add_option_group(group3)
+
+    def execute( self, opts, args ):
+        CmdFinder.execute(self, opts, args)
+        if not self.candidates:
+            return
+
+        # check candidates against history (if not suppressed)
+        server = self.get_server(opts)
+        if opts.force:
+            proclist = self.candidates
+        else:
+            idhistory = server.gethistory([x.unid for x in self.candidates])
+
+            # compare digests and figure out which files to process
+            proclist = []
+            for candidate in self.candidates:
                 try:
-                    import nabu.process
-                    
-                    raise NotImplementedError(
-                        "Local Nabu validation not implemented yet.")
+                    hist_digest = idhistory[candidate.unid]
+                except KeyError:
+                    hist_digest = None
+
+                if candidate.digest != hist_digest:
+                    proclist.append(candidate)
+
+        # process selected files
+        for pfile in proclist:
+            if opts.process_locally == 0:
+                print '======= sending source document to server:  %s  {%s}' % \
+                      (pfile.fn, pfile.unid)
+
+                errors = server.process_source(pfile.unid, pfile.fn, opts.user,
+                                               xmlrpclib.Binary(pfile.contents))
+                if errors:
+                    print errors
+                continue
+
+            elif opts.process_locally >= 1:
+                #
+                # Local processing with docutils.
+                #
+                # Note: we require at least a docutils install.
+                # Note2: this assumes that the tree structure is compatible with
+                #        that which is installed on the server.
+                #
+                print '======= processing file locally:  %s' % pfile.fn
+
+                try:
+                    import docutils.core
+                except ImportError:
+                    raise SystemExit(
+                        "Error: you must have installed docutils in order to "
+                        "process files locally.")
+
+                import StringIO
+                errstream = StringIO.StringIO()
+                doctree, parts = docutils.core.publish_doctree(
+                    source=pfile.contents, source_path=pfile.fn,
+                    settings_overrides={'input_encoding': 'UTF-8',
+                                        'warning_stream': errstream},
+                    )
+                errors = errstream.getvalue()
+                if errors:
+                    print >> sys.stderr, errors
+
+                if opts.process_locally == 1:
+                    print '======= sending parsed document to server: {%s}' % \
+                          pfile.unid
+                    import cPickle as pickle
+                    docpickled = pickle.dumps(doctree)
+
+                    server.process_doctree(pfile.unid, pfile.fn, pfile.digest,
+                                           opts.user,
+                                           xmlrpclib.Binary(docpickled))
+
+                elif opts.process_locally == 2:
+                    # do nothing, all we were asked to do is validate and don't
+                    # send.
+                    pass
+
+                elif opts.process_locally == 3:
+                    print ('======= validating file with docutils and "'
+                           'extraction:  %s') % pfile.fn
+                    try:
+                        import nabu.process
+
+                        raise NotImplementedError(
+                            "Local Nabu validation not implemented yet.")
 ## FIXME finish extract method in Nabu and call it here and then
-##       print out the extracted fields.
+##       print out the extracted fields. 
 ##
 ##                     contents_uni = pfile.contents.decode('utf-8')
 ##                     entries = nabu.process.process_source(contents_uni)
-                except ImportError:
-                    raise SystemExit(
-                        "Error: you must have installed Nabu in order to "
-                        "process files with locally with extraction.")
+                    except ImportError:
+                        raise SystemExit(
+                            "Error: you must have installed Nabu in order to "
+                            "process files with locally with extraction.")
 
-
-#-------------------------------------------------------------------------------
-# Config / Command-line
-#-------------------------------------------------------------------------------
-
-def parse_options():
+class CmdClear(CmdServerUser, CmdFinder):
     """
-    Parse the command-line and config file options and return a pair of opts,
-    args like optparse.
+    Clear/remove stuff in the database.
     """
-    # define the list of options
-    import optparse
-    parser = optparse.OptionParser(__doc__.strip())
+    names = ['clear', 'dump', 'clean']
 
-    parser.add_option('-v', '--verbose', action='store_true',
-                      help="Increase verbosity")
+    def addopts( self, lparser ):
+        CmdFinder.addopts(self, lparser)
+        lparser.add_option('--found-only', action='store_true',
+                           help="Only remove documents that were found.")
 
-    # finder options
-    group = optparse.OptionGroup(parser, "Finder options",
-                                 """These options affect how the publisher
-                                 finds and recognizes files.""")
+    def execute( self, opts, args ):
+        server = self.get_server(opts)
 
-    group.add_option('-R', '--no-recurse', '--dont-recurse',
-                     action='store_false', dest='recursive', default=True,
-                     help="Disable recursion for directories.")
-    group.add_option('-r', '--recurse', '--recurse',
-                     action='store_true', dest='recursive',
-                     help="Disable recursion for directories.")
+        if opts.found_only:
+            CmdFinder.execute(self, opts, args)
+            if not self.candidates:
+                return
 
-    group.add_option('-e', '--exclude', action='append', metavar='PATTERN',
-                     default=[],
-                     help="Ignore files and subdirectories whose basenames "
-                     "match the given globbing pattern.  You can append "
-                     "many of these options.  Typically you would ignore "
-                     "something like ['.svn', 'CVS'].  You do not need to "
-                     "bother setting up patterns to ignore binary files, we "
-                     "process those very efficiently.")
+            idlist = [x.unid for x in self.candidates]
+            for iid in idlist:
+                print "== clearing {%s}" % iid
+            server.clearids(opts.user, idlist)
+        else:
+            print "== clearing entire database for user '%s'." % opts.user
+            server.clearuser(opts.user)
 
-    group.add_option('--marker-regexp', action='store', metavar='REGEXP',
-                     default=':Id:\s+(\S*)',
-                     help="Regular expression to search for marker. "
-                     "It must contain a single group. Note that the entire "
-                     "matched contents may be removed from source.")
 
-    group.add_option('--header-length', action='store', type='int',
-                     metavar='LENGTH', default=1024,
-                     help="Length of the header (in characters) to look "
-                     "for the marker at the top of each file "
-                     "(the default is roughly 20 lines).")
+class CmdErrors(CmdServerUser):
+    """
+    Report parsing errors.
+    """
+    names = ['errors']
 
-    parser.add_option_group(group)
-
-    # server options
-    group = optparse.OptionGroup(parser, "Server options",
-                                 """These options specify where to upload
-                                 the files on the server.""")
-
-    group.add_option('-s', '--server-url', action='store', metavar='URL',
-                      help="URL to server handler.")
-
-    group.add_option('-u', '--user', action='store',
-                      help="Username to use to publish.")
-
-    group.add_option('-p', '--password', action='store', metavar='PASSWD',
-                      help="Password to use to publish (will query if not set).")
-
-    parser.add_option_group(group)
-
-    # processing options
-    group = optparse.OptionGroup(parser, "Processing options",
-                                 """These options specify where to upload
-                                 the files on the server.""")
-
-    group.add_option('-c', '--clear', '--clean', action='store_true',
-                      help="Clear the entire contents database "
-                      "before publishing the new files.")
-
-    group.add_option('-f', '--force', action='store_true',
-                     help="Force sending/processing all files regardless "
-                     "of history.")
-
-    group.add_option('-l', '--process-locally', '--local',
-                     action='count', default=0,
-                     help="Process documents locally.  If you omit the option, "
-                     "the documents get sent to and processed on the server "
-                     "(this is the default).  If you specify it once, the "
-                     "documents get processed locally and the results gets sent "
-                     "to the server;  twice is for validation, the "
-                     "documents get processed locally but do not get sent to "
-                     "the server;  three times is for debugging only: local "
-                     "extraction of Nabu entries is attempted by the local "
-                     "installation of Nabu.")
-
-    group.add_option('--dont-remove-marker', '--leave-marker',
-                     action='store_true',
-                     help="Leave the markers in the source files when uploading. "
-                     "You would use this if it makes sense for the markers "
-                     "appear in your published documents somehow.")
-
-    parser.add_option_group(group)
-
-    # parse config file, if present
-    try:
-        rcfile = os.environ['NABURC']
-    except KeyError:
-        rcfile = join(os.environ['HOME'], '.naburc')
-
-    if not exists(rcfile):
-        values = None
-    else:
-        values = parser.get_default_values()
-        values.read_file(rcfile) # this reads the config file as Python
-
-    # parse command-line (takes precedence over config file)
-    opts, args = parser.parse_args(values=values)
-
-    if opts.server_url is None:
-        parser.error("You must specify a server url.")
-
-    # compile regular expression
-    try:
-        opts.marker_regexp = re.compile(opts.marker_regexp, re.M)
-    except re.error, e:
-        parser.error("Compiling marker regexp: %s" % str(e))
-
-    return opts, args
+    def execute( self, opts, args ):
+        pass
 
 #-------------------------------------------------------------------------------
 # Finder
@@ -388,17 +402,20 @@ def find_to_publish( fnordns, opts ):
         else:
             encoding = 'latin-1'
 
-        try:
-            contents_uni = contents_enc.decode(encoding)
-            contents = contents_uni.encode('UTF-8')
-        except UnicodeDecodeError, e:
-            raise SystemExit( ("Decoding error in file '%s' "
-                               "(trying to decode with encoding '%s'): %s") %
-                              (fn, encoding, e))
-        except UnicodeEncodeError, e:
-            raise SystemExit( ("Encoding error in file '%s' "
-                               "(trying to encode with encoding '%s'): %s") %
-                              (fn, 'UTF-8', e))
+        if encoding.lower() in ('utf-8', 'utf8'):
+            contents = contents_enc
+        else:
+            try:
+                contents_uni = contents_enc.decode(encoding)
+                contents = contents_uni.encode('UTF-8')
+            except UnicodeDecodeError, e:
+                raise SystemExit( ("Decoding error in file '%s' "
+                                   "(trying to decode with encoding '%s'): %s") %
+                                  (fn, encoding, e))
+            except UnicodeEncodeError, e:
+                raise SystemExit( ("Encoding error in file '%s' "
+                                   "(trying to encode with encoding '%s'): %s") %
+                                  (fn, 'UTF-8', e))
 
         m = md5.new(contents)
         digest = m.hexdigest()
@@ -443,7 +460,7 @@ def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
         if missing:
             raise IOError("files or directories do not exist: %s" %
                           ', '.join(missing))
-                
+
     for arg in args:
         if isdir(arg):
             if recurse:
@@ -468,5 +485,132 @@ def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
                 continue
             yield arg
 
+#-------------------------------------------------------------------------------
+# Config / Global Options
+#-------------------------------------------------------------------------------
+
+def parse_subcommands( gparser, subcmds, configvars, defcmd=None ):
+    """
+    Parse given global arguments, find subcommand from given list of subcommand
+    objects, parse local arguments and return a tuple of global options,
+    selected command object, command options, and command arguments.  Call
+    execute() on the command object to run.
+    """
+    # build map of name -> command
+    subcmds_map = {}
+    for sc in subcmds:
+        for n in sc.names:
+            assert n not in subcmds_map
+            subcmds_map[n] = sc
+
+    # parse global options.
+    for option in gparser._get_all_options():
+        if option.dest in configvars:
+            gparser.defaults[option.dest] = configvars[option.dest]
+
+    gparser.disable_interspersed_args()
+    opts, args = gparser.parse_args()
+    if not args:
+        if defcmd is None:
+            gparser.print_help()
+            raise SystemExit("Error: you must specify a command to use.")
+        else:
+            args.insert(0, None) # later will be caught
+    subcmdname, subargs = args[0], args[1:]
+
+    # parse command-local arguments and invoke command.
+    try:
+        sc = subcmds_map[subcmdname]
+    except KeyError:
+        if defcmd is None:
+            raise SystemExit("Error: invalid command '%s'" % subcmdname)
+        else:
+            subargs.insert(0, subcmdname)
+            sc = subcmds_map[defcmd]
+
+    lparser = optparse.OptionParser(sc.__doc__.strip())
+    if hasattr(sc, 'addopts'):
+        sc.addopts(lparser)
+
+    for option in lparser._get_all_options():
+        if option.dest in configvars:
+            lparser.defaults[option.dest] = configvars[option.dest]
+
+    lopts, subsubargs = lparser.parse_args(subargs)
+    opts.__dict__.update(lopts.__dict__.iteritems())
+
+    return sc, opts, subsubargs
+
+def parse_options( configvars ):
+    """
+    Parse the command-line and config file options and return a pair of opts,
+    args like optparse.
+    """
+    # global parser
+    parser = optparse.OptionParser(__doc__.strip())
+
+    parser.add_option('-v', '--verbose', action='store_true',
+                      help="Increase verbosity")
+
+    # server options
+    group1 = optparse.OptionGroup(parser, "Global / Server options",
+                                  """These options specify where to upload
+                                  the files on the server.""")
+
+
+    group1.add_option('-s', '--server-url', action='store', metavar='URL',
+                      help="URL to server handler.")
+
+    group1.add_option('-u', '--user', action='store',
+                      help="Username to use to publish.")
+
+    group1.add_option('-p', '--password', action='store', metavar='PASSWD',
+                      help="Password to use to publish (will query if not set).")
+
+    parser.add_option_group(group1)
+
+    subcmds = (CmdPublish(), CmdClear(), CmdErrors(),)
+    sc, opts, args = parse_subcommands(parser, subcmds, configvars, 'publish')
+
+    # some server url is necessary
+    if opts.server_url is None:
+        parser.error("You must specify a server url.")
+
+    return sc, opts, args
+
+def read_config():
+    """
+    Read, parse and verify values from config file.
+    Returns a dictionary of all values read in the file.
+    """
+    defvars = {}
+    try:
+        rcfile = os.environ['NABURC']
+    except KeyError:
+        rcfile = join(os.environ['HOME'], '.naburc')
+    if exists(rcfile):
+        execfile(rcfile, defvars)
+        # FIXME: maybe catch exceptions here.
+    return defvars
+
+#-------------------------------------------------------------------------------
+# Main Program
+#-------------------------------------------------------------------------------
+
+def main():
+    """
+    Main program of publisher client.
+    """
+    try: # set the locale to the user settings.
+        import locale
+        locale.setlocale(locale.LC_ALL, '')
+    except:
+        pass
+
+    configvars = read_config()
+    sc, opts, args = parse_options(configvars)
+    return sc.execute(opts, args)
+
+
 if __name__ == '__main__':
-    publish()
+    main()
