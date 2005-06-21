@@ -146,7 +146,7 @@ class CmdPublish(CmdServerUser, CmdFinder):
     """
     Publish files.
     """
-    names = ['publish']
+    names = ('publish',)
 
     def addopts( self, lparser ):
         CmdFinder.addopts(self, lparser)
@@ -160,6 +160,11 @@ class CmdPublish(CmdServerUser, CmdFinder):
         group3.add_option('-f', '--force', action='store_true',
                           help="Force sending/processing all files regardless "
                           "of history.")
+
+        group3.add_option('-c', '--clear-others',
+                          '--complete', '--clear-not-found',
+                          action='store_true',
+                          help="Clear documents that we not found.")
 
         group3.add_option('-l', '--process-locally', '--local',
             action='count', default=0,
@@ -210,7 +215,7 @@ class CmdPublish(CmdServerUser, CmdFinder):
                 print '======= sending source document to server:  %s  {%s}' % \
                       (pfile.fn, pfile.unid)
 
-                errors = server.process_source(pfile.unid, pfile.fn, opts.user,
+                errors = server.process_source(pfile.unid, pfile.fn, 
                                                xmlrpclib.Binary(pfile.contents))
                 if errors:
                     print errors
@@ -251,8 +256,8 @@ class CmdPublish(CmdServerUser, CmdFinder):
                     docpickled = pickle.dumps(doctree)
 
                     server.process_doctree(pfile.unid, pfile.fn, pfile.digest,
-                                           opts.user,
-                                           xmlrpclib.Binary(docpickled))
+                                           xmlrpclib.Binary(docpickled),
+                                           errors)
 
                 elif opts.process_locally == 2:
                     # do nothing, all we were asked to do is validate and don't
@@ -277,17 +282,29 @@ class CmdPublish(CmdServerUser, CmdFinder):
                             "Error: you must have installed Nabu in order to "
                             "process files with locally with extraction.")
 
+        # remove documents that were not found (if requested)
+        if opts.clear_others:
+            print '======= clearing other document that were not found'
+            allids = server.getallids()
+            foundids = [x.unid for x in self.candidates]
+            idlist = [x for x in allids if x not in foundids]
+            server.clearids(idlist)
+
+
 class CmdClear(CmdServerUser, CmdFinder):
     """
     Clear/remove stuff in the database.
     """
-    names = ['clear', 'dump', 'clean']
+    names = ('clear', 'clean',)
 
     def addopts( self, lparser ):
         CmdFinder.addopts(self, lparser)
-        lparser.add_option('--found-only', action='store_true',
+        lparser.add_option('-t', '--found-only', action='store_true',
                            help="Only remove documents that were found.")
-
+        lparser.add_option('-T', '--not-found-only', action='store_true',
+                           help="Only remove documents that were NOT found.")
+## FIXME TODO
+        
     def execute( self, opts, args ):
         server = self.get_server(opts)
 
@@ -299,20 +316,48 @@ class CmdClear(CmdServerUser, CmdFinder):
             idlist = [x.unid for x in self.candidates]
             for iid in idlist:
                 print "== clearing {%s}" % iid
-            server.clearids(opts.user, idlist)
+            server.clearids(idlist)
         else:
             print "== clearing entire database for user '%s'." % opts.user
-            server.clearuser(opts.user)
+            server.clearuser()
 
 
 class CmdErrors(CmdServerUser):
     """
     Report parsing errors.
     """
-    names = ['errors']
+    names = ('errors',)
 
     def execute( self, opts, args ):
-        pass
+        errors_info = self.get_server(opts).geterrors()
+        for e in errors_info:
+            print '=== From %s {%s}' % (e['filename'], e['unid'])
+            print e['errors']
+
+class CmdDump(CmdServerUser):
+    """
+    Report parsing errors.
+    """
+    names = ('list', 'contents', 'dump',)
+
+    def execute( self, opts, args ):
+        attrs = ['unid', 'filename', 'username', 'time', 'errors']
+        headers = [dict( (x, x.capitalize()) for x in attrs )]
+        sources_info = self.get_server(opts).dump()
+        countcols = dict( (x, 0) for x in attrs )
+        for s in headers + sources_info:
+            for a in attrs:
+                countcols[a] = max(countcols[a], len(str(s[a])))
+        
+        headers.append( dict( (x, '-' * countcols[x]) for x in attrs ) )
+
+        sfmt = '%%(%(name)s)-%(count)ds'
+        fmt = '   '.join(
+            map(lambda a: sfmt % {'name': a, 'count': countcols[a]}, attrs))
+
+        for s in headers + sources_info:
+            print fmt % s
+
 
 #-------------------------------------------------------------------------------
 # Finder
@@ -515,8 +560,9 @@ def parse_subcommands( gparser, subcmds, configvars, defcmd=None ):
             gparser.print_help()
             raise SystemExit("Error: you must specify a command to use.")
         else:
-            args.insert(0, None) # later will be caught
-    subcmdname, subargs = args[0], args[1:]
+            subcmdname, subargs = defcmd, args
+    else:
+        subcmdname, subargs = args[0], args[1:]
 
     # parse command-local arguments and invoke command.
     try:
@@ -525,7 +571,7 @@ def parse_subcommands( gparser, subcmds, configvars, defcmd=None ):
         if defcmd is None:
             raise SystemExit("Error: invalid command '%s'" % subcmdname)
         else:
-            subargs.insert(0, subcmdname)
+            subargs = args
             sc = subcmds_map[defcmd]
 
     lparser = optparse.OptionParser(sc.__doc__.strip())
@@ -569,7 +615,7 @@ def parse_options( configvars ):
 
     parser.add_option_group(group1)
 
-    subcmds = (CmdPublish(), CmdClear(), CmdErrors(),)
+    subcmds = (CmdPublish(), CmdClear(), CmdErrors(), CmdDump(),)
     sc, opts, args = parse_subcommands(parser, subcmds, configvars, 'publish')
 
     # some server url is necessary

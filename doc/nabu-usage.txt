@@ -30,11 +30,12 @@ storage of this data in a generic way.
 Creating Files
 ==============
 
-Create text files as you normally would.  The location or directory organization
-of those text files is not very important; make it the most convenient for you,
-the writer.  The server may offer features to let you organize and categorize
-files in a way that lets it present them coherently (this depends on the code
-that will present the information and is outside the scope of Nabu).
+Create text files as you normally would, with your favourite text editor (we
+recommend emacs or vi).  The location or directory organization of those text
+files is not very important; make it the most convenient for you, the writer.
+The server may offer features to let you organize and categorize files in a way
+that lets it present them coherently (this depends on the code that will present
+the information and is outside the scope of Nabu).
 
 
 RestructuredText
@@ -71,8 +72,8 @@ as the first line of a file::
   .. -*- coding: utf-8 -*-   :Id: branching-instructions
 
 This string depends on the publisher and you can customize it.  There is a
-regular expression in the publisher configuration that can be changed to
-recognize a different pattern for unique id.
+regular expression in the publisher options that can be changed to recognize a
+different pattern for unique id.
 
 .. important::
 
@@ -100,9 +101,30 @@ recognized (there should be an available document for these).
 Version Control
 ---------------
 
-If you would like to put the files under version control.
+If you would like to put the files under version control, you can do that, using
+whatever system you like, but you really do not have to.  Nabu does not force
+you to use any particular system for safeguarding your files.
 
+Note that if you *are* putting your files under version control, one convenient
+arrangement is to allow a commit/checkin server trigger to do the publishing.
+This way, every time you commit new changes the new extracted items or documents
+will automatically appear in the database.  Also, this has the advantage to work
+for all the users committing to a repository.
 
+Server Triggers using CVS
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To implement triggers using CVS, edit the ``CVSROOT/commitinfo`` file and ::
+
+  FIXME add this
+
+Server Triggers using Subversion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To implement triggers using Subversion, edit the ``CVSROOT/commitinfo`` file and
+::
+
+  FIXME add this
 
 
 Publishing Files
@@ -111,17 +133,31 @@ Publishing Files
 Pointing to a Server
 --------------------
 
-You publish files to a Nabu publishing handler URL.  This needs to already have
-been setup.
-
+You publish files to a Nabu publishing handler URL, you need to tell nabu what
+are the connection parameters, the server, and the user and password.  This can
+be setup in your publisher/client configuration file.  The publisher will not
+run without this information.
 
 
 Dealing with Errors
 -------------------
 
-FIXME TODO
+Even though the reStructuredText syntax is very simple, the nature of simple
+text files makes it so that it is possible that the documents that you create
+contain structural errors, because they contain text that is not valid
+reStructuredText syntax.  When parsing the source documents with ``docutils``,
+some errors can be output by the parser.
 
+If you are processing the files on the server (the default), and if the server
+is setup to process the files asynchronously, you will not see those errors
+immediately.  There is a command in the publisher that will fetch the errors
+from the server and display them.  Use that after a while to find out what the
+processing errors were.
 
+.. note:: 
+
+   For emacs users: the errors are formatted in a way that it is possible to use
+   the ``next-error`` feature for emacs to quickly find them out.
 
 
 Triggers

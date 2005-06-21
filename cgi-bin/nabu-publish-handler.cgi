@@ -14,7 +14,7 @@ web application framework.
 """
 
 # stdlib imports
-import sys
+import sys, os
 from os.path import dirname, join
 import cgitb; cgitb.enable(display=0, logdir="/tmp") # for debugging
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
@@ -42,8 +42,11 @@ def main():
     }
     connection = PostgresConnection(**params)
 
+    # note: make sure we're authenticated
+    username = os.environ.get('REMOTE_USER', None)
+    
     # create an XMLRPC server handler and bind methods
-    server_handler = server.ServerHandler(connection)
+    server_handler = server.ServerHandler(connection, username)
     handler = CGIXMLRPCRequestHandler()
     handler.register_instance(server_handler)
     handler.handle_request()

@@ -11,7 +11,7 @@
   - errors should be stored in the NabuSource table
     - rename the NabuSource table to be without the Nabu in the name
 
-  - document error behaviour
+- errors: print processing/pending queue (server must provide that information)
 
 - setup automated publish on commit using
   - CVS
@@ -22,8 +22,12 @@
 
   - problem: how do we identify documents to be published without decrypting?
 
-- handle authorization failure gracefully
+    - emacs config must keep plain text at the top of the file when decrypting
+      in a variable and add it back in when reencrypting
 
+- handle authorization failure more gracefully
+
+- make sure that the errors format can be processed by emacs
 
 
 :server setup and beta users:
@@ -130,3 +134,6 @@ Rejected or Indefinitely-postponed Ideas
 
   Do this later. This could be interesting.
 
+- do we require a user/password?  
+
+  For now, yes.

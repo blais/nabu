@@ -25,7 +25,7 @@ from sqlobject import *
 # nabu imports
 from nabu.process import extract
 
-class NabuSource(SQLObject):
+class Source(SQLObject):
     """
     Source and history of uploads.
     This is used to figure out what needs to be refreshed.
@@ -34,13 +34,16 @@ class NabuSource(SQLObject):
     run, so that we can reprocess the extraction on the server without having to
     reparse nor upload the documents.
     """
+    class sqlmeta:
+        table = '__sources__'
+
     unid = StringCol(alternateID=1, length=36, notNull=1)
     filename = StringCol(length=256)
     digest = StringCol(length=32, notNull=1)
-    username = StringCol()
+    username = StringCol(length=32)
     time = DateTimeCol()
-    doctree = BLOBCol() # pickled doctree, before Nabu transforms.
-
+    doctree = BLOBCol() # pickled doctree, before custom transforms.
+    errors = StringCol()
 
 
 ## FIXME move this into being simply the result of one of the transforms
@@ -49,12 +52,12 @@ class Document(SQLObject):
     Stored document.
     """
     unid = StringCol(alternateID=1, length=36, notNull=1)
-    contents = BLOBCol() # pickled doctree, after Nabu transforms.
+    contents = BLOBCol() # pickled doctree, after custom transforms.
 
 
 
 
-sqlobject_classes = [NabuSource, Document]
+sqlobject_classes = [Source, Document]
 
 def init_connection( connection ):
     """
@@ -71,12 +74,20 @@ def init_connection( connection ):
 
 class ServerHandler:
     """
-    Nabu protocol server handler.
+    Protocol server handler.
     """
-    def __init__( self, connection ):
+    username = 'guest'
+    
+    def __init__( self, connection, username=None ):
         self.connection = connection
-
+        if username:
+            self.username = username
+        
         init_connection(connection)
+
+    def getallids( self ):
+## FIXME for this user only
+        return [r.unid for r in Source.select()]
 
     def gethistory( self, idlist=None ):
         """
@@ -85,18 +96,18 @@ class ServerHandler:
         ret = {}
 
         if idlist is None:
-            for r in NabuSource.select():
+            for r in Source.select():
                 ret[r.unid] = r.digest
         else:
             for unid in idlist:
-                r = NabuSource.select(NabuSource.q.unid == unid)
+                r = Source.select(Source.q.unid == unid)
                 if r.count() > 0:
                     rr = r[0]
                     ret[rr.unid] = rr.digest
 
         return ret
 
-    def clearuser( self, username ):
+    def clearuser( self ):
         """
         Clear the entire database.
         This is requested from the client interface.
@@ -107,10 +118,13 @@ class ServerHandler:
 ## FIXME implement clearing for user only
         return 0
 
-    def clearids( self, username, idlist ):
+    def clearids( self, idlist ):
         """
         Clear all entries for a set of ids.
         """
+        for unid in idlist:
+            self.__clear_id(unid)
+
 ## FIXME implement clearing of specific ids only
 
 ##         # drop the tables.  We're bold.
@@ -118,7 +132,16 @@ class ServerHandler:
 ##             cls.dropTable(ifExists=True, cascade=True)
         return 0
 
-    def process_source( self, unid, filename, username, contents_bin ):
+    def __clear_id( self, unid ):
+        """
+        Removes all entries associated with a specific id.
+        """
+        for cls in sqlobject_classes:
+            for r in cls.select(cls.q.unid == unid):
+                cls.delete(r.id)
+
+        
+    def process_source( self, unid, filename, contents_bin ):
         """
         Process a single file.
         We assume that the file comes wrapped in a Binary, encoded in UTF-8.
@@ -137,14 +160,13 @@ class ServerHandler:
             settings_overrides={'input_encoding': 'UTF-8',
                                 'warning_stream': errstream}
             )
+        errortext = errstream.getvalue()
 
+        self.__process(unid, filename, digest, doctree, None, errortext)
 
-        self.__process(unid, filename, digest, username,
-                       doctree, None)
+        return errortext or ''
 
-        return errstream.getvalue() or ''
-
-    def process_doctree( self, unid, filename, digest, username, doctree_bin ):
+    def process_doctree( self, unid, filename, digest, doctree_bin, errortext ):
         """
         Process a single file.
         We assume that the file comes wrapped in a Binary, encoded in UTF-8.
@@ -153,11 +175,10 @@ class ServerHandler:
         doctree = pickle.loads(docpickled)
 ## FIXME return error to the client if there is an exception in unpickling here.
 
-        self.__process(unid, filename, digest, username,
-                       doctree, docpickled)
+        self.__process(unid, filename, digest, doctree, docpickled, errortext)
         return 0
     
-    def __process( self, unid, filename, digest, username, doctree, docpickled ):
+    def __process( self, unid, filename, digest, doctree, docpickled, errortext ):
         """
         Process the given tree, extracting the information entries from it and
         replacing the existing entries with the newly extracted ones.
@@ -179,15 +200,16 @@ class ServerHandler:
         if docpickled is None:
             docpickled = pickle.dumps(doctree)
 
-        newhist = NabuSource(unid=unid,
+        newhist = Source(unid=unid,
                              filename=filename,
                              digest=digest,
-                             username=username,
+                             username=self.username,
                              time=datetime.datetime.now(),
-                             doctree=docpickled)
+                             doctree=docpickled,
+                             errors=errortext)
 
 
-##         # process the Nabu transforms.
+##         # process the custom transforms.
 ##         entries = process_source(contents)
 ## FIXME how do I detect errors here?
 
@@ -199,7 +221,7 @@ class ServerHandler:
             }
 
 ## FIXME entries should be the result of running all the transforms
-        assert 'NabuSource' not in entries
+        assert 'Source' not in entries
 
 ## FIXME create tables dynamically depending on what entries are returned
 
@@ -217,4 +239,31 @@ class ServerHandler:
             newinst = cls(**params)
 
         return 0
+    
+    def dump( self ):
+        """
+        Returns information about all the documents stored for a specific user.
+        """
+        allsources = []
+        attrs = ('unid', 'filename', 'username',)
+        for s in Source.select():
+            ret = {}
+            for a in attrs:
+                ret[a] = getattr(s, a)
+            # datetime objects cannot be marshalled
+            ret['time'] = s.time.isoformat()
+            ret['errors'] = bool(s.errors)
+            allsources.append(ret)
+        return allsources
 
+    def geterrors( self ):
+        """
+        Return a list of mappings with the error texts.
+        """
+        errors = []
+        fields = ['unid', 'filename', 'errors']
+        for s in Source.select(Source.q.errors != ''):
+            errors.append(dict((a, getattr(s, a)) for a in fields))
+        return errors
+        
+        
