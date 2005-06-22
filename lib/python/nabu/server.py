@@ -58,6 +58,7 @@ class Document(SQLObject):
     """
     Stored document.
     """
+## FIXME _fromDatabase, what is it?
     unid = StringCol(alternateID=1, length=36, notNull=1)
     title = UnicodeCol()
     date = DateCol()

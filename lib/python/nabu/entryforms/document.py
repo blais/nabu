@@ -55,4 +55,3 @@ class DocumentTransform(Transform):
 
 import nabu.entryforms
 nabu.entryforms.registry['document'] = DocumentTransform
-
