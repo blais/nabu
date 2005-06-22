@@ -1,0 +1,18 @@
+.. :Id: 7283acab-45cc-4b1e-81b9-f70cc8d22dcw
+
+=========================
+  Some Blog Entry Title
+=========================
+
+:Date: 2005-06-15
+:Location: Montreal, Québec, Canada
+:Category: Zwiii
+:Serie: Montreal
+
+
+Some text that is being used here.
+
+Address Book Entries / Contact Information
+===============================
+
+sjds
