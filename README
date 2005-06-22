@@ -112,9 +112,13 @@ Presenter / Web Application
 Download
 ========
 
-This software is not released yet, and it might never make it to the open
-source world.  We're just not sure what we're going to do with this at
-this point (2005-06-04).
+You can download the `Nabu Publisher Client`__ and save it under the name
+``nabu``.  Usage instructions can be found `here <doc/nabu-usage.html>`_.
+
+The server code is not available for now, we only want to release this when it
+will be sexy enough.
+
+__ /nabu/bin/nabu
 
 
 Reporting Bugs
