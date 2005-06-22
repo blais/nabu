@@ -4,7 +4,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
-<title></title>
+<title>Ideas for Information Publishing System</title>
+<meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
+<meta name="date" content="2005-06-20" />
 <link rel="stylesheet" href="../style.css" type="text/css" />
 </head>
 <body>
@@ -14,26 +16,56 @@
   <div id="project-home"><a href="..">Project Home</a></div>
 </div>
 
-<div class="document">
-<div class="section" id="ideas-for-information-publishing-system">
-<h1><a name="ideas-for-information-publishing-system">Ideas for Information Publishing System</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="document" id="ideas-for-information-publishing-system">
+<h1 class="title">Ideas for Information Publishing System</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Author:</th><td class="field-body">Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td>
-</tr>
-<tr class="field"><th class="field-name">Date:</th><td class="field-body">2005-06-20</td>
-</tr>
-<tr class="field"><th class="field-name">Abstract:</th><td class="field-body">Some ideas for my information publishing system.</td>
-</tr>
+<tr><th class="docinfo-name">Author:</th>
+<td>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2005-06-20</td></tr>
 </tbody>
 </table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>Some ideas for my information publishing system.</p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#high-level-design" id="id1" name="id1">High-Level Design</a><ul>
+<li><a class="reference" href="#components" id="id2" name="id2">Components</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#other-stuff" id="id3" name="id3">Other stuff</a><ul>
+<li><a class="reference" href="#web-publishing" id="id4" name="id4">Web Publishing</a><ul>
+<li><a class="reference" href="#unique-identifiers" id="id5" name="id5">Unique Identifiers</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#links-to-other-systems" id="id6" name="id6">Links to other systems</a></li>
+<li><a class="reference" href="#other" id="id7" name="id7">Other</a><ul>
+<li><a class="reference" href="#rename" id="id8" name="id8">Rename</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#projects-documents-reorganization" id="id9" name="id9">Projects/Documents Reorganization</a></li>
+<li><a class="reference" href="#ideas" id="id10" name="id10">Ideas</a></li>
+<li><a class="reference" href="#misc" id="id11" name="id11">Misc</a></li>
+<li><a class="reference" href="#the-todo-list" id="id12" name="id12">The TODO list</a></li>
+<li><a class="reference" href="#what-kinds-of-media-elements-to-i-want-to-share" id="id13" name="id13">What kinds of media elements to I want to share?</a></li>
+<li><a class="reference" href="#design-ideas" id="id14" name="id14">Design Ideas</a></li>
+<li><a class="reference" href="#example-source-file" id="id15" name="id15">Example Source File</a></li>
+<li><a class="reference" href="#summary-of-talking-with-dave-goodger-about-how-to-go-about-this" id="id16" name="id16">Summary of Talking with Dave Goodger about how to go about this</a></li>
+<li><a class="reference" href="#nabu" id="id17" name="id17">Nabu</a></li>
+</ul>
+</li>
+</ul>
 </div>
 <div class="section" id="high-level-design">
-<h1><a name="high-level-design">High-Level Design</a></h1>
+<h1><a class="toc-backref" href="#id1" name="high-level-design">High-Level Design</a></h1>
 <div class="section" id="components">
-<h2><a name="components">Components</a></h2>
+<h2><a class="toc-backref" href="#id2" name="components">Components</a></h2>
 <p>There are three main phases:</p>
 <ol class="arabic simple">
 <li>recursively searching for all the files that have an appropriate marker for
@@ -45,10 +77,14 @@ phase;</li>
 other extracted elements as well;</li>
 <li>build code that can query the data;</li>
 </ol>
+</div>
+</div>
+<div class="section" id="other-stuff">
+<h1><a class="toc-backref" href="#id3" name="other-stuff">Other stuff</a></h1>
 <div class="section" id="web-publishing">
-<h3><a name="web-publishing">Web Publishing</a></h3>
+<h2><a class="toc-backref" href="#id4" name="web-publishing">Web Publishing</a></h2>
 <div class="section" id="unique-identifiers">
-<h4><a name="unique-identifiers">Unique Identifiers</a></h4>
+<h3><a class="toc-backref" href="#id5" name="unique-identifiers">Unique Identifiers</a></h3>
 <ul>
 <li><p class="first">how do we create permanent links?</p>
 <ul class="simple">
@@ -63,9 +99,8 @@ any type of string and is unique, not just UUIDs.</p>
 </ul>
 </div>
 </div>
-</div>
 <div class="section" id="links-to-other-systems">
-<h2><a name="links-to-other-systems">Links to other systems</a></h2>
+<h2><a class="toc-backref" href="#id6" name="links-to-other-systems">Links to other systems</a></h2>
 <div class="line-block">
 <div class="line">LiveJournal -- personal publishing platform written in PHP</div>
 <div class="line"><a class="reference" href="http://www.livejournal.com/site/about.bml">http://www.livejournal.com/site/about.bml</a></div>
@@ -83,9 +118,9 @@ photographs.</p>
 enclosing document.  No need to mark keywords at all!</p>
 </div>
 <div class="section" id="other">
-<h2><a name="other">Other</a></h2>
+<h2><a class="toc-backref" href="#id7" name="other">Other</a></h2>
 <div class="section" id="rename">
-<h3><a name="rename">Rename</a></h3>
+<h3><a class="toc-backref" href="#id8" name="rename">Rename</a></h3>
 <p>Rename it to either:</p>
 <ul class="simple">
 <li>Furious Wanderlust</li>
@@ -94,7 +129,7 @@ enclosing document.  No need to mark keywords at all!</p>
 </div>
 </div>
 <div class="section" id="projects-documents-reorganization">
-<h2><a name="projects-documents-reorganization">Projects/Documents Reorganization</a></h2>
+<h2><a class="toc-backref" href="#id9" name="projects-documents-reorganization">Projects/Documents Reorganization</a></h2>
 <ul class="simple">
 <li>priv/notes/opportunities.asc
 - put all opportunities together</li>
@@ -118,7 +153,7 @@ enclosing document.  No need to mark keywords at all!</p>
 </ul>
 </div>
 <div class="section" id="ideas">
-<h2><a name="ideas">Ideas</a></h2>
+<h2><a class="toc-backref" href="#id10" name="ideas">Ideas</a></h2>
 <dl class="docutils">
 <dt>Q: would a Wiki be a better way to organize the information?</dt>
 <dd>-&gt; related to linking and organization</dd>
@@ -202,7 +237,7 @@ texts.</p>
 </ul>
 </div>
 <div class="section" id="misc">
-<h2><a name="misc">Misc</a></h2>
+<h2><a class="toc-backref" href="#id11" name="misc">Misc</a></h2>
 <ul>
 <li><p class="first">automatically detect words that could be found on Wikipedia and create links
 automatically.</p>
@@ -223,7 +258,7 @@ clients</p>
 </ul>
 </div>
 <div class="section" id="the-todo-list">
-<h2><a name="the-todo-list">The TODO list</a></h2>
+<h2><a class="toc-backref" href="#id12" name="the-todo-list">The TODO list</a></h2>
 <dl class="docutils">
 <dt>Currently, my TODO list lies in 3 places:</dt>
 <dd><ul class="first last simple">
@@ -246,7 +281,7 @@ tracking system of some kind, with:</p>
 </ul>
 </div>
 <div class="section" id="what-kinds-of-media-elements-to-i-want-to-share">
-<h2><a name="what-kinds-of-media-elements-to-i-want-to-share">What kinds of media elements to I want to share?</a></h2>
+<h2><a class="toc-backref" href="#id13" name="what-kinds-of-media-elements-to-i-want-to-share">What kinds of media elements to I want to share?</a></h2>
 <blockquote>
 <ul class="simple">
 <li>book reviews</li>
@@ -268,7 +303,7 @@ served at all.  Remove the templates and email list from zwiii-src, that shall
 become part of the application server that will serve those documents.</p>
 </div>
 <div class="section" id="design-ideas">
-<h2><a name="design-ideas">Design Ideas</a></h2>
+<h2><a class="toc-backref" href="#id14" name="design-ideas">Design Ideas</a></h2>
 <ul class="simple">
 <li>nice fonts:<ul>
 <li>readable: <a class="reference" href="http://www.jorendorff.com/articles/unicode/intro.html">http://www.jorendorff.com/articles/unicode/intro.html</a></li>
@@ -292,7 +327,7 @@ become part of the application server that will serve those documents.</p>
 </ul>
 </div>
 <div class="section" id="example-source-file">
-<h2><a name="example-source-file">Example Source File</a></h2>
+<h2><a class="toc-backref" href="#id15" name="example-source-file">Example Source File</a></h2>
 <pre class="literal-block">
 ==================
  Bar-B-Q Shopping
@@ -316,7 +351,7 @@ Some personal notes that aren't published anywhere.
 </pre>
 </div>
 <div class="section" id="summary-of-talking-with-dave-goodger-about-how-to-go-about-this">
-<h2><a name="summary-of-talking-with-dave-goodger-about-how-to-go-about-this">Summary of Talking with Dave Goodger about how to go about this</a></h2>
+<h2><a class="toc-backref" href="#id16" name="summary-of-talking-with-dave-goodger-about-how-to-go-about-this">Summary of Talking with Dave Goodger about how to go about this</a></h2>
 <p>Ideas:</p>
 <ul class="simple">
 <li>implement boxquote parser to replace .. note</li>
@@ -330,7 +365,7 @@ too long</li>
 </ul>
 </div>
 <div class="section" id="nabu">
-<h2><a name="nabu">Nabu</a></h2>
+<h2><a class="toc-backref" href="#id17" name="nabu">Nabu</a></h2>
 <ul>
 <li><p class="first">I could define new directives</p>
 </li>

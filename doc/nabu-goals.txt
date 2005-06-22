@@ -10,6 +10,7 @@
   relevance in their content and allow building ways to serve it intelligently
   by providing a semantically rich access to this data.
 
+.. contents::
 
 Introduction
 ------------

@@ -2,7 +2,6 @@
   Usage Intructions for Nabu
 ==============================
 
-:Id: b08ac706-7ff5-4311-9549-bb6c0421a545
 :Author: Martin Blais <blais@furius.ca>
 :Date: 2005-06-20
 :Abstract:
@@ -10,6 +9,8 @@
    Instructions for Nabu users. Intended audience: people writing content to be
    published.  This document does not contain information about setting up the
    server nor about the various kinds of entries.
+
+.. contents::
 
 What is Nabu?
 =============

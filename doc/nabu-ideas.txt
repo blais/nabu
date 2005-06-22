@@ -8,11 +8,10 @@
 
    Some ideas for my information publishing system.
 
+.. contents::
 
-
-=====================
-  High-Level Design
-=====================
+High-Level Design
+=================
 
 Components
 ----------
@@ -34,14 +33,17 @@ There are three main phases:
 
 
 
+Other stuff
+===========
+
 
 
 
 Web Publishing
-++++++++++++++
+--------------
 
 Unique Identifiers
-``````````````````
+~~~~~~~~~~~~~~~~~~
 
 - how do we create permanent links?
 
@@ -95,7 +97,7 @@ Other
 -----
 
 Rename
-++++++
+~~~~~~
 
 Rename it to either:
 
