@@ -6,8 +6,9 @@ Options +ExecCGI
    Allow from all
 
    AuthType Basic
-   AuthUserFile /home/blais/w.furius/webcache/nabu/htpasswd
-   AuthGroupFile /dev/null
+   AuthDBMType GDBM
+   AuthDBMUserFile /home/blais/w.furius/webcache/nabu/passwddbm
+   AuthDBMGroupFile /home/blais/w.furius/webcache/nabu/passwddbm
    AuthName "Nabu Restricted Access"
    Require valid-user
 </IfModule>
