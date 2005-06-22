@@ -14,7 +14,7 @@ Nabu system. This is only meant to be used for demo purposes.
 
 # stdlib imports
 import os, string, random, crypt, gdbm
-from os.path import join
+from os.path import join, dirname
 import cgi
 
 #---------------------------------------------------------------------------
@@ -34,6 +34,11 @@ def main():
     """
     form = cgi.FieldStorage()
     user, passwd = map(form.getvalue, ("user", "passwd"))
+
+    dref = '/nabu/nabu'
+    #dref = join(dirname(dirname(dirname(os.environ['SCRIPT_URL']))),
+    #            'lib/python/nabu/publish.py')
+
     if user is None and passwd is None:
         # generate an index of documents.
         print 'Content-type:', 'text/html'
@@ -51,6 +56,8 @@ def main():
         print '</tr>'
         print '<tr><td><input type="submit" value="Create"></input></td></tr>'
         print '</table>'
+        print ('Then download the <a href="%s">Nabu Publisher</a> and save '
+               'it as "nabu" somewhere in your path.') % dref
         print '</body></html>'
     else:
         passwd_file = join(os.environ['DOCUMENT_ROOT'],
@@ -66,6 +73,8 @@ def main():
         print
         print '<html><body>'
         print '<h1>User %s created.</h1>' % user
+        print ('Download the <a href="%s">Nabu Publisher</a> and save '
+               'it as "nabu" somewhere in your path.') % dref
         print '</body></html>'
 
 if __name__ == '__main__':

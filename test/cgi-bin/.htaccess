@@ -1,2 +1,4 @@
 # For Nabu tests
 Options +ExecCGI
+
+Alias /nabu/nabu /home/blais/w.furius/nabu/lib/python/nabu/publish.py
