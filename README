@@ -121,6 +121,19 @@ will be sexy enough.
 __ /nabu/bin/nabu
 
 
+Beta Testing
+------------
+
+1. `Create a new user in our testing Nabu server
+   </nabu/test/cgi-bin/nabu-newuser.cgi>`_;
+
+2. Use the created user/password to configure your client, for the publisher at
+   http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi  ;
+   
+3. `View the contents of the database (with the created user and password)
+   </nabu/cgi-bin/nabu-contents.cgi>`_.
+
+
 Reporting Bugs
 ==============
 
