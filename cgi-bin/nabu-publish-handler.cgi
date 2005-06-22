@@ -16,7 +16,7 @@ web application framework.
 # stdlib imports
 import sys, os
 from os.path import dirname, join
-import cgitb; cgitb.enable(display=0, logdir="/tmp") # for debugging
+##import cgitb; cgitb.enable(display=0, logdir="/tmp") # for debugging
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
 # add the nabu libraries to load path
