@@ -26,6 +26,30 @@ def crypt_pass( plpass ):
     cpass = crypt.crypt(plpass, salt)
     return cpass
 
+instructions = """
+<p>
+1. Download the <a href="%s">Nabu Publisher</a> and save
+it as \"nabu\" somewhere in your path.
+
+<p>
+2.  Configure your client by adding the following to your ~/.naburc file:
+        
+<pre>
+user = 'USERNAME'
+password = 'PASSWORD'
+server_url = 'http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi'
+</pre>
+
+<p>
+3. run Nabu on a set of files (see instructions in documentation).
+
+<p>
+4. You can debug your results by going to the
+<a href=\"http://furius.ca/nabu/cgi-bin/nabu-contents.cgi\">
+contents debug page</a>.
+"""
+
+
 #-------------------------------------------------------------------------------
 #
 def main():
@@ -34,10 +58,6 @@ def main():
     """
     form = cgi.FieldStorage()
     user, passwd = map(form.getvalue, ("user", "passwd"))
-
-    dref = '/nabu/nabu'
-    #dref = join(dirname(dirname(dirname(os.environ['SCRIPT_URL']))),
-    #            'lib/python/nabu/publish.py')
 
     if user is None and passwd is None:
         # generate an index of documents.
@@ -56,8 +76,7 @@ def main():
         print '</tr>'
         print '<tr><td><input type="submit" value="Create"></input></td></tr>'
         print '</table>'
-        print ('Then download the <a href="%s">Nabu Publisher</a> and save '
-               'it as "nabu" somewhere in your path.') % dref
+        print instructions
         print '</body></html>'
     else:
         passwd_file = join(os.environ['DOCUMENT_ROOT'],
@@ -73,8 +92,7 @@ def main():
         print
         print '<html><body>'
         print '<h1>User %s created.</h1>' % user
-        print ('Download the <a href="%s">Nabu Publisher</a> and save '
-               'it as "nabu" somewhere in your path.') % dref
+        print instructions
         print '</body></html>'
 
 if __name__ == '__main__':

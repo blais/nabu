@@ -80,7 +80,7 @@ different pattern for unique id.
    The identifiers that you use should be unique in the entire set of files that
    will be published in the database;
 
-The author likes to use universally unique identifiers (UUIDs_) for that
+The author likes to use universally unique identifiers (UUID_) for that
 purpose.  Those have unique guarantees.
 
 .. _UUID: http://en.wikipedia.org/wiki/UUID

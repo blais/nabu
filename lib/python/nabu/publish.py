@@ -1,14 +1,27 @@
 #!/usr/bin/env python
 #
-# $Source$
-# $Id$
+# Copyright (C) 2005  Martin Blais <blais@furius.ca>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
 """
 Nabu Publisher Client.
 
 Usage::
-   nabu [<options>] <file-or-dir> [<file-or-dir> ...]
+   nabu [<options>] [<file-or-dir> ...]
 
 Find files with a specific marker, and publish the files that have changed
 against the database using XML-RPC calls over an HTTP connection.  Takes a list
@@ -54,6 +67,8 @@ without pushing new files to the server.
 import sys, os, re, md5, xmlrpclib, fnmatch, urlparse
 import optparse
 from os.path import *
+
+__version__ = '$Revision$'
 
 #-------------------------------------------------------------------------------
 # Publish
@@ -221,11 +236,8 @@ def publish( candidates, opts, args ):
 
                     raise NotImplementedError(
                         "Local Nabu validation not implemented yet.")
-## FIXME finish extract method in Nabu and call it here and then
-##       print out the extracted fields. 
-##
-##                     contents_uni = pfile.contents.decode('utf-8')
-##                     entries = nabu.process.process_source(contents_uni)
+                    ## FIXME TODO finish extract method in Nabu and call it here
+                    ## and then print out the extracted fields.
                 except ImportError:
                     raise SystemExit(
                         "Error: you must have installed Nabu in order to "
@@ -317,7 +329,7 @@ def opts_finder( parser ):
                       help="Disable recursion for directories.")
 
     group.add_option('-E', '--exclude', action='append', metavar='PATTERN',
-                      default=[],
+                      default=['CVS', '.svn', '*~', '*.bak'],
                       help="Ignore files and subdirectories whose basenames "
                       "match the given globbing pattern.  You can append "
                       "many of these options.  Typically you would ignore "
@@ -533,59 +545,6 @@ def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
 # Config / Global Options
 #-------------------------------------------------------------------------------
 
-def parse_subcommands( gparser, subcmds, configvars, defcmd=None ):
-    """
-    Parse given global arguments, find subcommand from given list of subcommand
-    objects, parse local arguments and return a tuple of global options,
-    selected command object, command options, and command arguments.  Call
-    execute() on the command object to run.
-    """
-    # build map of name -> command
-    subcmds_map = {}
-    for sc in subcmds:
-        for n in sc.names:
-            assert n not in subcmds_map
-            subcmds_map[n] = sc
-
-    # parse global options.
-    for option in gparser._get_all_options():
-        if option.dest in configvars:
-            gparser.defaults[option.dest] = configvars[option.dest]
-
-    gparser.disable_interspersed_args()
-    opts, args = gparser.parse_args()
-    if not args:
-        if defcmd is None:
-            gparser.print_help()
-            raise SystemExit("Error: you must specify a command to use.")
-        else:
-            subcmdname, subargs = defcmd, args
-    else:
-        subcmdname, subargs = args[0], args[1:]
-
-    # parse command-local arguments and invoke command.
-    try:
-        sc = subcmds_map[subcmdname]
-    except KeyError:
-        if defcmd is None:
-            raise SystemExit("Error: invalid command '%s'" % subcmdname)
-        else:
-            subargs = args
-            sc = subcmds_map[defcmd]
-
-    lparser = optparse.OptionParser(sc.__doc__.strip())
-    if hasattr(sc, 'addopts'):
-        sc.addopts(lparser)
-
-    for option in lparser._get_all_options():
-        if option.dest in configvars:
-            lparser.defaults[option.dest] = configvars[option.dest]
-
-    lopts, subsubargs = lparser.parse_args(subargs)
-    opts.__dict__.update(lopts.__dict__.iteritems())
-
-    return sc, opts, subsubargs
-
 def opts_global( parser ):
     parser.add_option('-v', '--verbose', action='store_true',
                       help="Increase verbosity")
@@ -614,7 +573,7 @@ def parse_options( configvars ):
     """
     
     # global parser
-    parser = optparse.OptionParser(__doc__.strip())
+    parser = optparse.OptionParser(__doc__.strip(), version=__version__)
     opts_global(parser)
     opts_finder(parser)
     opts_publish(parser)
@@ -650,7 +609,7 @@ def parse_options( configvars ):
         if not opts.password:
             opts.password = fpass
 
-    ## FIXME query for password?
+    ## FIXME TODO: query for password to avoid storing in file.
     purl[1] = '%s:%s@%s' % (opts.user, opts.password, purl[1])
     opts.server_url = urlparse.urlunparse(purl)
 
@@ -667,8 +626,18 @@ def read_config():
     except KeyError:
         rcfile = join(os.environ['HOME'], '.naburc')
     if exists(rcfile):
-        execfile(rcfile, defvars)
-        # FIXME: catch exceptions here.
+        try:
+            execfile(rcfile, defvars)
+        except Exception, e:
+            import traceback
+            print >> sys.stderr, \
+                  "Error: parsing configuration file '%s'" % rcfile
+            print >> sys.stderr, "Please fix errors below before running."
+            print >> sys.stderr, '----------------------------------------'
+            traceback.print_exc(file=sys.stderr)
+            print >> sys.stderr, '----------------------------------------'
+            print >> sys.stderr, '(exiting.)'
+            raise SystemExit(1)
     return defvars
 
 #-------------------------------------------------------------------------------
