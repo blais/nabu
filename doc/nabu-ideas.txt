@@ -95,7 +95,7 @@ Other
 -----
 
 Rename
-~~~~~~
+++++++
 
 Rename it to either:
 
@@ -143,8 +143,10 @@ Q: how will I bind the pages in the application?
 - integrate media items, each media item with text, link, etc.:
 
   - book reviews (on the web)
+
     - the book list should be automatically extracted from the book reviews
       files, sorted with dates, rather than having to live in a single file
+
   - movies, with associated review and link
   - photo entries
   - private and shared entries
@@ -338,7 +340,7 @@ Ideas:
 
 
 Nabu
-~~~~
+----
 
 - I could define new directives
 
@@ -353,6 +355,7 @@ Nabu
      :Address:
      :Name: Martin Blais
      :Email: blais@furius.ca
+
      ...
 
      or even

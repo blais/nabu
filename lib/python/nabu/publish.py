@@ -53,23 +53,31 @@ Note: you can use the option to clear the database on its own to clean it up
 without pushing new files to the server.
 """
 
+__version__ = '$Revision$'
+__author__ = 'Martin Blais <blais@furius.ca>'
+
 ## Design Note About Dependencies
 ## ------------------------------
 ##
-## We want to make it so that all to code to publish fits inside this file, so
-## that we can distribute just a single script file with no libraries to setup
-## or install, at least for those who will not process locally.  The reason is
-## that it's really just much simpler to demo or setup for other people.
-## However, it the user wants to process locally, we require an install of the
-## nabu system; this is where we draw the line.
+## We really want to make it so that all to code to publish fits inside this one
+## file, so that we can distribute a single script file with no libraries to
+## setup or install, at least for those who will not process locally.  The
+## reason is that it's really just much simpler to setup or demo for other
+## people, in any place.  However, it the user wants to process locally, we
+## require an install of the nabu system; this is where we draw the line.
+## Otherwise running this only requires Python-2.4.
 
 # stdlib imports
 import sys, os, re, md5, xmlrpclib, fnmatch, urlparse
 import optparse
 from os.path import *
 
-__version__ = '$Revision$'
+if sys.version_info[:2] < (2, 3):
+    raise SystemExit("Error: you need Python >=2.3 to run this program.")
 
+if sys.version_info[:2] < (2, 4):
+    from sets import Set as set
+    
 #-------------------------------------------------------------------------------
 # Publish
 #-------------------------------------------------------------------------------
@@ -83,7 +91,15 @@ def get_server( opts ):
     if _server is None:
         # if opts.verbose:
         #     print '======= connecting to %s' % opts.server_url
-        _server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+        try:
+            _server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+            _server.ping()
+        except xmlrpclib.Error, e:
+            if e.errcode == 401:
+                raise SystemExit(
+                    "Error: Cannot authenticate user '%s'." % opts.user)
+            else:
+                raise
     return _server
 
 def opts_publish( parser ):
@@ -287,14 +303,14 @@ def dump( opts ):
     Dump/debug server contents.
     """
     attrs = ['unid', 'filename', 'username', 'time', 'errors']
-    headers = [dict( (x, x.capitalize()) for x in attrs )]
+    headers = [dict( [(x, x.capitalize()) for x in attrs] )]
     sources_info = get_server(opts).dump()
-    countcols = dict( (x, 0) for x in attrs )
+    countcols = dict( [(x, 0) for x in attrs] )
     for s in headers + sources_info:
         for a in attrs:
             countcols[a] = max(countcols[a], len(str(s[a])))
 
-    headers.append( dict( (x, '-' * countcols[x]) for x in attrs ) )
+    headers.append( dict( [(x, '-' * countcols[x]) for x in attrs] ) )
 
     sfmt = '%%(%(name)s)-%(count)ds'
     fmt = '   '.join(
@@ -580,7 +596,18 @@ def parse_options( configvars ):
     opts_clear(parser)
     opts_others(parser)
 
-    for option in parser._get_all_options():
+    # from optparse from 2.4, in order to be able to run on 2.3.
+    if sys.version_info[:2] < (2, 4):
+        def _get_all_options(self):
+            options = self.option_list[:]
+            for group in self.option_groups:
+                options.extend(group.option_list)
+            return options
+        allopts = _get_all_options
+    else:
+        allopts = optparse.OptionParser._get_all_options
+        
+    for option in allopts(parser):
         if option.dest in configvars:
             parser.defaults[option.dest] = configvars[option.dest]
 

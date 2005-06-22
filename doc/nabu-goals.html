@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<title>A Text-Based Content Creation System</title>
+<meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
+<meta name="date" content="2005-04-25" />
+<link rel="stylesheet" href="../style.css" type="text/css" />
+</head>
+<body>
+
+<div id="project-header">
+  <a href="/"><img src="/home/project-header.png" id="logo"></a>
+  <div id="project-home"><a href="..">Project Home</a></div>
+</div>
+
+<div class="document" id="a-text-based-content-creation-system">
+<h1 class="title">A Text-Based Content Creation System</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2005-04-25</td></tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>We describe a system that aims at making it possible for users to create
+relevance in their content and allow building ways to serve it intelligently
+by providing a semantically rich access to this data.</p>
+</div>
+<div class="section" id="introduction">
+<h1><a name="introduction">Introduction</a></h1>
+<p>We are considering a system for easing the management and publishing of various
+kinds of information personal to a single producer with a system that is &quot;as
+simple as possible&quot;.</p>
+<p>By personal information, we mean:</p>
+<ul class="simple">
+<li>contacts list, address book, birthday lists;</li>
+<li>list(s) of links (bookmarks);</li>
+<li>personal notes on specific themes (e.g. shopping for a new barbecue grill);</li>
+<li>essays, journal and blog entries;</li>
+<li>personal photographs;</li>
+<li>calendar and events;</li>
+<li>todo lists;</li>
+</ul>
+</div>
+<div class="section" id="motivation-angles">
+<h1><a name="motivation-angles">Motivation / Angles</a></h1>
+<p>We present differing angles to various problems of information management&quot;</p>
+<ul>
+<li><p class="first"><em>Relevance of Information</em>.  Not all information that transits in a user's
+computer, or that is created by that user, is relevant.  There is a <em>great
+value</em> in getting rid of junk.</p>
+<p>We believe that at this point, this task can only be performed manually: there
+is no artificial intelligence algorithm that can be decide what is important
+for you.  This is a key assumption in the motivation for this system:
+ultimately, the user is not just a producer of information, but is also an
+editor.</p>
+<p>There is no search algorithm that will be able to automatically create value.
+However, we recognize that filtering technologies will play an important role
+in helping us become more efficient editors, but we do not believe that they
+of themselves will become able to create &quot;the valuable&quot; automatically anytime
+soon;</p>
+</li>
+<li><p class="first"><em>Disparate Storage and Unaccessible Source Data</em>.  Information is stored in
+various bits that have an associated meaning to them--let us call them
+&quot;chunks&quot; for now.  All information chunks are stored in different places, for
+example, all addresses are stored in an address book manager program, all
+email in a contacts list program.  Contacts lists are stored in PDAs, and
+despite the availability of synchronization programs (you're lucky if it even
+works), ultimately the data lives in different places and there are multiple
+copies of it.</p>
+<p>Also, these data storages used different methods, often specific to the data
+model that they choose, and only readable by the specific software that
+created them.  This makes them difficult to access this data, to build
+independent services on top.</p>
+<p>Services that allow you to enter some of that data online fall in the same
+trap: they store the data on their machines in a format that is not accessible
+for you, the user, to get it back.  You create value by publishing your data
+using their system but you do not have a way to get it back in a form suitable
+for reuse! ;</p>
+</li>
+<li><p class="first"><em>Data Entry</em>.  It is difficult to enter the information, for many reasons:</p>
+<ul>
+<li><p class="first">every time you need to enter a new type of information, you need to start a
+program specific to that information storage.  These programs change over
+time, and this means that you must learn a plethora of programs, just to
+enter the data;</p>
+</li>
+<li><p class="first">more importantly, many times you would want to mix different types of data
+together in one logical unit.  For example, you might want to open a text
+file when you're researching a specific issue, for example, all information
+you find about a recently announced illness by your doctor, and you would
+want to store links to URLs of interest, contact information about local
+specialists may be able to help you, as well as text that you write yourself
+about the illness, or notes that you make on your condition, whatever.</p>
+<p>Personally, whenever I embark on any substantial task, I create a new small
+document for it--in the form of a text file-- and jot down notes as I
+discover more and more aspects of the problem that I'm working on.  I think
+many people do the same, or would do the same if they found a use for the
+document.  For example, you might want to share some of this knowledge.
+Right now, there is no easy way to do that;</p>
+</li>
+</ul>
+</li>
+<li><dl class="first docutils">
+<dt><em>Publishing is Difficult</em>.  Publishing much of the information you accumulate</dt>
+<dd><p class="first">is still very hard.  There are many different systems out there which attempt
+to provide a way for you to publish certain types of data, in a specialized
+way.  These require much cusomization, and a market for specialized services
+(such as blogger) has emerged for specific uses of the data.</p>
+<p>Would it not be great if we could build services on top of all your data,
+rather than attempting to solve one specific use of the data?</p>
+<p class="last">Also of note: online publishing systems store the data remotely, which make
+it difficult to build client software to edit it efficiently.  Making it
+possible to upload the data in a digested form once it's authored locally has
+some potential.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="simplicity">
+<h2><a name="simplicity">Simplicity</a></h2>
+<p>One central value behind our views, and one that you must keep in mind when
+considering the proposition that we're about to make, is that of the importance
+of simplicity.  There is <em>great value</em> in keeping things <em>as simple as they need
+to be</em>, because it allows the most flexible reuse of the information.</p>
+<p>Much of the rewards of keeping design and data simple can be observed in the
+power of the UNIX tools and operating system, which is built upon simple but
+very powerful ideas, sockets and files that consist in generic streams of bytes,
+and small tools that perform one task really well, and a simple and generic way
+to connect those tools together (See &quot;The Art of UNIX Programming&quot;,
+E.S.Raymond).  This has made possible the creation of complex tools without
+having to reinvent the small tools, but rather by improving those small tools in
+a generic way, that would henceforth allow more possibilities for connecting
+them in yet more different ways.  Keeping things generic and as simple as
+possible is a potent idea.</p>
+<p>This idea of designing systems as simple as they need be is also prevalent in
+the practice of software development.  Over the past ten years, we are seeing
+methodologies of development convergence towards this idea.  Extreme
+programming, agile methodologies, and the growing adoption of dynamic languages
+are a direct expression of the quest for reaching closer and closer to the
+essence of the problems we're trying to solve while trying to get rid of
+unneeded complications.  In many ways, software development is in the business
+of creating complexity.  We are essentially recognizing that keeping our designs
+and data models as simple as possible is the most efficient way of controlling
+the growth of this complexity.</p>
+</div>
+</div>
+<div class="section" id="goal">
+<h1><a name="goal">Goal</a></h1>
+<p>Simply stated, our goal is the following:</p>
+<blockquote>
+<em>To make it possible for users to create relevant content and allow building
+ways to serve it intelligently by providing a semantically rich access to his
+data.</em></blockquote>
+<p>We want to make it possible to build services on top of the user's valuable
+resource: information.  In order to do this, we have to make it possible for any
+user to build this meaningful source of his information, to add relevance to it.
+We want to:</p>
+<ol class="arabic">
+<li><p class="first">make it easy to enter the information in a way that allows an automated
+system to extract the meaningful chunks of data and associate them with
+pre-defined (and extensible) semantics.</p>
+<p>This may involve some form of simple markup (e.g. &quot;create new document&quot;,
+&quot;insert contact info&quot;, &quot;insert bookmark&quot;).  Easy means simple.  The interface
+and data format has to be <em>simple</em>, if not trivial;</p>
+</li>
+<li><p class="first">provide a service that will store this extracted information in a way that is
+accessible by various publishing services;</p>
+</li>
+<li><p class="first">create services that will offer creative views on this data.</p>
+<p>You can think of a blog interface, image galleries, a birthday notifier
+system, a system to sync your data store with your PDA, to serve your
+personal bookmarks as RSS feeds, to publish your travel log, to show your
+calendar of events, etc.</p>
+<p>These views would create value by providing convenient access and novelty on
+top of the user's data source.  Each of these views would use as its basis
+the parsed data source, stored and access in an efficient manner (i.e. in a
+database).</p>
+</li>
+</ol>
+<p>Our aim is clearly <strong>NOT</strong> to:</p>
+<ul class="simple">
+<li>create yet another specialized personal information management system.  For
+example, we do not want to manage email data.  We want to enable the creation
+of <em>relevant</em> data, for the user to create value by identifying <em>relevance</em> in
+his info, and we need to make this easy;</li>
+<li>create a desktop search system.  We do not want to deal with unorganized
+information on a user's system, but to provide a convenient space where a user
+can consciously organize most of his textual data.  Using all the unorganized
+information is difficult and a mistake, because there is a lot of non-relevant
+junk data;</li>
+</ul>
+<p>We believe that relevance in information is the result of a certain amount of
+conscious effort from the part of the user, and that search technologies have an
+inherent limit in the quality of the information that they can provide, in terms
+of filtering and organizing the data that navigates in a user's system.  This is
+a key aspect of this document and the scope of what we're trying to achieve.
+Search can help in organizing, but cannot organize for you.  Better search can
+alleviate some of the need for organization, but we recognize that ultimately,
+to create high-quality content, a conscious effort has to be made.</p>
+</div>
+<div class="section" id="requirements">
+<h1><a name="requirements">Requirements</a></h1>
+<p>The problem is threefold:</p>
+<ol class="arabic simple">
+<li>input and organization the information: the process of creating, editing,
+entering, storing the information in the system;</li>
+<li>extracting semantic chunks from it: parsing the input data and extracting
+meaning from its various components, meaning &quot;across&quot; the main organizational
+structure of input (for example, various input files may contain bookmarks,
+these bookmarks should be accessible in a global list of bookmarks);</li>
+<li>publishing the information: making selected views of the information
+accessible over the networks, with specialized interfaces.</li>
+</ol>
+<div class="section" id="input">
+<h2><a name="input">Input</a></h2>
+<ul class="simple">
+<li>we will need to be able to edit the data offline, this is often the case for
+people who work with laptops or who are on the road;</li>
+<li>the data lives in &quot;files&quot;, where files consist in logical and convenient units
+of organization of information for the user to input and edit, e.g.<ul>
+<li>my bookmarks file specific to my workplace;</li>
+<li>a contacts/address list that relates to a specific trip;</li>
+<li>a blog entry, perhaps with a snippet of code in it and some links/bookmarks.</li>
+<li>book reviews, which contain quotes, and a short public blurb and a link to
+the book (say, to amazon);</li>
+</ul>
+</li>
+<li>the information needs to have levels of disclosure, including the possibility
+of being hidden completely (i.e. not published nor extracted at all), and the
+possibility of being entirely public, and various levels in between.  Each
+file, but also each entry must be able to specify its level of disclosure
+individually as well;</li>
+<li>we want to have a system that is as simple as possible, therefore we will
+prefer text files that can be created in a normal editor, like emacs or vi,
+but that does not prevent the creation of client programs to generate these
+input files;</li>
+<li>we assume that not all &quot;data&quot; a user produces and consumes is revelant, data
+that gets included in the system is subject to revision and a minimal effort
+has been made on the part of the user to clean it up and select it.  The user
+has to &quot;write&quot; it, or somehow take a conscious step to request that certain
+information be included in the system;</li>
+<li>optional: many people must be able to edit the data concurrently, or a single
+user be able to work using various independent copies of the data;</li>
+</ul>
+</div>
+<div class="section" id="extraction">
+<h2><a name="extraction">Extraction</a></h2>
+<ul class="simple">
+<li>we must extract meaningful chunks of information from the input files;</li>
+<li>all information chunks that are extracted must be tracked to their input file,
+so that we can implement an incremental extraction algorithm that looks at the
+input and figures out:<ul>
+<li>which chunks are obsolete;</li>
+<li>a list of only new chunks to be integrated.</li>
+</ul>
+</li>
+<li>the kinds of &quot;chunks&quot; must be extensible or generic, so that the system is
+very flexible;</li>
+<li>input &quot;files&quot; may change location, therefore we should not rely on their
+filename as unique identifiers for the chunks of information;</li>
+<li>the extraction should make the data available in a data store (e.g. a SQL
+database), in a way that makes it possible to perform incremental updates,
+full updates, and in a way that makes it flexibly accessible to various
+publishing interfaces.</li>
+</ul>
+</div>
+<div class="section" id="publishing">
+<h2><a name="publishing">Publishing</a></h2>
+<ul class="simple">
+<li>we need to be able to provide the various chunks of information in various
+ways, and to organize them in various ways, for example:<ul>
+<li>a blog, organized by dates and/or categories;</li>
+<li>a travel journal;</li>
+<li>lists of bookmarks, served up as RSS to browsers can integrate them;</li>
+<li>a gallery of images, by trip;</li>
+<li>notes taken about a certain task, e.g. setting up incremental backups,
+setting up software on a particular laptop;</li>
+<li>a preferred wine list, a reading list;</li>
+<li>project ideas, essays;</li>
+</ul>
+</li>
+<li>a pluggable architecture should be developed to make it possible to render
+each type of info chunk with a specific rendering system.  We should be able
+to extend the system so that a new type of entry can be rendered in the
+existing publishing system;</li>
+</ul>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h1><a name="conclusion">Conclusion</a></h1>
+<p>The key ideas driving our design are:</p>
+<ul class="simple">
+<li>not all information a user produces is relevant, there is a lot of junk;</li>
+<li>a user's editorial involvement can create a higher-quality, semantically rich
+and valuable source of information;</li>
+<li>it is possible to make this editorial participation simple for most people;</li>
+<li>creating views on top of this semantically rich source of data allows the
+possibility for value added services and easier personal publishing;</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

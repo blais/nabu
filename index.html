@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<title>nabu: An Text File Publishing System</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+
+<div id="project-header">
+  <a href="/"><img src="/home/project-header.png" id="logo"></a>
+  
+</div>
+
+<div class="document" id="nabu-an-text-file-publishing-system">
+<h1 class="title">nabu: An Text File Publishing System</h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#description" id="id1" name="id1">Description</a></li>
+<li><a class="reference" href="#documentation" id="id2" name="id2">Documentation</a><ul>
+<li><a class="reference" href="#components" id="id3" name="id3">Components</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#download" id="id4" name="id4">Download</a></li>
+<li><a class="reference" href="#reporting-bugs" id="id5" name="id5">Reporting Bugs</a></li>
+<li><a class="reference" href="#installation" id="id6" name="id6">Installation</a></li>
+<li><a class="reference" href="#copyright-and-license" id="id7" name="id7">Copyright and License</a></li>
+<li><a class="reference" href="#author" id="id8" name="id8">Author</a></li>
+</ul>
+</div>
+<!--  -->
+<blockquote>
+<p>&quot;Nabu is the Babylonian god of wisdom and writing, worshipped by
+Babylonians as the son of Marduk and his consort, Sarpanitum, and as
+the grandson of Ea.&quot;</p>
+<p class="attribution">&mdash;From <a class="reference" href="http://en.wikipedia.org/wiki/Nabu">Wikipedia</a></p>
+</blockquote>
+<div class="section" id="description">
+<h1><a class="toc-backref" href="#id1" name="description">Description</a></h1>
+<p>Nabu is a system for allowing users to easily create large amounts of
+relevant information and publish this information in a semantically
+meaningful way on a remote server, which can then be accessed by various
+services with the intent to build useful services on top of this
+semantically rich storage.</p>
+<p>Concretely, Nabu allows you to keep various types of information into
+simple text files (in <a class="reference" href="http://docutils.sourceforge.net">restructuredtext</a> format, with simple added
+directives), and to have these informations parsed, organized and
+available remotely, and to have a web server display the information in
+various ways.  For example, you can have files with text, links, contact
+info, etc. in them and this information gets extracted and becomes
+available for a blog system to use.</p>
+<p>For more details, see the design document and project proposal under the
+<tt class="docutils literal"><span class="pre">doc</span></tt> subdirectory.</p>
+<p>Nabu is cool, because:</p>
+<ul class="simple">
+<li>you edit files locally, with your favourite editor.</li>
+<li>the organization of the files in subdirectories has nothing to do with how the
+content is presented.  It effectively offers you a sandbox for creating
+content, and then how you organize or present the content is dictated by ways
+that <em>you</em> decide, potentially independent of the file organization structure;</li>
+<li>the valuable source of the information, the text files, remains with you, and
+you are free to manage them in any way you prefer, with any version control
+system you like (if you want to do that);</li>
+<li>it does not dictate how the information is presented/served to the clients;</li>
+<li>various semantic things are automatically extracted from your document.  These
+semantic things are easily written with little code and are configurable.
+Nabu comes with many content extractors (generic and specific ones);</li>
+<li>a light-weight program with little dependencies is used to upload the files on
+the server.  The server parses the content.  This maximizes the potential that
+you will be able to use Nabu anywhere;</li>
+</ul>
+<p>Nabu is not:</p>
+<ul class="simple">
+<li>a Wiki</li>
+<li>a Blogging system</li>
+<li>a word processing system</li>
+</ul>
+<p>Nabu is:  a way to add content and extract semantic from this content-- no
+presentation layer.  You can build the presentation with any web development
+framework that can access an SQL database.</p>
+</div>
+<div class="section" id="documentation">
+<h1><a class="toc-backref" href="#id2" name="documentation">Documentation</a></h1>
+<ul class="simple">
+<li><a class="reference" href="doc/nabu-usage.html">Usage</a></li>
+<li><a class="reference" href="doc/nabu-goals.html">Goals</a></li>
+<li><a class="reference" href="doc/nabu-ideas.html">Ideas</a></li>
+</ul>
+<div class="section" id="components">
+<h2><a class="toc-backref" href="#id3" name="components">Components</a></h2>
+<dl class="docutils">
+<dt>Nabu Client</dt>
+<dd>Contains a publisher that reads files on the local client filesystem and that
+figures out which ones are meant for publication, connects to the Nabu Server
+and asks for comparison of the files and incrementally uploads the files that
+have changed to update the content on the server.
+The client code may also contain a easy-to-use editor for source files.</dd>
+<dt>Nabu Server</dt>
+<dd>Receives updates of the source files from the publisher client, figures out
+which files have changed since the last update by serving MD5 sums of the
+files it has processed, and makes the necessary updates.  The content is
+stored in a database after having been parsed.</dd>
+<dt>Presenter / Web Application</dt>
+<dd>Uses the content stored on the database by the server, and provides a web
+front to the data by providing various services, like a blog, an addressbook,
+etc.  It also provides a web application with users, and various levels of
+access to the various chunks of data.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="download">
+<h1><a class="toc-backref" href="#id4" name="download">Download</a></h1>
+<p>This software is not released yet, and it might never make it to the open
+source world.  We're just not sure what we're going to do with this at
+this point (2005-06-04).</p>
+</div>
+<div class="section" id="reporting-bugs">
+<h1><a class="toc-backref" href="#id5" name="reporting-bugs">Reporting Bugs</a></h1>
+<p>Send email to &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.</p>
+</div>
+<div class="section" id="installation">
+<h1><a class="toc-backref" href="#id6" name="installation">Installation</a></h1>
+<ul>
+<li><dl class="first docutils">
+<dt><em>client</em>: you need Python-2.4 and some kind of shell environment</dt>
+<dd><p class="first last">(cmd.exe can do, on Windows);</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>server</em>: you need apache and mod_python, Python-2.4 and the PostgreSQL</dt>
+<dd><p class="first last">database server;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>app</em>: you need the hume web application framework, which itself runs</dt>
+<dd><p class="first last">on apache and mod_python.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="copyright-and-license">
+<h1><a class="toc-backref" href="#id7" name="copyright-and-license">Copyright and License</a></h1>
+<p>Copyright (C) 2005  Martin Blais.  All Rights Reserved.</p>
+<p>This code is NOT distributed publicly.  It is very copyrighted and
+definitive action will be taken if you steal it in any way.  Those are
+the rules for now.  Use by permission only.</p>
+</div>
+<div class="section" id="author">
+<h1><a class="toc-backref" href="#id8" name="author">Author</a></h1>
+<p>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</p>
+</div>
+</div>
+</body>
+</html>

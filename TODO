@@ -2,29 +2,21 @@
  TODO: nabu
 ============
 
-- add config notes
-
-- how are *~ backup files dealt with
 
 - add to dump command: ability to dump contents like the page
   - automatically if there is an id as an argument
     (cmdline remains simple)
 
-- remove all traces of the document
+- remove all traces of the Document class in the server.py code
 
 - add option not to upload the source
 
-
-
-:server:
-- provide a way to debug the contents of the document, printing out the
-  structure (nabu-contents should add that, next to the html)
-
-
+- add config notes to server? to docs?
 
 
 
 :publisher:
+- make sure that the errors format can be processed by emacs
 
 - setup automated publish on commit using
   - CVS
@@ -38,40 +30,13 @@
     - emacs config must keep plain text at the top of the file when decrypting
       in a variable and add it back in when reencrypting
 
-- handle authorization failure more gracefully
-
-- make sure that the errors format can be processed by emacs
-
 
 :server setup and beta users:
-- important!  in the server, we *must* get the username from the authentication,
-  not as given, change to always use 'REMOTE_USER' for this purpose.
-
 - separate the nabu transforms from the standalone reader transforms and keep
   that as the source documents
 
-  * eventually we could reprocess the entire documents without uploading again,
+  - eventually we could reprocess the entire documents without uploading again,
     just having to run the nabu transforms/extractors
-
-- add parameters to the nabu-contents.cgi script:
-  - user (required)
-  - type (optional, if not present print list)
-  - rendering is for debugging: generic field/value style
-
-- add users to the storage and contents fetching script
-  - setup CGI on my server
-  - write a script to add databases for new users
-  - send script to friends to try it out
-
-- add upload date to all material stored in the database
-- add upload user to all material stored in the database
-  - this way, multiple users can fill in the same "nabu" storage to 
-    produce shared content
-
-- automatically adding columns for entry "fields" that are not currently
-  in the database, makes the data model looser
-
-  - find out how to programmatically add columns to the database
 
 - make the server run with multiple threads to process all files after
   communication
@@ -99,9 +64,11 @@
 
 
 :documentation:
+- put project online
+
 - create home page to describe what it is;
 
-- naming: 
+- naming:
 
   * Tinba: Tinba Is Not a Blog A...
   * xNB: x is not a blog
@@ -147,7 +114,7 @@ Rejected or Indefinitely-postponed Ideas
 
   Do this later. This could be interesting.
 
-- do we require a user/password?  
+- do we require a user/password?
 
   For now, yes.
 
@@ -165,7 +132,7 @@ Rejected or Indefinitely-postponed Ideas
 
 
 - when pushing new documents to the server, spit a warning if there is a clash
-  of documents between users? 
+  of documents between users?
 
   This should be in the server config and perhaps belongs to the domain of
   policy.
@@ -175,3 +142,10 @@ Rejected or Indefinitely-postponed Ideas
   evaluate the size or time to perform a specific task on the data.
 
   Do this later.
+
+- loose data models: automatically adding columns for entry "fields" that are
+  not currently in the database, makes the data model looser
+
+  - find out how to programmatically add columns to the database
+
+  Do this later, when I have a good demonstration of nicely extracted stuff.

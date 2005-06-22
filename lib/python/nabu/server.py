@@ -86,6 +86,9 @@ class ServerHandler:
         
         init_connection(connection)
 
+    def ping( self ):
+        return 0
+
     def getallids( self ):
 ## FIXME for this user only
         return [r.unid for r in Source.select()]
@@ -275,4 +278,6 @@ class ServerHandler:
         for s in Source.select(Source.q.errors != ''):
             errors.append(dict((a, getattr(s, a)) for a in fields))
         return errors
+
+    
 

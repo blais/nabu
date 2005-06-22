@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<title></title>
+<link rel="stylesheet" href="../style.css" type="text/css" />
+</head>
+<body>
+
+<div id="project-header">
+  <a href="/"><img src="/home/project-header.png" id="logo"></a>
+  <div id="project-home"><a href="..">Project Home</a></div>
+</div>
+
+<div class="document">
+<div class="section" id="ideas-for-information-publishing-system">
+<h1><a name="ideas-for-information-publishing-system">Ideas for Information Publishing System</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Author:</th><td class="field-body">Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td>
+</tr>
+<tr class="field"><th class="field-name">Date:</th><td class="field-body">2005-06-20</td>
+</tr>
+<tr class="field"><th class="field-name">Abstract:</th><td class="field-body">Some ideas for my information publishing system.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="high-level-design">
+<h1><a name="high-level-design">High-Level Design</a></h1>
+<div class="section" id="components">
+<h2><a name="components">Components</a></h2>
+<p>There are three main phases:</p>
+<ol class="arabic simple">
+<li>recursively searching for all the files that have an appropriate marker for
+publication in them (e.g. :Id:); compute md5sum of these files and query the
+server for md5sums of the files which were last updated for it.</li>
+<li>parse the files with docutils and transform then; stop before the writer
+phase;</li>
+<li>pickle the document trees and store them in a database, and store all the
+other extracted elements as well;</li>
+<li>build code that can query the data;</li>
+</ol>
+<div class="section" id="web-publishing">
+<h3><a name="web-publishing">Web Publishing</a></h3>
+<div class="section" id="unique-identifiers">
+<h4><a name="unique-identifiers">Unique Identifiers</a></h4>
+<ul>
+<li><p class="first">how do we create permanent links?</p>
+<ul class="simple">
+<li>files may change locations</li>
+<li>titles may change</li>
+</ul>
+<p>Unique identifiers fix the problem.  You can even use them to link between the
+files (e.g. build a transform for the reader that looks at the references and
+than transforms certain target URL patterns).  Those unique identifiers can be
+any type of string and is unique, not just UUIDs.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="links-to-other-systems">
+<h2><a name="links-to-other-systems">Links to other systems</a></h2>
+<div class="line-block">
+<div class="line">LiveJournal -- personal publishing platform written in PHP</div>
+<div class="line"><a class="reference" href="http://www.livejournal.com/site/about.bml">http://www.livejournal.com/site/about.bml</a></div>
+<div class="line">php, blog, pim</div>
+</div>
+<hr class="docutils" />
+<p>The idea is to unite my techdoc, zwiii-src/contents and priv notes projects to
+become the unique source of my personal and public documents.  A web application
+that would replace zwiii would become the way to publish various types of
+documents.  Only documents marked as public would appear on the blog.
+Organization of the documents would be by category, but each document would
+nevertheless have a date, location, and potentially link to some of my
+photographs.</p>
+<p>Bookmarks could be search by examining the keywords, the content of the
+enclosing document.  No need to mark keywords at all!</p>
+</div>
+<div class="section" id="other">
+<h2><a name="other">Other</a></h2>
+<div class="section" id="rename">
+<h3><a name="rename">Rename</a></h3>
+<p>Rename it to either:</p>
+<ul class="simple">
+<li>Furious Wanderlust</li>
+<li>Politburo Wanderlust or Wanderlust for the Politburo</li>
+</ul>
+</div>
+</div>
+<div class="section" id="projects-documents-reorganization">
+<h2><a name="projects-documents-reorganization">Projects/Documents Reorganization</a></h2>
+<ul class="simple">
+<li>priv/notes/opportunities.asc
+- put all opportunities together</li>
+<li>techdoc/future.txt</li>
+<li>techdoc/projects</li>
+<li>priv/notes</li>
+<li>priv/travel.d -&gt; zwiii</li>
+<li>priv/notes-books -&gt; zwiii</li>
+<li>priv/bookmarks -&gt; (nil)</li>
+<li>priv/addrbook -&gt; (nil)</li>
+<li>todo.asc</li>
+<li>zwiii-rsc/contents</li>
+<li>languages -&gt; zwiii</li>
+<li>put old and new emacs tricks in priv, and publicly published on blog</li>
+<li>add new emacs trick: X selection thing</li>
+</ul>
+<p>Note: some project ideas should be public, some should not.
+- levels of disclosure, associated with access privileges</p>
+<ul class="simple">
+<li>reorganize my priv directory completely in line with this</li>
+</ul>
+</div>
+<div class="section" id="ideas">
+<h2><a name="ideas">Ideas</a></h2>
+<dl class="docutils">
+<dt>Q: would a Wiki be a better way to organize the information?</dt>
+<dd>-&gt; related to linking and organization</dd>
+</dl>
+<p>Q: how will I bind the pages in the application?</p>
+<ul>
+<li><p class="first">rewrite zwiii to have a web interface, but still save content in files</p>
+</li>
+<li><p class="first">integrate media items, each media item with text, link, etc.:</p>
+<ul class="simple">
+<li>book reviews (on the web)<ul>
+<li>the book list should be automatically extracted from the book reviews
+files, sorted with dates, rather than having to live in a single file</li>
+</ul>
+</li>
+<li>movies, with associated review and link</li>
+<li>photo entries</li>
+<li>private and shared entries</li>
+<li>recently looked-up words and their associated definitions</li>
+<li>entirely public blog</li>
+<li>each entry should have a public and private portion, for taking personal
+notes</li>
+</ul>
+</li>
+<li><p class="first">media items could be typed?</p>
+</li>
+<li><p class="first">no tree hierarchy: i would prefer categories, then a tree can map onto it</p>
+</li>
+<li><p class="first">blog entries, need to be able link to photographs
+- how do we insert photo groups?</p>
+</li>
+<li><p class="first">accounts? yes and on, privileges and permissions per file would be great</p>
+</li>
+<li><p class="first">simplified authentication, e.g. enter email, confirm email, that's it</p>
+</li>
+<li><p class="first">shared calendar of upcoming events?</p>
+</li>
+<li><p class="first">add rss feed</p>
+</li>
+<li><p class="first">techdoc should become integrated in zwiii, minus the projects</p>
+</li>
+<li><p class="first">backend should be text files that I can edit in emacs and update</p>
+</li>
+<li><p class="first">allow parts of the same source document to be public, parts to be private, in
+the same media item/document;</p>
+</li>
+<li><p class="first">allow the creation of temporary tokens to send links to people, links that
+will work on specific sections and that will only work temporarily, with
+limited permissions</p>
+<ul class="simple">
+<li>restrict by images</li>
+<li>restrict by series</li>
+<li>restrict by date</li>
+</ul>
+</li>
+<li><p class="first">look at hooking directly into a subversion repository,
+see greg stein's wiki</p>
+</li>
+<li><p class="first">add a special mode for slide shows that renders without borders or nothing,
+perhaps just a CSS or just a totally separate mode.</p>
+</li>
+<li><p class="first">support rss</p>
+</li>
+<li><p class="first">I need to be able to put links within the text files that will be
+automatically added to my bookmarks file</p>
+<ul>
+<li><p class="first">do the same with addrbook entries</p>
+</li>
+<li><p class="first">make this generic: special entries can be &quot;pulled&quot; from files and viewed and
+searched globally, e.g.</p>
+<pre class="literal-block">
+.. entry:: bookmark
+.. entry:: addrbook
+.. entry:: ...
+</pre>
+<p>This processing could be performed when filling up the database with the
+texts.</p>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="misc">
+<h2><a name="misc">Misc</a></h2>
+<ul>
+<li><p class="first">automatically detect words that could be found on Wikipedia and create links
+automatically.</p>
+</li>
+<li><p class="first">entries extracted from the text should really be generic.</p>
+<pre class="literal-block">
+.. entry:: bib
+</pre>
+<blockquote>
+<p>BibTeX entry, extracted for use with BibTeX, converted to HTML automatically</p>
+</blockquote>
+</li>
+<li><p class="first">bookmarks entries should be served as RSS just like delicious!!!</p>
+</li>
+<li><p class="first">design a protocol between the information server to be able to easily write
+clients</p>
+</li>
+</ul>
+</div>
+<div class="section" id="the-todo-list">
+<h2><a name="the-todo-list">The TODO list</a></h2>
+<dl class="docutils">
+<dt>Currently, my TODO list lies in 3 places:</dt>
+<dd><ul class="first last simple">
+<li>in a text file</li>
+<li>in my email (Starred)</li>
+<li>bugs on SF</li>
+</ul>
+</dd>
+</dl>
+<p>Problems:
+- time is being spent replicating or moving entries around
+- it is not available from work</p>
+<p>It would be truly awesome to find a way to integrate all of this in a bug
+tracking system of some kind, with:</p>
+<ul class="simple">
+<li>priorities</li>
+<li>quick to modify</li>
+<li>available from anywhere</li>
+<li>with categories</li>
+</ul>
+</div>
+<div class="section" id="what-kinds-of-media-elements-to-i-want-to-share">
+<h2><a name="what-kinds-of-media-elements-to-i-want-to-share">What kinds of media elements to I want to share?</a></h2>
+<blockquote>
+<ul class="simple">
+<li>book reviews</li>
+<li>movie reviews</li>
+<li>blog entries (links to photographs)</li>
+<li>photographs (public and private)</li>
+<li>calendar, shared with rachel</li>
+<li>project ideas, some public, some private</li>
+<li>technical documents (encrypt, shipcds, thinkpad)</li>
+</ul>
+</blockquote>
+<p>Basically, priv should contains mostly just technical stuff, config.</p>
+<p>All other documents should be in a blog space, in which zwiii would
+automatically become just a subset.  Should this space contain my bookmarks and
+addressbook?</p>
+<p>I think I got it: join all of priv and zwiii-src together. All documents that
+should be public should have a special tag in them, otherwise they will not be
+served at all.  Remove the templates and email list from zwiii-src, that shall
+become part of the application server that will serve those documents.</p>
+</div>
+<div class="section" id="design-ideas">
+<h2><a name="design-ideas">Design Ideas</a></h2>
+<ul class="simple">
+<li>nice fonts:<ul>
+<li>readable: <a class="reference" href="http://www.jorendorff.com/articles/unicode/intro.html">http://www.jorendorff.com/articles/unicode/intro.html</a></li>
+</ul>
+</li>
+<li>support next/previous html navigation in the head</li>
+<li>random images on top header, like flickr</li>
+<li>provide a nice, lean, printable view</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">thumbnails:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>add funky rotated Thumbscrew for rendering, this is really cool</li>
+<li>better images could have larger thumbnails</li>
+</ul>
+</div>
+<div class="section" id="example-source-file">
+<h2><a name="example-source-file">Example Source File</a></h2>
+<pre class="literal-block">
+==================
+ Bar-B-Q Shopping
+==================
+
+:Id: ec87d535-9236-48e4-9630-741831abdb9c   &lt;-- unique file id
+:Disclosure: public
+:Expire: 2005-09-04
+
+Some text.
+
+Some Section
+------------
+
+Some more text.
+http://furius.ca/barbecue-grills       &lt;-- a bookmark
+
+.. disclosure:: private        &lt;-- change the default disclosure level
+
+Some personal notes that aren't published anywhere.
+</pre>
+</div>
+<div class="section" id="summary-of-talking-with-dave-goodger-about-how-to-go-about-this">
+<h2><a name="summary-of-talking-with-dave-goodger-about-how-to-go-about-this">Summary of Talking with Dave Goodger about how to go about this</a></h2>
+<p>Ideas:</p>
+<ul class="simple">
+<li>implement boxquote parser to replace .. note</li>
+<li>emacs: try table.el</li>
+<li>over-and-under titles are considered DIFFERENT than single underline titles,
+just as if they were using a new character, e.g. they can open a new level.</li>
+<li>try subtitles</li>
+<li>S5 reader: count words or lines in each slide/section and output a warning if
+too long</li>
+<li>try csv-tables</li>
+</ul>
+</div>
+<div class="section" id="nabu">
+<h2><a name="nabu">Nabu</a></h2>
+<ul>
+<li><p class="first">I could define new directives</p>
+</li>
+<li><p class="first">or I could use classes.  Class directives apply to the &quot;next thing&quot;. Then I
+could use a transform to extract those bits of things.  They also work
+recursively.</p>
+</li>
+<li><p class="first">Another option: I could write my own reader (simple, small) to find field
+lists, and interpret certain field list values to make the entries into
+specific types, e.g.</p>
+<blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Address:</th><td class="field-body"></td>
+</tr>
+<tr class="field"><th class="field-name">Name:</th><td class="field-body"><p class="first last">Martin Blais</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Email:</th><td class="field-body"><p class="first last"><a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>...</p>
+<p>or even</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Address:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ksjdjds</div>
+<div class="line">sjds djsjdsdjs</div>
+<div class="line">sjdhsdsjhdjshdshs</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>(it's recursive, remember!)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Link:</th><td class="field-body"></td>
+</tr>
+<tr class="field"><th class="field-name">desc:</th><td class="field-body"><p class="first last">Classifieds in Montreal</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">url:</th><td class="field-body"><p class="first last"><a class="reference" href="http://kijiji.montreal.com">http://kijiji.montreal.com</a></p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">keywords:</th><td class="field-body"><p class="first last">montreal, classifieds</p>
+</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>This actually would probably be the best approach.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>
