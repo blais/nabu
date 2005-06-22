@@ -1,0 +1,13 @@
+# For Nabu tests
+Options +ExecCGI
+
+<IfModule mod_access.c>
+   Order Allow,Deny
+   Allow from all
+
+   AuthType Basic
+   AuthUserFile /home/blais/w.furius/webcache/nabu/htpasswd
+   AuthGroupFile /dev/null
+   AuthName "Nabu Restricted Access"
+   Require valid-user
+</IfModule>
