@@ -2,16 +2,25 @@
  TODO: nabu
 ============
 
+:client:
+
+- errors processing transforms should be caught and the client should not have
+  to know about it (apart from the fact that there was an error)
 
 - add to dump command: ability to dump contents like the page
   - automatically if there is an id as an argument
     (cmdline remains simple)
+
+- add a command to return the list of transforms that the server supports,
+  (these are simply the docstrings of the configured transforms, concatenated)
 
 - remove all traces of the Document class in the server.py code
 
 - add option not to upload the source
 
 - add config notes to server? to docs?
+
+
 
 
 
@@ -149,3 +158,10 @@ Rejected or Indefinitely-postponed Ideas
   - find out how to programmatically add columns to the database
 
   Do this later, when I have a good demonstration of nicely extracted stuff.
+
+
+Docutils Questions
+------------------
+
+- docutils DTD: shouldn't we have a special kind of node for the document title
+  and subtitle?

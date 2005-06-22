@@ -97,18 +97,18 @@ We present differing angles to various problems of information management"
 
 
 * *Publishing is Difficult*.  Publishing much of the information you accumulate
-   is still very hard.  There are many different systems out there which attempt
-   to provide a way for you to publish certain types of data, in a specialized
-   way.  These require much cusomization, and a market for specialized services
-   (such as blogger) has emerged for specific uses of the data.
+  is still very hard.  There are many different systems out there which attempt
+  to provide a way for you to publish certain types of data, in a specialized
+  way.  These require much cusomization, and a market for specialized services
+  (such as blogger) has emerged for specific uses of the data.
 
-   Would it not be great if we could build services on top of all your data,
-   rather than attempting to solve one specific use of the data?
+  Would it not be great if we could build services on top of all your data,
+  rather than attempting to solve one specific use of the data?
 
-   Also of note: online publishing systems store the data remotely, which make
-   it difficult to build client software to edit it efficiently.  Making it
-   possible to upload the data in a digested form once it's authored locally has
-   some potential.
+  Also of note: online publishing systems store the data remotely, which make it
+  difficult to build client software to edit it efficiently.  Making it possible
+  to upload the data in a digested form once it's authored locally has some
+  potential.
 
 
 Simplicity

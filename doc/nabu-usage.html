@@ -37,28 +37,32 @@ server nor about the various kinds of entries.</p>
 <div class="contents topic" id="contents">
 <p class="topic-title first"><a name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference" href="#what-is-nabu" id="id1" name="id1">What is Nabu?</a></li>
-<li><a class="reference" href="#creating-files" id="id2" name="id2">Creating Files</a><ul>
-<li><a class="reference" href="#restructuredtext" id="id3" name="id3">RestructuredText</a></li>
-<li><a class="reference" href="#marking-files-for-publication" id="id4" name="id4">Marking Files for Publication</a></li>
-<li><a class="reference" href="#entry-types" id="id5" name="id5">Entry Types</a></li>
-<li><a class="reference" href="#version-control" id="id6" name="id6">Version Control</a><ul>
-<li><a class="reference" href="#server-triggers-using-cvs" id="id7" name="id7">Server Triggers using CVS</a></li>
-<li><a class="reference" href="#server-triggers-using-subversion" id="id8" name="id8">Server Triggers using Subversion</a></li>
+<li><a class="reference" href="#what-is-nabu" id="id4" name="id4">What is Nabu?</a></li>
+<li><a class="reference" href="#creating-files" id="id5" name="id5">Creating Files</a><ul>
+<li><a class="reference" href="#restructuredtext" id="id6" name="id6">RestructuredText</a></li>
+<li><a class="reference" href="#marking-files-for-publication" id="id7" name="id7">Marking Files for Publication</a></li>
+<li><a class="reference" href="#entry-types" id="id8" name="id8">Entry Types</a></li>
+<li><a class="reference" href="#version-control" id="id9" name="id9">Version Control</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#publishing-files" id="id10" name="id10">Publishing Files</a><ul>
+<li><a class="reference" href="#getting-the-publisher-client" id="id11" name="id11">Getting the Publisher Client</a></li>
+<li><a class="reference" href="#pointing-to-a-server" id="id12" name="id12">Pointing to a Server</a></li>
+<li><a class="reference" href="#dealing-with-errors" id="id13" name="id13">Dealing with Errors</a></li>
+<li><a class="reference" href="#triggers" id="id14" name="id14">Triggers</a><ul>
+<li><a class="reference" href="#repository-triggers" id="id15" name="id15">Repository Triggers</a><ul>
+<li><a class="reference" href="#server-triggers-using-cvs" id="id16" name="id16">Server Triggers using CVS</a></li>
+<li><a class="reference" href="#server-triggers-using-subversion" id="id17" name="id17">Server Triggers using Subversion</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference" href="#publishing-files" id="id9" name="id9">Publishing Files</a><ul>
-<li><a class="reference" href="#pointing-to-a-server" id="id10" name="id10">Pointing to a Server</a></li>
-<li><a class="reference" href="#dealing-with-errors" id="id11" name="id11">Dealing with Errors</a></li>
-<li><a class="reference" href="#triggers" id="id12" name="id12">Triggers</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="what-is-nabu">
-<h1><a class="toc-backref" href="#id1" name="what-is-nabu">What is Nabu?</a></h1>
+<h1><a class="toc-backref" href="#id4" name="what-is-nabu">What is Nabu?</a></h1>
 <p>Nabu is a framework for the publication of documents and automated extraction of
 semantically meaningful parts of documents to populate a database on a server.
 It is intended for the users to only have to write simple text files on their
@@ -71,7 +75,7 @@ publishing mechanism, the extraction of meaningful document parts, and to the
 storage of this data in a generic way.</p>
 </div>
 <div class="section" id="creating-files">
-<h1><a class="toc-backref" href="#id2" name="creating-files">Creating Files</a></h1>
+<h1><a class="toc-backref" href="#id5" name="creating-files">Creating Files</a></h1>
 <p>Create text files as you normally would, with your favourite text editor (we
 recommend emacs or vi).  The location or directory organization of those text
 files is not very important; make it the most convenient for you, the writer.
@@ -79,7 +83,7 @@ The server may offer features to let you organize and categorize files in a way
 that lets it present them coherently (this depends on the code that will present
 the information and is outside the scope of Nabu).</p>
 <div class="section" id="restructuredtext">
-<h2><a class="toc-backref" href="#id3" name="restructuredtext">RestructuredText</a></h2>
+<h2><a class="toc-backref" href="#id6" name="restructuredtext">RestructuredText</a></h2>
 <p>The files should be in valid reStructuredText format.  You can find out more
 about RestructuredText at <a class="reference" href="http://docutils.sourceforge.net/rst.html">http://docutils.sourceforge.net/rst.html</a> .</p>
 <p>Files that do not validate the rst format may not be able to fully populate all
@@ -87,7 +91,7 @@ the data contained in them to the database.  See the section on <cite>Dealing wi
 Errors</cite> for more details.</p>
 </div>
 <div class="section" id="marking-files-for-publication">
-<h2><a class="toc-backref" href="#id4" name="marking-files-for-publication">Marking Files for Publication</a></h2>
+<h2><a class="toc-backref" href="#id7" name="marking-files-for-publication">Marking Files for Publication</a></h2>
 <p>Files that will be published need to be marked with a unique string identifier,
 so that the source document can be matched against the data entries in the
 database.  This marker will be automatically removed by the publisher before the
@@ -118,7 +122,7 @@ will be published in the database;</p>
 purpose.  Those have unique guarantees.</p>
 </div>
 <div class="section" id="entry-types">
-<h2><a class="toc-backref" href="#id5" name="entry-types">Entry Types</a></h2>
+<h2><a class="toc-backref" href="#id8" name="entry-types">Entry Types</a></h2>
 <p>One of the powerful ideas behind this publishing system, is that the publisher
 handler will automatically recognize certain patterns in the source files and
 populate a database with those.</p>
@@ -127,7 +131,7 @@ person who is responsible for that server to find out which text patterns are
 recognized (there should be an available document for these).</p>
 </div>
 <div class="section" id="version-control">
-<h2><a class="toc-backref" href="#id6" name="version-control">Version Control</a></h2>
+<h2><a class="toc-backref" href="#id9" name="version-control">Version Control</a></h2>
 <p>If you would like to put the files under version control, you can do that, using
 whatever system you like, but you really do not have to.  Nabu does not force
 you to use any particular system for safeguarding your files.</p>
@@ -135,34 +139,50 @@ you to use any particular system for safeguarding your files.</p>
 arrangement is to allow a commit/checkin server trigger to do the publishing.
 This way, every time you commit new changes the new extracted items or documents
 will automatically appear in the database.  Also, this has the advantage to work
-for all the users committing to a repository.</p>
-<div class="section" id="server-triggers-using-cvs">
-<h3><a class="toc-backref" href="#id7" name="server-triggers-using-cvs">Server Triggers using CVS</a></h3>
-<p>To implement triggers using CVS, edit the <tt class="docutils literal"><span class="pre">CVSROOT/commitinfo</span></tt> file and</p>
-<pre class="literal-block">
-FIXME add this
-</pre>
-</div>
-<div class="section" id="server-triggers-using-subversion">
-<h3><a class="toc-backref" href="#id8" name="server-triggers-using-subversion">Server Triggers using Subversion</a></h3>
-<p>To implement triggers using Subversion, edit the <tt class="docutils literal"><span class="pre">CVSROOT/commitinfo</span></tt> file and</p>
-<pre class="literal-block">
-FIXME add this
-</pre>
-</div>
+for all the users committing to a repository.  See section on <a class="reference" href="#repository-triggers">Repository
+Triggers</a> to find out how to set it up.</p>
 </div>
 </div>
 <div class="section" id="publishing-files">
-<h1><a class="toc-backref" href="#id9" name="publishing-files">Publishing Files</a></h1>
+<h1><a class="toc-backref" href="#id10" name="publishing-files">Publishing Files</a></h1>
+<div class="section" id="getting-the-publisher-client">
+<h2><a class="toc-backref" href="#id11" name="getting-the-publisher-client">Getting the Publisher Client</a></h2>
+<p>The Nabu Publisher Client is used to find files that have changed in your local
+copy and push those files out to the server for processing and extraction.  It
+is meant to be as smart and automatic as possible, to work incrementally, and
+does not store any files locally.</p>
+<p>Furthermore, it is a small program that fits in a single Python file, so it
+should be easy to install anywhere and should run on any platform that can have
+a Python interpreter on it.  Its only dependencies are the Python interpreter
+(version &gt;=2.3).</p>
+<p>You can fetch the <a class="reference" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name <tt class="docutils literal"><span class="pre">nabu</span></tt>.</p>
+</div>
 <div class="section" id="pointing-to-a-server">
-<h2><a class="toc-backref" href="#id10" name="pointing-to-a-server">Pointing to a Server</a></h2>
+<h2><a class="toc-backref" href="#id12" name="pointing-to-a-server">Pointing to a Server</a></h2>
 <p>You publish files to a Nabu publishing handler URL, you need to tell nabu what
 are the connection parameters, the server, and the user and password.  This can
 be setup in your publisher/client configuration file.  The publisher will not
 run without this information.</p>
+<p>This file is found under your home directory as <tt class="docutils literal"><span class="pre">~/.naburc</span></tt>.  You need to
+create it to setup your connection parameters <a class="footnote-reference" href="#id3" id="id2" name="id2">[1]</a>.</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2" name="id3">[1]</a></td><td>Alternatively, you can set the <tt class="docutils literal"><span class="pre">NABURC</span></tt> environment variable to tell
+the client where to find the configuration file.</td></tr>
+</tbody>
+</table>
+<p>A typical <tt class="docutils literal"><span class="pre">~/.naburc</span></tt> file will look something like this:</p>
+<pre class="literal-block">
+user = '&lt;username&gt;'
+password = '&lt;password&gt;'
+server_url = 'http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi'
+exclude = ['.svn', 'CVS', '*~']
+#verbose = 1
+</pre>
 </div>
 <div class="section" id="dealing-with-errors">
-<h2><a class="toc-backref" href="#id11" name="dealing-with-errors">Dealing with Errors</a></h2>
+<h2><a class="toc-backref" href="#id13" name="dealing-with-errors">Dealing with Errors</a></h2>
 <p>Even though the reStructuredText syntax is very simple, the nature of simple
 text files makes it so that it is possible that the documents that you create
 contain structural errors, because they contain text that is not valid
@@ -180,7 +200,7 @@ the <tt class="docutils literal"><span class="pre">next-error</span></tt> featur
 </div>
 </div>
 <div class="section" id="triggers">
-<h2><a class="toc-backref" href="#id12" name="triggers">Triggers</a></h2>
+<h2><a class="toc-backref" href="#id14" name="triggers">Triggers</a></h2>
 <p>When should you run the publisher?</p>
 <ul class="simple">
 <li>whenever you want to publish, from the command-line;</li>
@@ -189,6 +209,23 @@ checkout on a commit trigger and then publish to the Nabu server from that;</li>
 <li>you could run it from emacs;</li>
 <li>you could even bind it to an emacs save hook;</li>
 </ul>
+<div class="section" id="repository-triggers">
+<h3><a class="toc-backref" href="#id15" name="repository-triggers">Repository Triggers</a></h3>
+<div class="section" id="server-triggers-using-cvs">
+<h4><a class="toc-backref" href="#id16" name="server-triggers-using-cvs">Server Triggers using CVS</a></h4>
+<p>To implement triggers using CVS, edit the <tt class="docutils literal"><span class="pre">CVSROOT/commitinfo</span></tt> file and</p>
+<pre class="literal-block">
+FIXME add this
+</pre>
+</div>
+<div class="section" id="server-triggers-using-subversion">
+<h4><a class="toc-backref" href="#id17" name="server-triggers-using-subversion">Server Triggers using Subversion</a></h4>
+<p>To implement triggers using Subversion, edit the <tt class="docutils literal"><span class="pre">CVSROOT/commitinfo</span></tt> file and</p>
+<pre class="literal-block">
+FIXME add this
+</pre>
+</div>
+</div>
 </div>
 </div>
 </div>

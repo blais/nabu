@@ -9,6 +9,7 @@ Server-side handlers for requests.
 """
 
 # stdlib imports
+import sys
 import md5
 import datetime
 import threading
@@ -18,12 +19,17 @@ from pprint import pprint, pformat
 
 # docutils imports
 import docutils.core
+import docutils.utils
+import docutils.frontend
+from docutils.transforms import Transformer
 
 # other imports
 from sqlobject import *
 
 # nabu imports
-from nabu.process import extract
+import nabu.entryforms
+from nabu.entryforms import *
+
 
 class Source(SQLObject):
     """
@@ -53,9 +59,8 @@ class Document(SQLObject):
     Stored document.
     """
     unid = StringCol(alternateID=1, length=36, notNull=1)
-    contents = BLOBCol() # pickled doctree, after custom transforms.
-
-
+    title = UnicodeCol()
+    date = DateCol()
 
 
 sqlobject_classes = [Source, Document]
@@ -228,13 +233,28 @@ class ServerHandler:
 
 
 
+        
+        # apply extractor transforms
+        doctree.transformer = Transformer(doctree)
+
+## FIXME set settings manually
+        settings = docutils.frontend.OptionParser().get_default_values()
+        doctree.reporter = docutils.utils.new_reporter('<doctree>', settings)
+
+        doctree.transformer.add_transforms(
+            tuple(nabu.entryforms.registry.values()))
+        doctree.transformer.apply_transforms()
+
+        # create a map of the applied transforms
+        entries = {}
+        for transform, priority, transform_class, pending in \
+                doctree.transformer.applied:
+            ## FIXME FIXME find a per-xform generic way to return stuff
+            entries[transform_class.table] = transform.extracted
+
 ## FIXME this should be in the "whole document" transform
-        entries = {
-            'Document': {'contents': pickle.dumps(doctree)}
-            }
 
 ## FIXME entries should be the result of running all the transforms
-        assert 'Source' not in entries
 
 ## FIXME create tables dynamically depending on what entries are returned
 
@@ -248,6 +268,8 @@ class ServerHandler:
 
             entry['unid'] = unid
 
+## FIXME check that the entry indeed has a value for the column
+## or perhaps create a column
             params = dict( (k._name, entry[k._name]) for k in cls._columns )
             newinst = cls(**params)
 

@@ -3,5 +3,5 @@
 # $Id: env,v 1.14 2005/05/08 22:04:17 blais Exp $
 #
 
-alias nabu=$PROJDIR/lib/python/nabu/publish.py
+## alias nabu=$PROJDIR/lib/python/nabu/publish.py
 

@@ -3,7 +3,9 @@
 Entry transforms.
 """
 
-__all__ = ['link']
+## FIXME
+##__all__ = ['link', 'document']
+__all__ = ['document']
 
 registry = {}
 

@@ -47,7 +47,7 @@ server_url = 'http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi'
 4. You can debug your results by going to the
 <a href=\"http://furius.ca/nabu/cgi-bin/nabu-contents.cgi\">
 contents debug page</a>.
-"""
+""" % '/nabu/bin/nabu'
 
 
 #-------------------------------------------------------------------------------

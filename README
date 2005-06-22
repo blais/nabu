@@ -1,6 +1,6 @@
-========================================
-  nabu: An Text File Publishing System
-========================================
+=======================================
+  nabu: A Text File Publishing System
+=======================================
 
 .. contents::
 ..
@@ -76,20 +76,15 @@ framework that can access an SQL database.
 
 
 
-
-
-
-
-
-
-
-
 Documentation
 =============
 
-- `Usage <doc/nabu-usage.html>`_
-- `Goals <doc/nabu-goals.html>`_
-- `Ideas <doc/nabu-ideas.html>`_
+- `Usage <doc/nabu-usage.html>`_: for content creators;
+
+- `Goals <doc/nabu-goals.html>`_: motivation behind this project;
+
+- `Ideas <doc/nabu-ideas.html>`_: unorganized file with random ideas (this is my
+  work file);
 
 Components
 ----------
@@ -131,25 +126,27 @@ Send email to <blais@furius.ca>.
 Installation
 ============
 
-- *client*: you need Python-2.4 and some kind of shell environment
-   (cmd.exe can do, on Windows);
+- *client*: you need Python-2.3 (and perhaps some kind of shell environment
+  (cmd.exe can do on Windows));
 
 - *server*: you need apache and mod_python, Python-2.4 and the PostgreSQL
-   database server;
+  database server;
 
-- *app*: you need the hume web application framework, which itself runs
-   on apache and mod_python.
+- *app*: you need some web application framework of your choice.  We provide an
+  example with a CGI script to debug the contents extracted to the database.
 
 
 Copyright and License
 =====================
 
-Copyright (C) 2005  Martin Blais.  All Rights Reserved.
+.. important::
 
-This code is NOT distributed publicly.  It is very copyrighted and
-definitive action will be taken if you steal it in any way.  Those are
-the rules for now.  Use by permission only.
-
+   Copyright (C) 2005  Martin Blais.  All Rights Reserved.
+   
+   This code is NOT distributed publicly for now.  It is very much copyrighted
+   and definitive action will be taken if you steal it in any way.  Those are
+   the rules for now.  Use by permission only.
+   
 
 Author
 ======

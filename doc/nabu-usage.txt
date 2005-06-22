@@ -20,7 +20,7 @@ semantically meaningful parts of documents to populate a database on a server.
 It is intended for the users to only have to write simple text files on their
 local computer disk, and to have a minimum of software dependencies to rely on
 to be able to publish those incrementally to a server.  It provides an easy way
-to maintain and create a collection of documents.  
+to maintain and create a collection of documents.
 
 The extracted data be presented on the server in various ways, by any available
 web framework of your preference.  The goal of this project limits itself to the
@@ -110,26 +110,29 @@ Note that if you *are* putting your files under version control, one convenient
 arrangement is to allow a commit/checkin server trigger to do the publishing.
 This way, every time you commit new changes the new extracted items or documents
 will automatically appear in the database.  Also, this has the advantage to work
-for all the users committing to a repository.
-
-Server Triggers using CVS
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To implement triggers using CVS, edit the ``CVSROOT/commitinfo`` file and ::
-
-  FIXME add this
-
-Server Triggers using Subversion
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To implement triggers using Subversion, edit the ``CVSROOT/commitinfo`` file and
-::
-
-  FIXME add this
+for all the users committing to a repository.  See section on `Repository
+Triggers`_ to find out how to set it up.
 
 
 Publishing Files
 ================
+
+Getting the Publisher Client
+----------------------------
+
+The Nabu Publisher Client is used to find files that have changed in your local
+copy and push those files out to the server for processing and extraction.  It
+is meant to be as smart and automatic as possible, to work incrementally, and
+does not store any files locally.
+
+Furthermore, it is a small program that fits in a single Python file, so it
+should be easy to install anywhere and should run on any platform that can have
+a Python interpreter on it.  Its only dependencies are the Python interpreter
+(version >=2.3).
+
+You can fetch the `Nabu Publisher Client`__ and save it under the name ``nabu``.
+
+__ /nabu/bin/nabu
 
 Pointing to a Server
 --------------------
@@ -138,6 +141,20 @@ You publish files to a Nabu publishing handler URL, you need to tell nabu what
 are the connection parameters, the server, and the user and password.  This can
 be setup in your publisher/client configuration file.  The publisher will not
 run without this information.
+
+This file is found under your home directory as ``~/.naburc``.  You need to
+create it to setup your connection parameters [#]_.
+
+.. [#] Alternatively, you can set the ``NABURC`` environment variable to tell
+       the client where to find the configuration file.
+
+A typical ``~/.naburc`` file will look something like this::
+
+  user = '<username>'
+  password = '<password>'
+  server_url = 'http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi'
+  exclude = ['.svn', 'CVS', '*~']
+  #verbose = 1
 
 
 Dealing with Errors
@@ -155,7 +172,7 @@ immediately.  There is a command in the publisher that will fetch the errors
 from the server and display them.  Use that after a while to find out what the
 processing errors were.
 
-.. note:: 
+.. note::
 
    For emacs users: the errors are formatted in a way that it is possible to use
    the ``next-error`` feature for emacs to quickly find them out.
@@ -172,3 +189,21 @@ When should you run the publisher?
 - you could run it from emacs;
 - you could even bind it to an emacs save hook;
 
+
+Repository Triggers
+~~~~~~~~~~~~~~~~~~~
+
+Server Triggers using CVS
++++++++++++++++++++++++++
+
+To implement triggers using CVS, edit the ``CVSROOT/commitinfo`` file and ::
+
+  FIXME add this
+
+Server Triggers using Subversion
+++++++++++++++++++++++++++++++++
+
+To implement triggers using Subversion, edit the ``CVSROOT/commitinfo`` file and
+::
+
+  FIXME add this

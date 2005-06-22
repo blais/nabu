@@ -209,10 +209,22 @@ def publish( candidates, opts, args ):
 
             try:
                 import docutils.core
+                docutils.core.publish_doctree
+
             except ImportError:
                 raise SystemExit(
                     "Error: you must have installed docutils in order to "
                     "process files locally.")
+
+            # FIXME: merge my branch in docutils trunk.
+            except AttributeError:
+                raise SystemExit(
+                    "Error: for local processing "
+                    "you need a more recent checkout of docutils \n"
+                    "or the author's special branch (will be merged soon, "
+                    "for now you can fetch it from:\n"
+                    "svn://svn.berlios.de/docutils/branches/"
+                    "blais_interrupt_render/docutils\n")
 
             import StringIO
             errstream = StringIO.StringIO()

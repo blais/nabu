@@ -20,8 +20,6 @@ import docutils.io
 import docutils.core
 from docutils import nodes
 
-__all__ = ['process_source']
-
 class LinkTransform(docutils.transforms.Transform):
     """
     Transform that finds links represented as line-blocks of less than lines,
@@ -45,6 +43,8 @@ class LinkTransform(docutils.transforms.Transform):
 
     """
     default_priority = 900
+
+    table = 'Link'
 
     class Visitor(nodes.SparseNodeVisitor):
 
