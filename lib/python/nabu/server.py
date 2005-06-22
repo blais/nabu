@@ -42,8 +42,9 @@ class Source(SQLObject):
     digest = StringCol(length=32, notNull=1)
     username = StringCol(length=32)
     time = DateTimeCol()
+    source = UnicodeCol()
     doctree = BLOBCol() # pickled doctree, before custom transforms.
-    errors = StringCol()
+    errors = UnicodeCol()
 
 
 ## FIXME move this into being simply the result of one of the transforms
@@ -148,7 +149,7 @@ class ServerHandler:
         """
         # convert XML-RPC Binary into string
         contents_utf8 = contents_bin.data
-
+        
         # compute digest of contents
         m = md5.new(contents_utf8)
         digest = m.hexdigest()
@@ -157,28 +158,37 @@ class ServerHandler:
         errstream = StringIO.StringIO()
         doctree, parts = docutils.core.publish_doctree(
             source=contents_utf8, source_path=filename,
-            settings_overrides={'input_encoding': 'UTF-8',
-                                'warning_stream': errstream}
+            settings_overrides={
+            'input_encoding': 'UTF-8',
+            'warning_stream': errstream,
+            'halt_level': 100, # never halt
+            },
             )
         errortext = errstream.getvalue()
 
-        self.__process(unid, filename, digest, doctree, None, errortext)
+        self.__process(unid, filename, digest,
+                       contents_utf8, doctree, None, errortext)
 
         return errortext or ''
 
-    def process_doctree( self, unid, filename, digest, doctree_bin, errortext ):
+    def process_doctree( self, unid, filename, digest,
+                         contents_bin, doctree_bin, errortext ):
         """
-        Process a single file.
-        We assume that the file comes wrapped in a Binary, encoded in UTF-8.
+        Process a single file.  We assume that the file and document tree comes
+        wrapped in a Binary, encoded in UTF-8.
         """
+        contents_utf8 = contents_bin.data
+
         docpickled = doctree_bin.data
         doctree = pickle.loads(docpickled)
 ## FIXME return error to the client if there is an exception in unpickling here.
 
-        self.__process(unid, filename, digest, doctree, docpickled, errortext)
+        self.__process(unid, filename, digest,
+                       contents_utf8, doctree, docpickled, errortext)
         return 0
     
-    def __process( self, unid, filename, digest, doctree, docpickled, errortext ):
+    def __process( self, unid, filename, digest, contents_utf8,
+                   doctree, docpickled, errortext ):
         """
         Process the given tree, extracting the information entries from it and
         replacing the existing entries with the newly extracted ones.
@@ -201,13 +211,13 @@ class ServerHandler:
             docpickled = pickle.dumps(doctree)
 
         newhist = Source(unid=unid,
-                             filename=filename,
-                             digest=digest,
-                             username=self.username,
-                             time=datetime.datetime.now(),
-                             doctree=docpickled,
-                             errors=errortext)
-
+                         filename=filename.replace('\\', '/'),
+                         digest=digest,
+                         username=self.username,
+                         time=datetime.datetime.now(),
+                         source=contents_utf8.decode('utf-8'),
+                         doctree=docpickled,
+                         errors=errortext.decode('utf-8'))
 
 ##         # process the custom transforms.
 ##         entries = process_source(contents)
@@ -265,5 +275,4 @@ class ServerHandler:
         for s in Source.select(Source.q.errors != ''):
             errors.append(dict((a, getattr(s, a)) for a in fields))
         return errors
-        
-        
+

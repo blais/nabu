@@ -5,13 +5,14 @@
 #
 
 """
-Nabu reStructuredText Reader Extractor.
+Nabu Publisher Client.
 
 Usage::
    nabu [<options>] <file-or-dir> [<file-or-dir> ...]
 
-Find and publish files that have changed against the database.  Takes a list of
-files and/or directories to publish.  If none is specified, the current
+Find files with a specific marker, and publish the files that have changed
+against the database using XML-RPC calls over an HTTP connection.  Takes a list
+of files and/or directories to publish.  If none is specified, the current
 directory is assumed.
 
 This program's publish functionality reads some input text files, identifies and
@@ -159,7 +160,7 @@ def publish( candidates, opts, args ):
             print '======= sending source for processing:  %s  {%s}' % \
                   (pfile.fn, pfile.unid)
 
-            errors = server.process_source(pfile.unid, pfile.fn, 
+            errors = server.process_source(pfile.unid, pfile.fn,
                                            xmlrpclib.Binary(pfile.contents))
             if errors:
                 print errors
@@ -186,8 +187,11 @@ def publish( candidates, opts, args ):
             errstream = StringIO.StringIO()
             doctree, parts = docutils.core.publish_doctree(
                 source=pfile.contents, source_path=pfile.fn,
-                settings_overrides={'input_encoding': 'UTF-8',
-                                    'warning_stream': errstream},
+                settings_overrides={
+                'input_encoding': 'UTF-8',
+                'warning_stream': errstream,
+                'halt_level': 100, # never halt
+                },
                 )
             errors = errstream.getvalue()
             if errors:
@@ -200,6 +204,7 @@ def publish( candidates, opts, args ):
                 docpickled = pickle.dumps(doctree)
 
                 server.process_doctree(pfile.unid, pfile.fn, pfile.digest,
+                                       xmlrpclib.Binary(pfile.contents),
                                        xmlrpclib.Binary(docpickled),
                                        errors)
 
@@ -383,12 +388,12 @@ def find_to_publish( fnordns, opts ):
     fileids = set()
     files = set()
     for fn in process_dirs_or_files(fnordns, opts.exclude, opts.recursive):
-        afn = abspath(normpath(fn))
-        if afn in files:
+        fn = abspath(fn).replace('\\', '/') # platform independent.
+        if fn in files:
             print >> sys.stderr, \
                   "Warning: Skipping file '%s' that was seen twice." % fn
             continue
-        files.add(afn)
+        files.add(fn)
 
         if opts.verbose:
             print '======= reading...', fn

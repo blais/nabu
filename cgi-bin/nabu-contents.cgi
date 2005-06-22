@@ -18,6 +18,7 @@ import sys, os, urlparse
 from os.path import dirname, join
 import cgi, cgitb; cgitb.enable()
 import cPickle as pickle
+from xml.sax.saxutils import escape
 
 # add the nabu libraries to load path
 root = dirname(dirname(sys.argv[0]))
@@ -39,6 +40,7 @@ def main():
     """
     CGI handler. 
     """
+    uri = os.environ['SCRIPT_URI']
     # connect to the database
     params = {
         'db': 'nabu',
@@ -54,7 +56,7 @@ def main():
     unid = form.getvalue("id")
     if unid is None:
         # generate an index of documents.
-        linkfmt = '%s?id=%%s' % os.environ['SCRIPT_URI']
+        linkfmt = '%s?id=%%s' % uri
         print 'Content-type:', 'text/html'
         print
         print '<html>'
@@ -68,14 +70,15 @@ def main():
         sr = Source.select()
         for s in sr:
             print '<tr>'
-            print '<td>%s</td>' % s.unid
+            print '<td><a href="%s">%s</a></td>' % (linkfmt % s.unid, s.unid)
             print '<td>%s</td>' % s.filename
             print '<td>%s</td>' % s.username
             print '<td>%s</td>' % s.time
-            print '<td>%s</td>' % (s.errors and True or False)
+            print '<td>%s</td>' % (s.errors and 'ERRORS' or '     ')
             print '</tr>'
         print '</table>'
 
+## FIXME this should be generic for all tables
         print '<h2>Documents</h2>'
         print '<table width="100%">'
         sr = Document.select()
@@ -87,30 +90,60 @@ def main():
         return
 
     # select the document from the database
-    sr = Document.select(Document.q.unid==unid)
+    sr = Source.select(Source.q.unid==unid)
     if sr.count() == 0:
         print 'Content-type:', 'text/plain'
         print 'Status: 404 Document Not Found.'
         print
         print 'Document not found'
         return
+    print >> sys.stderr, sr.count()
+##     assert sr.count() == 1
+    src = sr[0]
 
-    # read and document and unpickle it
-    doc = sr[0]
-    document = pickle.loads(sr[0].contents)
+    # read document tree and unpickle it
+    doctree = pickle.loads(src.doctree)
 
     # render document in HTML
-    scheme, netloc, path, parameters, query, fragid = \
-            urlparse.urlparse(os.environ['SCRIPT_URI'])
+    scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
     settings = {'stylesheet': '%s://%s/docutils-style.css' % (scheme, netloc),
                 'output_encoding': 'UTF-8'}
 
-    output = docutils.core.publish_from_doctree(
-        document, writer_name='html4css1', settings_overrides=settings)
+    doctree_str = docutils.core.publish_from_doctree(
+        doctree, writer_name='pseudoxml', settings_overrides=settings)
 
     print 'Content-type:', 'text/html'
     print
-    print output
+    print '<html><head></head><body>'
+    print '<h1>Source: %s</h1>' % escape(src.unid)
+    print '<dl>'
+    print '<dt>Source Filename</dt><dd>%s</dd>' % escape(src.filename)
+    print '<dt>User</dt><dd>%s</dd>' % escape(src.username)
+    print '<dt>Time Uploaded</dt><dd>%s</dd>' % escape(str(src.time))
+    print '<dt>Digest</dt><dd>%s</dd>' % escape(src.digest)
+    print '</dl>'
+    print '<a href="#doctree">Document Tree</a> '
+    print '<a href="#source">Source</a> '
+    if src.errors:
+        print '<a href="#errors">Errors</a> '
+    print '<a href="%s">(Back to Index)</a>' % uri
+    print '<hr/>'
+    if src.errors:
+        print '<a name="errors"/><h2>Errors</h2>'
+        print '<pre>'
+        print escape(src.errors.encode('utf-8'))
+        print '</pre>'
+    print '<a name="doctree"/><h2>Document Tree</h2>'
+    print '<pre>'
+    print escape(doctree_str)
+    print '</pre>'
+    print '<hr/>'
+    print '<a name="source"/><h2>Source</h2>'
+    print '<pre>'
+    print escape(src.source.encode('utf-8'))
+    print '</pre>'
+    print '<hr width="5"/>'
+    print '</body></html>'
 
 
 if __name__ == '__main__':

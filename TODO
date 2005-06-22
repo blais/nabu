@@ -2,8 +2,24 @@
  TODO: nabu
 ============
 
+- how are *~ backup files dealt with
+
+- add to dump command: ability to dump contents like the page
+
+  - if there is an id
+
+- remove all traces of the document
+
+
+:server:
+- provide a way to debug the contents of the document, printing out the
+  structure (nabu-contents should add that, next to the html)
+
+
+
+
+
 :publisher:
-- errors: print processing/pending queue (server must provide that information)
 
 - setup automated publish on commit using
   - CVS
@@ -136,3 +152,21 @@ Rejected or Indefinitely-postponed Ideas
 
   Do this later.
 
+- print processing/pending queue (server must provide that information)
+
+  We need an interface for servers that implement deferred processing.  We
+  should be able to query this processing queue to find out if our documents
+  have been processed so we can query for errors.
+
+
+- when pushing new documents to the server, spit a warning if there is a clash
+  of documents between users? 
+
+  This should be in the server config and perhaps belongs to the domain of
+  policy.
+
+
+- store length or number of nodes in the sources document, to be able to
+  evaluate the size or time to perform a specific task on the data.
+
+  Do this later.
