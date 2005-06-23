@@ -1,0 +1,16 @@
+========================
+  Nabu Design Document
+========================
+
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2005-06-22
+:Abstract:
+
+   Design documentation for the Nabu publishing system.
+
+
+.. figure:: nabu1.png
+
+   Nabu system components.
+
+

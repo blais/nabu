@@ -17,23 +17,22 @@ web application framework.
 import sys, os
 from os.path import dirname, join
 ##import cgitb; cgitb.enable(display=0, logdir="/tmp") # for debugging
-from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
 # add the nabu libraries to load path
 root = dirname(dirname(sys.argv[0]))
 sys.path.append(join(root, 'lib', 'python'))
 
+
 # nabu and other imports
 from sqlobject.postgres.pgconnection import PostgresConnection
 from nabu import server
+from nabu.utils import ExceptionXMLRPCRequestHandler
 
-#-------------------------------------------------------------------------------
-#
 def main():
     """
     CGI handler for XML-RPC server.
     """
-    # connect to the database
+    # connect to the PostgreSQL database
     params = {
         'db': 'nabu',
         'user': 'blais',
@@ -47,7 +46,7 @@ def main():
     
     # create an XMLRPC server handler and bind methods
     server_handler = server.ServerHandler(connection, username)
-    handler = CGIXMLRPCRequestHandler()
+    handler = ExceptionXMLRPCRequestHandler()
     handler.register_instance(server_handler)
     handler.handle_request()
     

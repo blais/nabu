@@ -439,7 +439,12 @@ def find_to_publish( fnordns, opts ):
             print '======= reading...', fn
 
         # read the beginnings of the file
-        f = open(fn)
+        try:
+            f = open(fn)
+        except IOError, e:
+            print >> sys.stderr, '======= skipping: %s' % e
+            continue
+            
         header = f.read(opts.header_length)
 
         # find if it should be published
@@ -652,6 +657,9 @@ def parse_options( configvars ):
     purl[1] = '%s:%s@%s' % (opts.user, opts.password, purl[1])
     opts.server_url = urlparse.urlunparse(purl)
 
+    if opts.verbose:
+        print '======= server url:', opts.server_url
+
     return opts, args
 
 def read_config():
@@ -695,20 +703,25 @@ def main():
 
     configvars = read_config()
     opts, args = parse_options(configvars)
-    if opts.errors:
-        errors(opts)
-    elif opts.dump:
-        dump(opts)
-    elif opts.clear_all:
-        clear(opts)
-    else:
-        # if we're not requesting a complete clear of the database,
-        # process files from current directory.  this is a bit of a special
-        # behaviour to allow us to clear the entire database.
-        if not args:
-            args = ['.']
-        candidates = find_candidates(opts, args)
-        publish(candidates, opts, args)
+
+    try:
+        if opts.errors:
+            errors(opts)
+        elif opts.dump:
+            dump(opts)
+        elif opts.clear_all:
+            clear(opts)
+        else:
+            # if we're not requesting a complete clear of the database,
+            # process files from current directory.  this is a bit of a special
+            # behaviour to allow us to clear the entire database.
+            if not args:
+                args = ['.']
+            candidates = find_candidates(opts, args)
+            publish(candidates, opts, args)
+    except xmlrpclib.Fault, e:
+        raise SystemExit("Error: an error occurred on the server:\n %s\n" % e +
+                         "Contact the server administrator for support.")
 
 if __name__ == '__main__':
     main()

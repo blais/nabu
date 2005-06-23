@@ -4,9 +4,6 @@
 
 :client:
 
-- errors processing transforms should be caught and the client should not have
-  to know about it (apart from the fact that there was an error)
-
 - add to dump command: ability to dump contents like the page
   - automatically if there is an id as an argument
     (cmdline remains simple)
@@ -123,6 +120,11 @@ Rejected or Indefinitely-postponed Ideas
 
   Do this later. This could be interesting.
 
+  - try this in headers from Nabu server script::
+  
+      Connection: close
+
+
 - do we require a user/password?
 
   For now, yes.
@@ -151,6 +153,7 @@ Rejected or Indefinitely-postponed Ideas
   evaluate the size or time to perform a specific task on the data.
 
   Do this later.
+
 
 - loose data models: automatically adding columns for entry "fields" that are
   not currently in the database, makes the data model looser
