@@ -290,11 +290,13 @@ def opts_others( parser ):
         "Alternative actions, other than publish. "
         "These don't find nor publish.")
 
-    group.add_option('-e', '--errors', action='store_true',
+    group.add_option('-e', '--errors', '--dump-errors', action='store_true',
                       help="Don't publish, fetch error status from the server.")
 
     group.add_option('-d', '--dump', '--debug', action='store_true',
-                      help="Don't publish, print server contents for debugging.")
+                      help="Don't publish, print server contents for debugging. "
+                     "If you specify some unique ids, server information about "
+                     "that document is printed.")
 
     group.add_option('-X', '--clear-all', action='store_true',
                       help="Clear the entire database for this user.")
@@ -310,26 +312,46 @@ def errors( opts ):
         print '=== From %s {%s}' % (e['filename'], e['unid'])
         print e['errors']
 
-def dump( opts ):
+def dump( opts, args ):
     """
     Dump/debug server contents.
     """
-    attrs = ['unid', 'filename', 'username', 'time', 'errors']
-    headers = [dict( [(x, x.capitalize()) for x in attrs] )]
-    sources_info = get_server(opts).dump()
-    countcols = dict( [(x, 0) for x in attrs] )
-    for s in headers + sources_info:
-        for a in attrs:
-            countcols[a] = max(countcols[a], len(str(s[a])))
+    server = get_server(opts)
+    if not args:
+        attrs = ['unid', 'filename', 'username', 'time', 'errors']
+        headers = [dict( [(x, x.capitalize()) for x in attrs] )]
+        sources_info = server.dumpall()
+        countcols = dict( [(x, 0) for x in attrs] )
+        for s in headers + sources_info:
+            for a in attrs:
+                countcols[a] = max(countcols[a], len(str(s[a])))
 
-    headers.append( dict( [(x, '-' * countcols[x]) for x in attrs] ) )
+        headers.append( dict( [(x, '-' * countcols[x]) for x in attrs] ) )
 
-    sfmt = '%%(%(name)s)-%(count)ds'
-    fmt = '   '.join(
-        map(lambda a: sfmt % {'name': a, 'count': countcols[a]}, attrs))
+        sfmt = '%%(%(name)s)-%(count)ds'
+        fmt = '   '.join(
+            map(lambda a: sfmt % {'name': a, 'count': countcols[a]}, attrs))
 
-    for s in headers + sources_info:
-        print fmt % s
+        for s in headers + sources_info:
+            print fmt % s
+    else:
+        attrs = ('unid', 'filename', 'username', 'time', 'digest',
+                 'errors', 'doctree', 'source',)
+        for unid in args:
+            sources_info = server.dumpone()
+## FIXME continue here
+            
+
+
+
+
+
+
+
+
+
+
+        
 
 def clear( opts ):
     print "======= clearing entire database for user '%s'." % opts.user
@@ -708,7 +730,7 @@ def main():
         if opts.errors:
             errors(opts)
         elif opts.dump:
-            dump(opts)
+            dump(opts, args)
         elif opts.clear_all:
             clear(opts)
         else:

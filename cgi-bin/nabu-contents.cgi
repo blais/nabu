@@ -148,10 +148,10 @@ def main():
     print '<dt>Time Uploaded</dt><dd>%s</dd>' % escape(str(src.time))
     print '<dt>Digest</dt><dd>%s</dd>' % escape(src.digest)
     print '</dl>'
-    print '<a href="#doctree">Document Tree</a> '
-    print '<a href="#source">Source</a> '
     if src.errors:
         print '<a href="#errors">Errors</a> '
+    print '<a href="#doctree">Document Tree</a> '
+    print '<a href="#source">Source</a> '
     print '<a href="%s">[As Html]</a> ' % (ashtml % src.unid)
     print '<a href="%s">[Back to Index]</a>' % uri
     print '<hr/>'

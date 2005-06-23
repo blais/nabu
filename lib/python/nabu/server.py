@@ -275,7 +275,7 @@ class ServerHandler:
 
         return 0
     
-    def dump( self ):
+    def dumpall( self ):
         """
         Returns information about all the documents stored for a specific user.
         """
@@ -290,7 +290,28 @@ class ServerHandler:
             ret['errors'] = bool(s.errors)
             allsources.append(ret)
         return allsources
+            
+    def dumpone( self, unid ):
+        """
+        Returns information about a single uploaded source.
+        """
+        attrs = ('unid', 'filename', 'username', 'time', 'digest',
+                 'errors', 'doctree', 'source',)
+## FIXME continue here
 
+
+
+
+
+
+
+
+
+
+
+
+
+        
     def geterrors( self ):
         """
         Return a list of mappings with the error texts.

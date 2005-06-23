@@ -4,9 +4,8 @@
 
 :client:
 
-- add to dump command: ability to dump contents like the page
-  - automatically if there is an id as an argument
-    (cmdline remains simple)
+- finish dump command: ability to dump contents like the page
+
 
 - add a command to return the list of transforms that the server supports,
   (these are simply the docstrings of the configured transforms, concatenated)
