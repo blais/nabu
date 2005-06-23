@@ -1,0 +1,11 @@
+.. -*- coding: UTF-8 -*-  
+.. :Id: unitest
+
+=================
+   Coding Test
+=================
+
+éà
+utilitairé
+
+

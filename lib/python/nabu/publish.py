@@ -93,7 +93,7 @@ def get_server( opts ):
         #     print '======= connecting to %s' % opts.server_url
         try:
             _server = xmlrpclib.ServerProxy(opts.server_url,
-                                            allow_none=1, verbose=1)
+                                            allow_none=1, verbose=0)
             _server.ping()
         except xmlrpclib.Error, e:
             if e.errcode == 401:
@@ -294,7 +294,8 @@ def opts_others( parser ):
     group.add_option('-e', '--errors', '--dump-errors', action='store_true',
                       help="Don't publish, fetch error status from the server.")
 
-    group.add_option('-d', '--dump', '--debug', action='store_true',
+    group.add_option('-d', '--dump', '--dump-all', '--debug',
+                     action='store_true',
                       help="Don't publish, print server contents for debugging. "
                      "If you specify some unique ids, server information about "
                      "that document is printed.")
@@ -302,7 +303,7 @@ def opts_others( parser ):
     group.add_option('-X', '--clear-all', action='store_true',
                       help="Clear the entire database for this user.")
 
-## FIXME implement
+## FIXME implement this
 ##     group.add_option('--help-transforms', action='store_true',
 ##                       help="Don't publish, fetch the help for the transforms "
 ##                      "that are supported by the server.  This is a simple "
@@ -325,7 +326,7 @@ def dump( opts, args ):
     """
     server = get_server(opts)
     if not args:
-        attrs = ['unid', 'filename', 'username', 'time', 'errors']
+        attrs = ['unid', 'filename', 'time', 'username', 'errors']
         headers = [dict( [(x, x.capitalize()) for x in attrs] )]
         sources_info = server.dumpall()
         countcols = dict( [(x, 0) for x in attrs] )
@@ -336,36 +337,36 @@ def dump( opts, args ):
         headers.append( dict( [(x, '-' * countcols[x]) for x in attrs] ) )
 
         sfmt = '%%(%(name)s)-%(count)ds'
-        fmt = '   '.join(
+        fmt = '  '.join(
             map(lambda a: sfmt % {'name': a, 'count': countcols[a]}, attrs))
 
         for s in headers + sources_info:
             print fmt % s
     else:
         attrs = ('unid', 'filename', 'username', 'time', 'digest',)
-        attrs_long = ('errors',)
-        attrs_bin = ('doctree', 'source',)
+        attrs_bin = ('errors', 'doctree', 'source',)
         for unid in args:
             sources_info = server.dumpone(unid)
+            if not sources_info:
+                print >> sys.stderr, "Error: document '%s' not found" % unid
+                continue
+
+            print '\f'
             for a in attrs:
                 print '%s: %s' % (a.capitalize(), sources_info[a])
-            for a in attrs_long:
-                print '\f'
-                print a.capitalize()
-                print '=' * 80
-                print sources_info[a]
-                print
             for a in attrs_bin:
                 print '\f'
                 print a.capitalize()
                 print '=' * 80 
-                print sources_info[a]
+                utf8_text = sources_info[a].data.decode('UTF-8')
+                # most consoles take latin-1
+                print utf8_text.encode('latin-1', 'replace') 
                 print
                 
 def clear( opts ):
     print "======= clearing entire database for user '%s'." % opts.user
     # note: this might be faster
-    get_server(opts).clearuser()
+    get_server(opts).clearall()
 
 
 #-------------------------------------------------------------------------------
@@ -418,7 +419,7 @@ class File:
         self.fn = fn
         self.unid = unid
         self.digest = digest
-        self.contents = contents
+        self.contents = contents # always a UTF-8 encoded string
 
 def find_candidates( opts, args ):
     """

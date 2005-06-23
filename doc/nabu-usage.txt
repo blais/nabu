@@ -145,9 +145,6 @@ run without this information.
 This file is found under your home directory as ``~/.naburc``.  You need to
 create it to setup your connection parameters [#]_.
 
-.. [#] Alternatively, you can set the ``NABURC`` environment variable to tell
-       the client where to find the configuration file.
-
 A typical ``~/.naburc`` file will look something like this::
 
   user = '<username>'
@@ -156,6 +153,9 @@ A typical ``~/.naburc`` file will look something like this::
   exclude = ['.svn', 'CVS', '*~']
   #verbose = 1
 
+
+.. [#] Alternatively, you can set the ``NABURC`` environment variable to tell
+       the client where to find the configuration file.
 
 Dealing with Errors
 -------------------
@@ -175,7 +175,8 @@ processing errors were.
 .. note::
 
    For emacs users: the errors are formatted in a way that it is possible to use
-   the ``next-error`` feature for emacs to quickly find them out.
+   the ``next-error`` feature for emacs to quickly find them out.  You can just
+   run ``nabu`` from within emacs if you like.
 
 
 Triggers
@@ -207,3 +208,16 @@ To implement triggers using Subversion, edit the ``CVSROOT/commitinfo`` file and
 ::
 
   FIXME add this
+
+
+
+Users Policy
+============
+
+Right now, the way the Nabu servers are implemented, you can see, dump and
+overwrite the contents of other users [#]_.  
+
+.. [#] It would be possible to implement per-user document sets by combining
+       the unique id with the username to form the new unique id.  This
+       requires some changes on the server.
+

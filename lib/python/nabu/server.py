@@ -24,33 +24,12 @@ import docutils.frontend
 from docutils.transforms import Transformer
 
 # other imports
-from sqlobject import *
+from sqlobject import *  ## FIXME remove
 
 # nabu imports
 import nabu.entryforms
 from nabu.entryforms import *
 
-
-class Source(SQLObject):
-    """
-    Source and history of uploads.
-    This is used to figure out what needs to be refreshed.
-
-    We also keep a copy of the original document tree, before our extraction was
-    run, so that we can reprocess the extraction on the server without having to
-    reparse nor upload the documents.
-    """
-    class sqlmeta:
-        table = '__sources__'
-
-    unid = StringCol(alternateID=1, length=36, notNull=1)
-    filename = StringCol(length=256)
-    digest = StringCol(length=32, notNull=1)
-    username = StringCol(length=32)
-    time = DateTimeCol()
-    source = UnicodeCol()
-    doctree = BLOBCol() # pickled doctree, before custom transforms.
-    errors = UnicodeCol()
 
 
 ## FIXME move this into being simply the result of one of the transforms
@@ -58,7 +37,7 @@ class Document(SQLObject):
     """
     Stored document.
     """
-## FIXME _fromDatabase, what is it?
+## FIXME _fromDatabase, what does it do?
     unid = StringCol(alternateID=1, length=36, notNull=1)
     title = UnicodeCol()
     date = DateCol()
@@ -85,7 +64,8 @@ class ServerHandler:
     """
     username = 'guest'
     
-    def __init__( self, connection, username=None ):
+    def __init__( self, sources, connection, username=None ):
+        self.sources = sources
         self.connection = connection
         if username:
             self.username = username
@@ -96,7 +76,6 @@ class ServerHandler:
         return 0
 
     def getallids( self ):
-## FIXME for this user only
         return [r.unid for r in Source.select()]
 
     def gethistory( self, idlist=None ):
@@ -118,7 +97,7 @@ class ServerHandler:
 
         return ret
 
-    def clearuser( self ):
+    def clearall( self ):
         """
         Clear the entire database.
         This is requested from the client interface.
@@ -297,23 +276,32 @@ class ServerHandler:
         """
         Returns information about a single uploaded source.
         """
+        # Note: we need to return some Unicode strings using a UTF-8 encoded as
+        # a binary, because we don't know if those long strings will contain
+        # line-feed characters, which do not go through the XML-RPC layer.
+
         r = {}
         try:
             s = Source.byUnid(unid)
         except SQLObjectNotFound:
             return r
 
-        attrs = ('unid', 'filename', 'username', 'digest', 'errors',)
+        # FIXME: figure out policy for users. Now: all shared, all writable.
+        # if s.username != self.username:
+        #     return r
+
+        attrs = ('unid', 'filename', 'username', 'digest',)
         for a in attrs:
             r[a] = getattr(s, a)
         r['time'] = s.time.isoformat()
-        r['source'] = s.source
+        r['errors'] = xmlrpclib.Binary(s.errors.encode('UTF-8'))
+        r['source'] = xmlrpclib.Binary(s.source.encode('UTF-8'))
 
         doctree = pickle.loads(s.doctree)
-        doctree_str = docutils.core.publish_from_doctree(
+        doctree_utf8 = docutils.core.publish_from_doctree(
             doctree, writer_name='pseudoxml',
-            settings_overrides={'output_encoding': 'unicode'})
-        r['doctree'] = doctree_str
+            settings_overrides={'output_encoding': 'UTF-8'})
+        r['doctree'] = xmlrpclib.Binary(doctree_utf8)
         return r
 
     def geterrors( self ):
@@ -326,6 +314,3 @@ class ServerHandler:
             errors.append(dict((a, getattr(s, a)) for a in fields))
         return errors
 
-    
-
-        
