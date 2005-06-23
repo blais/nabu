@@ -3,12 +3,13 @@
 ============
 
 :client:
-
 - finish dump command: ability to dump contents like the page
-
 
 - add a command to return the list of transforms that the server supports,
   (these are simply the docstrings of the configured transforms, concatenated)
+
+
+
 
 - remove all traces of the Document class in the server.py code
 

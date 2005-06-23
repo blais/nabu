@@ -39,7 +39,7 @@ class DocumentTransform(Transform):
 
         def __init__( self, *args, **kwds ):
             nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
-            self.extracted = {}
+            self.extracted = dict( (x, None) for x in ('title', 'date') )
             
         def visit_title( self, node ):
             if 'title' not in self.extracted:
@@ -50,7 +50,6 @@ class DocumentTransform(Transform):
             mo = re.match('(\d\d\d\d)-(\d\d)-(\d\d)', tdate)
             if mo:
                 self.extracted['date'] = datetime.date(*map(int,mo.groups()))
-
 
 import nabu.entryforms
 nabu.entryforms.registry['document'] = DocumentTransform

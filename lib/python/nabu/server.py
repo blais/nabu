@@ -9,6 +9,7 @@ Server-side handlers for requests.
 
 # stdlib imports
 import sys
+import xmlrpclib
 import md5
 import datetime
 import threading
@@ -109,10 +110,11 @@ class ServerHandler:
                 ret[r.unid] = r.digest
         else:
             for unid in idlist:
-                r = Source.select(Source.q.unid == unid)
-                if r.count() > 0:
-                    rr = r[0]
+                try:
+                    rr = Source.byUnid(unid)
                     ret[rr.unid] = rr.digest
+                except SQLObjectNotFound:
+                    pass
 
         return ret
 
@@ -295,23 +297,25 @@ class ServerHandler:
         """
         Returns information about a single uploaded source.
         """
-        attrs = ('unid', 'filename', 'username', 'time', 'digest',
-                 'errors', 'doctree', 'source',)
-## FIXME continue here
+        r = {}
+        try:
+            s = Source.byUnid(unid)
+        except SQLObjectNotFound:
+            return r
 
+        attrs = ('unid', 'filename', 'username', 'digest', 'errors',)
+        for a in attrs:
+            r[a] = getattr(s, a)
+        r['time'] = s.time.isoformat()
+        r['source'] = s.source
 
+        doctree = pickle.loads(s.doctree)
+        doctree_str = docutils.core.publish_from_doctree(
+            doctree, writer_name='pseudoxml',
+            settings_overrides={'output_encoding': 'unicode'})
+        r['doctree'] = doctree_str
+        return r
 
-
-
-
-
-
-
-
-
-
-
-        
     def geterrors( self ):
         """
         Return a list of mappings with the error texts.

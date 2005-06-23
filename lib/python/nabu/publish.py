@@ -92,7 +92,8 @@ def get_server( opts ):
         # if opts.verbose:
         #     print '======= connecting to %s' % opts.server_url
         try:
-            _server = xmlrpclib.ServerProxy(opts.server_url, allow_none=1)
+            _server = xmlrpclib.ServerProxy(opts.server_url,
+                                            allow_none=1, verbose=1)
             _server.ping()
         except xmlrpclib.Error, e:
             if e.errcode == 401:
@@ -301,6 +302,12 @@ def opts_others( parser ):
     group.add_option('-X', '--clear-all', action='store_true',
                       help="Clear the entire database for this user.")
 
+## FIXME implement
+##     group.add_option('--help-transforms', action='store_true',
+##                       help="Don't publish, fetch the help for the transforms "
+##                      "that are supported by the server.  This is a simple "
+##                      "server-dependent documentation mechanism.")
+
     parser.add_option_group(group)
         
 def errors( opts ):
@@ -335,24 +342,26 @@ def dump( opts, args ):
         for s in headers + sources_info:
             print fmt % s
     else:
-        attrs = ('unid', 'filename', 'username', 'time', 'digest',
-                 'errors', 'doctree', 'source',)
+        attrs = ('unid', 'filename', 'username', 'time', 'digest',)
+        attrs_long = ('errors',)
+        attrs_bin = ('doctree', 'source',)
         for unid in args:
-            sources_info = server.dumpone()
-## FIXME continue here
-            
-
-
-
-
-
-
-
-
-
-
-        
-
+            sources_info = server.dumpone(unid)
+            for a in attrs:
+                print '%s: %s' % (a.capitalize(), sources_info[a])
+            for a in attrs_long:
+                print '\f'
+                print a.capitalize()
+                print '=' * 80
+                print sources_info[a]
+                print
+            for a in attrs_bin:
+                print '\f'
+                print a.capitalize()
+                print '=' * 80 
+                print sources_info[a]
+                print
+                
 def clear( opts ):
     print "======= clearing entire database for user '%s'." % opts.user
     # note: this might be faster
