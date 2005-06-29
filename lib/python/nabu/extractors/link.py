@@ -4,31 +4,32 @@
 #
 
 """
-Process the restructuredtext files.
+Process links inside of documents.
 """
 
-import sys
-import xmlrpclib
-import pickle
-from pprint import pprint, pformat
+# stdlib imports
+import re, datetime
 
-import docutils.readers.standalone
-import docutils.writers.null
-import docutils.transforms
-import docutils.io
-import docutils.core
+# docutils imports
 from docutils import nodes
 
-class LinkTransform(docutils.transforms.Transform):
+# other imports
+from sqlobject import *
+
+# nabu imports
+from nabu import extract
+
+
+class LinkExtractor(extract.Extractor):
     """
     Transform that finds links represented as line-blocks of less than lines,
     where if it has three lines, the first line is taken to be a description,
     the second line is a URL (reference), and the third line a comma-separated
     set of keywords.  Like this::
     
-      | Description of a link
-      | http://this-is-a-reference.com/target.html
-      | keyword1, references, keyword3
+      |   From Montreal -- Classifieds for Japanese living in Montreal
+      |   http://www.from-montreal.com/
+      |   montreal, classified, ads, japan
 
     The following forms are also accepted.
 
@@ -43,7 +44,10 @@ class LinkTransform(docutils.transforms.Transform):
     """
     default_priority = 900
 
-    table = 'Link'
+    def apply( self ):
+        v = self.Visitor(self.document)
+        v.x = self
+        self.document.walk(v)
 
     class Visitor(nodes.SparseNodeVisitor):
 
@@ -51,31 +55,71 @@ class LinkTransform(docutils.transforms.Transform):
             # check the number of lines
             if len(node.children) not in (1, 2, 3):
                 return
+            
+            ldesc = lurl = lkeys = ''
 
-            # make sure that all children are lines
-            hasref = None
-            for line in node.children:
-                if not isinstance(line, nodes.line):
+            # check the various patterns above
+            def checkref( lineref ):
+                if not lineref.children[0]:
+                    return False
+                if not isinstance(lineref.children[0], nodes.reference):
+                    return False
+                return lineref.children[0]
+            
+            if len(node.children) == 1:
+                ref = checkref(node.children[0])
+                if not ref:
                     return
-                if len(line.children) == 1 and \
-                   isinstance(line.children[0], nodes.reference):
-                    hasref = line
-                
-            # make sure that one of the children has a reference has the unique
-            # child
-            if hasref is None:
+                lurl = ref.astext()
+
+            elif len(node.children) == 2:
+                ref = checkref(node.children[1])
+                if ref:
+                    lurl = ref.astext()
+                    ldesc = node.children[0].astext()
+                else:
+                    ref = checkref(node.children[0])
+                    if ref:
+                        lurl = ref.astext()
+                        lkeys = node.children[1].astext()
+                    else:
+                        return
+                    
+            elif len(node.children) == 3:
+                ref = checkref(node.children[1])
+                lurl = ref.astext()
+                ldesc = node.children[0].astext()
+                lkeys = node.children[2].astext()
+            else:
                 return
             
+            # add a class to the document for later rendering
             node.attributes['classes'].append('bookmark')
 
-            print node.children[0].astext()
-            print node.children[1].children[0]
-            print node.children[2].astext()
-            
+            # store the bookmark
+            self.x.storage.store(self.x.unid, ldesc, lurl, lkeys)
+                
 
-    def apply( self ):
-        v = self.Visitor(self.document)
-        self.document.walk(v)
+class Link(SQLObject):
+    """
+    Storage for document information.
+    """
+    unid = StringCol(notNull=1)
 
-import nabu.entryforms
-nabu.entryforms.registry['link'] = LinkTransform
+    url = StringCol()
+    description = UnicodeCol()
+    keywords = UnicodeCol()
+
+
+class LinkStorage(extract.SQLObjectExtractorStorage):
+    """
+    Link storage.
+    """
+
+    sqlobject_classes = [Link]
+
+    def store( self, unid, url, description, keywords ):
+        Link(unid=unid,
+             url=url,
+             description=description,
+             keywords=keywords)

@@ -7,43 +7,48 @@
 Process global information about the upload as a document.
 """
 
-import sys
-import xmlrpclib
-import pickle
-import re
-import datetime
-from pprint import pprint, pformat
+# stdlib imports
+import re, datetime
 
-import docutils.readers.standalone
-import docutils.writers.null
-from docutils.transforms import Transform
-import docutils.io
-import docutils.core
+# docutils imports
 from docutils import nodes
 
-class DocumentTransform(Transform):
+# other imports
+from sqlobject import *
+
+# nabu imports
+from nabu import extract
+
+
+class DocumentExtractor(extract.Extractor):
     """
     Transform that extracts some basic information about the document as a
     whole.  For example, it extracts the title and some bibliographic fields.
     """
     default_priority = 900
 
-    table = 'Document'
-
     def apply( self ):
         v = self.Visitor(self.document)
         self.document.walk(v)
-        self.extracted = v.extracted
+        self.storage.store(self.unid, v.extracted)
+
+        from pprint import pformat
+        self.document.reporter.info(
+            'Document extractor: %s' % pformat(v.extracted))
 
     class Visitor(nodes.SparseNodeVisitor):
 
         def __init__( self, *args, **kwds ):
             nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
-            self.extracted = dict( (x, None) for x in ('title', 'date') )
-            
+            self.extracted = {}
+
         def visit_title( self, node ):
             if 'title' not in self.extracted:
                 self.extracted['title'] = node.astext()
+
+        def visit_author( self, node ):
+            if 'author' not in self.extracted:
+                self.extracted['author'] = node.astext()
 
         def visit_date(self, node):
             tdate = node.astext()
@@ -51,5 +56,32 @@ class DocumentTransform(Transform):
             if mo:
                 self.extracted['date'] = datetime.date(*map(int,mo.groups()))
 
-import nabu.entryforms
-nabu.entryforms.registry['document'] = DocumentTransform
+class Document(SQLObject):
+    """
+    Storage for document information.
+    """
+    unid = StringCol(notNull=1)
+
+    title = UnicodeCol()
+    author = UnicodeCol()
+    date = DateCol()
+    abstract = UnicodeCol(notNull=0)
+
+class DocumentStorage(extract.SQLObjectExtractorStorage):
+    """
+    Document storage.
+
+    Note: this is not necessarily meant to store the actual document, but rather
+    stuff extracted from the document.  You may to use the document from the
+    uploaded sources storage to render the entire document as HTML, this is ok.
+    """
+
+    sqlobject_classes = [Document]
+
+    def store( self, unid, *args ):
+        data, = args
+        Document(unid=unid,
+                 title=data.get('title', ''),
+                 date=data.get('date'),
+                 author=data.get('author', ''),
+                 abstract=data.get('abstract', ''))
