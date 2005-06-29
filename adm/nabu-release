@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Simple script to create a new Nabu release.
+#
+
+set -x
+
+VER=`svnlook youngest $SVNROOT`
+OUTNAME=nabu.$VER
+
+SVNROOT=file:///home/blais/repos/svnroot/nabu/trunk
+WEBROOT=/home/blais/w.furius
+
+echo "Exporting to $OUTNAME ..."
+cd /var/tmp
+svn export $SVNROOT $OUTNAME
+tar jcvf $OUTNAME.tar.bz2 $OUTNAME
+cp $OUTNAME.tar.bz2 $WEBROOT/downloads/nabu
+rm -r $OUTNAME $OUTNAME.tar.bz2
+cd -
