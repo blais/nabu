@@ -1,19 +1,14 @@
-============
- TODO: nabu
-============
+==================
+    TODO: nabu
+==================
 
 :client:
-- add a command to return the list of transforms that the server supports,
-  (these are simply the docstrings of the configured transforms, concatenated)
-
-- remove all traces of the Document class in the server.py code
-
-- add option not to upload the source
-
 - add config notes to server? to docs?
 
 
 
+:web:
+- create a separate demo page with explanations, etc.
 
 
 :publisher:
@@ -30,149 +25,31 @@
       in a variable and add it back in when reencrypting
 
 
-:server setup and beta users:
-- separate the nabu transforms from the standalone reader transforms and keep
-  that as the source documents
-
-  - eventually we could reprocess the entire documents without uploading again,
-    just having to run the nabu transforms/extractors
-
-- make the server run with multiple threads to process all files after
-  communication
+:server setup:
+- implement asynchronous document processing on the server
 
 - database locking issues?
 
 
 
+:tests:
+  - test with files with DOS CRLF chars
+  - test with other encodings than utf-8 in source file
 
-:entries:
+
+:extractors:
 - warn on files that have no titles (add minimum requirements entryform)
-
-- find a way for the entryforms to be "loosely coupled" with the data model on
-  the server.
 
 - add a generic field list parser for creating new types of records without
   code: the entry type is the first field list, if it matches some pattern
   (e.g. if it's empty);
 
-- comment nodes could be stripped off complete
+- add my own HTML writer to remove comment nodes completely, so they don't show
+  up in the HTML as comments;
 
 - there should be and .. end directive to stop the processing from that point on.
   - .. disclosure:: private directive could achieve something similar
 
 
 
-:documentation:
-- put project online
 
-- create home page to describe what it is;
-
-- naming:
-
-  * Tinba: Tinba Is Not a Blog A...
-  * xNB: x is not a blog
-  * NABO: Not A Blog Only
-
-
-
-
-:tests:
-  - test with other encodings than utf-8 in source files
-  - duplicate Id error test
-
-
-:source files:
-- uniformize the :Id: tags
-
-
-Rejected or Indefinitely-postponed Ideas
-----------------------------------------
-
-- ``include-only`` option in the publisher:
-
-    - restrict finder to certain extensions (default is all files)
-      - test with .txt extensions
-
-  For now, we think that the ``exclude`` option combined with the
-  discrimintation of having markers in only certain files is sufficient for most
-  usage.  And you can customize the marker.  Also, since we're just reading the
-  header of the files, it is still really fast even when there are a lot of
-  large binary files.
-
-- extend the server to allow the publisher to send already parsed doctree as
-  pickled to the server.
-
-  We can do this later: this is only an optimization to ease the load on the
-  server.
-
-
-- we need to find out if it is possible from a CGI script to let the client
-  know that we're done, and to keep running on the server, while letting the
-  client exit?  note that there might be some options in the client for that
-  purpose. find out.
-
-  Do this later. This could be interesting.
-
-  - try this in headers from Nabu server script::
-  
-      Connection: close
-
-
-- do we require a user/password?
-
-  For now, yes.
-
-
-- do we even bother entering partial data when there are errors?
-  make it an option on the server?
-
-  Do this later.
-
-- print processing/pending queue (server must provide that information)
-
-  We need an interface for servers that implement deferred processing.  We
-  should be able to query this processing queue to find out if our documents
-  have been processed so we can query for errors.
-
-
-- when pushing new documents to the server, spit a warning if there is a clash
-  of documents between users?
-
-  This should be in the server config and perhaps belongs to the domain of
-  policy.
-
-
-- store length or number of nodes in the sources document, to be able to
-  evaluate the size or time to perform a specific task on the data.
-
-  Do this later.
-
-
-- loose data models: automatically adding columns for entry "fields" that are
-  not currently in the database, makes the data model looser
-
-  - find out how to programmatically add columns to the database
-
-  Do this later, when I have a good demonstration of nicely extracted stuff.
-
-- per-user document sets:
-
-  Right now, the way the Nabu servers are implemented, you can see, dump and
-  overwrite the contents of other users [#]_.
-  
-  _ [#]. It would be possible to implement per-user document sets by combining the
-         unique id with the username to form the new unique id.  This requires
-         some changes on the server.
-
-  Do this at some point.
-
-  This has important consequences if the users are pushing documents from a
-  shared body of source texts.
-
-
-
-Docutils Questions
-------------------
-
-- docutils DTD: shouldn't we have a special kind of node for the document title
-  and subtitle?

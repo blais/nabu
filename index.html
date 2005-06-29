@@ -16,149 +16,300 @@
 
 <div class="document" id="nabu-a-text-file-publishing-system">
 <h1 class="title">nabu: A Text File Publishing System</h1>
-<div class="contents topic" id="contents">
-<p class="topic-title first"><a name="contents">Contents</a></p>
-<ul class="simple">
-<li><a class="reference" href="#description" id="id2" name="id2">Description</a></li>
-<li><a class="reference" href="#documentation" id="id3" name="id3">Documentation</a><ul>
-<li><a class="reference" href="#components" id="id4" name="id4">Components</a></li>
-</ul>
-</li>
-<li><a class="reference" href="#download" id="id5" name="id5">Download</a><ul>
-<li><a class="reference" href="#beta-testing" id="id6" name="id6">Beta Testing</a></li>
-</ul>
-</li>
-<li><a class="reference" href="#reporting-bugs" id="id7" name="id7">Reporting Bugs</a></li>
-<li><a class="reference" href="#installation" id="id8" name="id8">Installation</a></li>
-<li><a class="reference" href="#copyright-and-license" id="id9" name="id9">Copyright and License</a></li>
-<li><a class="reference" href="#author" id="id10" name="id10">Author</a></li>
-</ul>
-</div>
-<!--  -->
 <blockquote>
 <p>&quot;Nabu is the Babylonian god of wisdom and writing, worshipped by
 Babylonians as the son of Marduk and his consort, Sarpanitum, and as
 the grandson of Ea.&quot;</p>
 <p class="attribution">&mdash;(From <a class="reference" href="http://en.wikipedia.org/wiki/Nabu">Wikipedia</a>)</p>
 </blockquote>
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#description" id="id2" name="id2">Description</a><ul>
+<li><a class="reference" href="#example-extracting-contact-info" id="id3" name="id3">Example: Extracting Contact Info</a></li>
+<li><a class="reference" href="#example-blogging-system" id="id4" name="id4">Example: Blogging System</a></li>
+<li><a class="reference" href="#example-automatic-bookmarks-list" id="id5" name="id5">Example: Automatic Bookmarks List</a></li>
+<li><a class="reference" href="#example-shared-events-calendar" id="id6" name="id6">Example: Shared Events Calendar</a></li>
+<li><a class="reference" href="#customizeability-writing-extractors" id="id7" name="id7">Customizeability: Writing Extractors</a></li>
+<li><a class="reference" href="#target-audience" id="id8" name="id8">Target Audience</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#features" id="id9" name="id9">Features</a><ul>
+<li><a class="reference" href="#nabu-is-not" id="id10" name="id10">Nabu is not</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#documentation" id="id11" name="id11">Documentation</a><ul>
+<li><a class="reference" href="#test-drive-nabu" id="id12" name="id12">Test Drive Nabu</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#download" id="id13" name="id13">Download</a></li>
+<li><a class="reference" href="#reporting-bugs" id="id14" name="id14">Reporting Bugs</a></li>
+<li><a class="reference" href="#installation-and-dependencies" id="id15" name="id15">Installation and Dependencies</a></li>
+<li><a class="reference" href="#copyright-and-license" id="id16" name="id16">Copyright and License</a></li>
+<li><a class="reference" href="#author" id="id17" name="id17">Author</a></li>
+</ul>
+</div>
 <div class="section" id="description">
 <h1><a class="toc-backref" href="#id2" name="description">Description</a></h1>
-<p>Nabu is a system for allowing users to easily create large amounts of
-relevant information and publish this information in a semantically
-meaningful way on a remote server, which can then be accessed by various
-services with the intent to build useful services on top of this
-semantically rich storage.</p>
-<p>Concretely, Nabu allows you to keep various types of information into
-simple text files (in <a class="reference" href="http://docutils.sourceforge.net">restructuredtext</a> format, with simple added
-directives), and to have these informations parsed, organized and
-available remotely, and to have a web server display the information in
-various ways.  For example, you can have files with text, links, contact
-info, etc. in them and this information gets extracted and becomes
-available for a blog system to use.</p>
+<p>Nabu is a simple framework that extracts chunks of various types of information
+from documents written in simple text files (written with <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>
+conventions) and that stores this information (including the document) in a
+remote database for later retrieval.  The processing and extraction of the
+document is handled on a server, and there is a small and simple client that is
+used to push the files to the server for processing and storage (think
+<tt class="docutils literal"><span class="pre">rsync</span></tt>).  The client requires only Python to work.  The presentation layer
+is left unspecified: you can use whichever web application framework to present
+the extracted data in the way that you prefer.</p>
+<p>Assuming that a user can easily create text documents --this is the case for
+most programmers and techies, we do this all day, and we all have our favourite
+text editors-- this system allows you to store various kinds of data <em>across</em>
+multiple documents.  You can create and maintain a body of text files from which
+various elements automatically get stored in an organized manner in a database.</p>
+<p>It is probably best illustrated by some examples...</p>
+<div class="section" id="example-extracting-contact-info">
+<h2><a class="toc-backref" href="#id3" name="example-extracting-contact-info">Example: Extracting Contact Info</a></h2>
+<p>For example, imagine that you write several files about your travels, say, one
+for each destination.  Most likely they contain various contact information.
+You could insert them like this in any of your text files and they would
+automatically be extracted to a global list of contact info:</p>
+<pre class="literal-block">
+:Contact:
+:n: Martin Blais
+:e: blais&#64;furius.ca
+:a: 1 rue de la Montagne, Mongueuil, France
+</pre>
+<p>You could use this to feed into an online address book system, or create a
+birthday notification system for yourself by adding your birth date.</p>
+</div>
+<div class="section" id="example-blogging-system">
+<h2><a class="toc-backref" href="#id4" name="example-blogging-system">Example: Blogging System</a></h2>
+<p>Another example: you could easily build a blogging system by detecting documents
+with certain bibliographic fields and a date at the top of document, for
+example:</p>
+<pre class="literal-block">
+Cookies and Cream Today
+=======================
+
+:Blog: general
+:Date: 2005-06-25
+
+Ahh, I like to talk about cookies and cream...
+</pre>
+<p>All you would have to do is present the documents in an orderly way, e.g. by
+category, by date, just the most recent, whatever you like.</p>
+</div>
+<div class="section" id="example-automatic-bookmarks-list">
+<h2><a class="toc-backref" href="#id5" name="example-automatic-bookmarks-list">Example: Automatic Bookmarks List</a></h2>
+<p>Another idea: you could automatically extract all the URLs from the documents
+pushed to the server (across <em>all</em> the files) and automatically build an online
+RSS bookmarks feeder, where your bookmarks would be organized by keywords, maybe
+even fetching the keywords in the respective documents from which they were
+extracted.</p>
+</div>
+<div class="section" id="example-shared-events-calendar">
+<h2><a class="toc-backref" href="#id6" name="example-shared-events-calendar">Example: Shared Events Calendar</a></h2>
+<p>How about this one: I maintain a todo file in a text file, simply.  With a
+simple convention, like:</p>
+<pre class="literal-block">
+:Event: 2005-06-28
+  - dinner with Hannah &#64; funky restaurant
+
+:Event: 2005-07-10 13h30
+  - presentation on quaternions (room C-117)
+</pre>
+<p>These entries could be fed automatically in a shared Nabu, for a group of
+friends or perhaps co-workers, and presented as a shared online calendar,
+perhaps password-protected for access by certain people only, or filtered
+somehow.</p>
+<p>There are many possibilities... I'm convinced I will find more serious uses for
+this system as well, which is why I built it in a generic manner.</p>
+</div>
+<div class="section" id="customizeability-writing-extractors">
+<h2><a class="toc-backref" href="#id7" name="customizeability-writing-extractors">Customizeability: Writing Extractors</a></h2>
+<p>Various simple extractors will come with the Nabu package itself, but we suspect
+you will very soon want to write your own.  Writing extractors is very easy.</p>
+<p>All of this is built using the very powerful <a class="reference" href="http://docutils.sourceforge.net">docutils</a> tools, which includes the
+<a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> parser and provides the data structures that represent your
+source documents.  Extractors are simply docutils transforms that visit the
+document structure (which is provided and saved by the Nabu system).  To add a
+new type of entry, all you need to do is write code that visits the tree, finds
+what you want, and write a simple object to store it in the way you prefer.  You
+can use SQLObject or another library to store the data in a database or in text
+files.</p>
+</div>
+<div class="section" id="target-audience">
+<h2><a class="toc-backref" href="#id8" name="target-audience">Target Audience</a></h2>
+<p>This system is made to be a simple as possible to use.  However, it is not
+designed for your mother.  In order to be able to use this efficiently, you must</p>
+<ol class="arabic simple">
+<li>understand the conventions and simple no-markup syntax of <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>;</li>
+<li>be able to edit simple text files.</li>
+</ol>
+<p>I suspect that this will cather to people who are already familiar with
+computers.</p>
 <p>For more details, see the design document and project proposal under the
 <tt class="docutils literal"><span class="pre">doc</span></tt> subdirectory.</p>
+</div>
+</div>
+<div class="section" id="features">
+<h1><a class="toc-backref" href="#id9" name="features">Features</a></h1>
 <p>Nabu is cool, because:</p>
+<ul>
+<li><p class="first">it is flexible: you can use</p>
 <ul class="simple">
-<li>you edit files locally, with your favourite editor.</li>
-<li>the organization of the files in subdirectories has nothing to do with how the
-content is presented.  It effectively offers you a sandbox for creating
-content, and then how you organize or present the content is dictated by ways
-that <em>you</em> decide, potentially independent of the file organization structure;</li>
-<li>the valuable source of the information, the text files, remains with you, and
-you are free to manage them in any way you prefer, with any version control
-system you like (if you want to do that);</li>
-<li>it does not dictate how the information is presented/served to the clients;</li>
-<li>various semantic things are automatically extracted from your document.  These
-semantic things are easily written with little code and are configurable.
-Nabu comes with many content extractors (generic and specific ones);</li>
-<li>a light-weight program with little dependencies is used to upload the files on
-the server.  The server parses the content.  This maximizes the potential that
-you will be able to use Nabu anywhere;</li>
+<li>whichever text editor you like to edit the files;</li>
+<li>whichever source code control system you like to store and maintain them (or
+none);</li>
+<li>whichever database for storage;</li>
+<li>and whichever web application framework for presentation.  Nabu does not
+dictate how the information is presented/served to the clients;</li>
 </ul>
-<p>Nabu is not:</p>
+</li>
+<li><p class="first">you edit files <em>locally</em>, not in a bleeping web browser window (programmers
+will appreciate the value of this);</p>
+</li>
+<li><p class="first">the organization of the source files in subdirectories has <em>nothing</em> to do
+with how the content is presented.  We use a unique id system (similar to
+arch) where your document to be published must contain a unique string to mark
+it with that id.  You can put that string in a <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> comment or a
+bibliographic field.  Unlike Wikis, this allows you to change the title of
+your documents which keeping the possibility of a permanent link to them.</p>
+<p>It effectively offers you a sandbox for creating content, and then how you
+organize and present the content is dictated by ways that <em>you</em> decide, most
+likely independent of the source file organization structure;</p>
+</li>
+<li><p class="first">the input data is scattered over many files, it does not have to be stored
+per-category (for example, you don't have to store all your &quot;contacts&quot; in a
+single &quot;address book&quot; file.  I conjecture that this may be closer to how
+humans think of this data.  This body of files can be used to create a
+mind-mapping system;</p>
+</li>
+<li><p class="first">we recognize that the value of the information lies in the source itself, the
+text files.  This valuable source remains <em>with you</em>, and you are free to
+manage them in any way you prefer, with any version control system you like
+(if you want to do that).  You can completely dump the data that lies on the
+database and rebuild it from the text files;</p>
+</li>
+<li><p class="first">various semantic chunks of content are automatically extracted from your
+document.  These semantic things are easily written with little code and are
+configurable.  Nabu comes with example content extractors;</p>
+</li>
+<li><p class="first">a light-weight program with minimal dependencies is used to upload the files
+on the server.  The server processes the files for content.  This maximizes
+the potential that you will be able to use Nabu anywhere, on any platform.
+The client only requires Python to work;</p>
+</li>
+</ul>
+<div class="section" id="nabu-is-not">
+<h2><a class="toc-backref" href="#id10" name="nabu-is-not">Nabu is not</a></h2>
 <ul class="simple">
-<li>a Wiki</li>
-<li>a Blogging system</li>
-<li>a word processing system</li>
+<li>a Wiki: although we upload documents (like Wiki pages) to a server, it may be
+that the presentation layer never serves the pages/documents themselves.
+Maybe it just serves bits of information extracted from the files.  Also,
+documents are identified by a unique string, and not by Wiki names.  This
+allows one to use whatever title for single documents and to create permanent
+links to specific documents (as long as the file id is maintained);</li>
+<li>a Blogging system: it can be used to add any document set to a database.
+Organization by date and category is simply implemented, but not a
+requirement.  You present the data set (which can be anything) in your
+preferred manner;</li>
+<li>a Word Processing system: it is not meant to just serve documents.  You write
+your documents locally, but they have the limitations of <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>.
+You must use a simple text editor.</li>
+<li>a Data Entry format: if you have <em>lots</em> of similarly structured bits of
+human-editable data, it would probably be better to write custom code to parse
+a known format rather than leverage Nabu for this.  The <a class="reference" href="http://docutils.sourceforge.net">docutils</a> processing
+on the server is not extremely fast, and if you need speed for lots of data
+(say, thousands of files), you will probably find this too slow.  However, for
+smaller sets of files that do not change too often, Nabu could be used this
+way.</li>
 </ul>
-<p>Nabu is:  a way to add content and extract semantic from this content-- no
-presentation layer.  You can build the presentation with any web development
-framework that can access an SQL database.</p>
+<p>Nabu sits between all these things.  I do not know what to call it, so I just
+call it &quot;Nabu&quot;.</p>
+</div>
 </div>
 <div class="section" id="documentation">
-<h1><a class="toc-backref" href="#id3" name="documentation">Documentation</a></h1>
+<h1><a class="toc-backref" href="#id11" name="documentation">Documentation</a></h1>
 <ul class="simple">
-<li><a class="reference" href="doc/nabu-usage.html">Usage</a>: for content creators;</li>
-<li><a class="reference" href="doc/nabu-goals.html">Goals</a>: motivation behind this project;</li>
-<li><a class="reference" href="doc/nabu-ideas.html">Ideas</a>: unorganized file with random ideas (this is my
-work file);</li>
-<li><a class="reference" href="doc/nabu-design.html">Design</a>: design concepts.</li>
+<li><a class="reference" href="doc/nabu-usage.html">Usage</a>: usage instructions for content pushers;</li>
+<li><a class="reference" href="doc/nabu-goals.html">Goals</a>: motivation behind this project, history of
+what led me to implement this;</li>
+<li><a class="reference" href="doc/nabu-design.html">Design</a>: conceptual design and software architecture;</li>
+<li><a class="reference" href="doc/nabu-ideas.html">Future</a>: future, postponed or rejected ideas. Stuff
+that I would like to do that is not on the immediate list;</li>
+<li><a class="reference" href="TODO">TODO list</a>: list of future changes, broken things, etc.;</li>
+<li><a class="reference" href="CHANGES">Change Log</a>: recent changes, history;</li>
 </ul>
-<div class="section" id="components">
-<h2><a class="toc-backref" href="#id4" name="components">Components</a></h2>
-<dl class="docutils">
-<dt>Nabu Client</dt>
-<dd>Contains a publisher that reads files on the local client filesystem and that
-figures out which ones are meant for publication, connects to the Nabu Server
-and asks for comparison of the files and incrementally uploads the files that
-have changed to update the content on the server.
-The client code may also contain a easy-to-use editor for source files.</dd>
-<dt>Nabu Server</dt>
-<dd>Receives updates of the source files from the publisher client, figures out
-which files have changed since the last update by serving MD5 sums of the
-files it has processed, and makes the necessary updates.  The content is
-stored in a database after having been parsed.</dd>
-<dt>Presenter / Web Application</dt>
-<dd>Uses the content stored on the database by the server, and provides a web
-front to the data by providing various services, like a blog, an addressbook,
-etc.  It also provides a web application with users, and various levels of
-access to the various chunks of data.</dd>
-</dl>
+<div class="section" id="test-drive-nabu">
+<h2><a class="toc-backref" href="#id12" name="test-drive-nabu">Test Drive Nabu</a></h2>
+<ul class="simple">
+<li><a class="reference" href="doc/nabu-beta.html">Test Drive</a>: test drive Nabu on our server;</li>
+</ul>
 </div>
 </div>
 <div class="section" id="download">
-<h1><a class="toc-backref" href="#id5" name="download">Download</a></h1>
+<h1><a class="toc-backref" href="#id13" name="download">Download</a></h1>
 <p>You can download the <a class="reference" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name
 <tt class="docutils literal"><span class="pre">nabu</span></tt>.  Usage instructions can be found <a class="reference" href="doc/nabu-usage.html">here</a>.</p>
-<p>The server code is not available for now, we only want to release this when it
-will be sexy enough.</p>
-<div class="section" id="beta-testing">
-<h2><a class="toc-backref" href="#id6" name="beta-testing">Beta Testing</a></h2>
-<ol class="arabic simple">
-<li><a class="reference" href="/nabu/test/cgi-bin/nabu-newuser.cgi">Create a new user in our testing Nabu server</a>;</li>
-<li>Use the created user/password to configure your client, for the publisher at
-<a class="reference" href="http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi">http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi</a>  ;</li>
-<li><a class="reference" href="/nabu/cgi-bin/nabu-contents.cgi">View the contents of the database (with the created user and password)</a>.</li>
-</ol>
-</div>
+<p>The entire codebase is available from our Subversion server only, until we
+release a 1.0 version.  It consists mostly in server code, but it also contains
+the publisher client.</p>
 </div>
 <div class="section" id="reporting-bugs">
-<h1><a class="toc-backref" href="#id7" name="reporting-bugs">Reporting Bugs</a></h1>
-<p>Send email to &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.</p>
+<h1><a class="toc-backref" href="#id14" name="reporting-bugs">Reporting Bugs</a></h1>
+<p>Send email to the author: Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.</p>
 </div>
-<div class="section" id="installation">
-<h1><a class="toc-backref" href="#id8" name="installation">Installation</a></h1>
+<div class="section" id="installation-and-dependencies">
+<h1><a class="toc-backref" href="#id15" name="installation-and-dependencies">Installation and Dependencies</a></h1>
+<dl class="docutils">
+<dt>Nabu Publisher Client</dt>
+<dd><p class="first">A single file written in Python.</p>
+<p>The publisher finds files on the local client filesystem and figures out which
+ones are meant for publication by detecting the ids within the top of the
+files, connects to the Nabu Server and asks for comparison of the files and
+incrementally uploads the files that have changed to update the content on the
+server.  The client code may also contain a easy-to-use editor for source
+files.</p>
+<p class="last">Requires Python-2.3 or greater (and perhaps some kind of shell environment to
+invoke the Python script with some arguments (cmd.exe that comes with Windows
+can do the job)).  That's it.</p>
+</dd>
+<dt>Nabu Server / Publisher Handler</dt>
+<dd><p class="first">Receives updates of the source files from the publisher client, helps the
+client figure out which files have changed since the last update by serving
+MD5 sums of the files it has processed, and makes the necessary updates.  The
+content is stored in a database after having been parsed.</p>
+<p>We provide generic handler code for the publisher server, which you can bind
+to a CGI script with XML-RPC (very simple) or within your own server system
+(if you can write a little bit of Python code, still very simple).  On the
+server, you must have:</p>
 <ul class="simple">
-<li><em>client</em>: you need Python-2.3 (and perhaps some kind of shell environment
-(cmd.exe can do on Windows));</li>
-<li><em>server</em>: you need apache and mod_python, Python-2.4 and the PostgreSQL
-database server;</li>
-<li><em>app</em>: you need some web application framework of your choice.  We provide an
-example with a CGI script to debug the contents extracted to the database.</li>
+<li><a class="reference" href="http://python.org">Python-2.4</a> or greater;</li>
+<li><a class="reference" href="http://docutils.sourceforge.net">docutils</a>;</li>
+<li>if you use a database backend: <a class="reference" href="http://sqlobject.org">SQLObject</a> and a
+supported wrapper for your database;</li>
 </ul>
+<p class="last">Otherwise, all you have to do with copy the example publisher that comes with
+Nabu, change it to configure the transforms that you would like be processed
+on your server.</p>
+</dd>
+<dt>Presentation Layer</dt>
+<dd><p class="first">This is up to you.  Nabu does not provide nor dictate the way in which you
+present your content, it only deals with the upload and processing of the
+source documents and the storage of extracted information.</p>
+<p class="last">However, we provide a simple CGI script that allows you to browse the uploaded
+contents for debugging and visualizing what has been stored in the Nabu
+database.</p>
+</dd>
+</dl>
 </div>
 <div class="section" id="copyright-and-license">
-<h1><a class="toc-backref" href="#id9" name="copyright-and-license">Copyright and License</a></h1>
-<div class="important">
-<p class="first admonition-title">Important</p>
-<p>Copyright (C) 2005  Martin Blais.  All Rights Reserved.</p>
-<p class="last">This code is NOT distributed publicly for now.  It is very much copyrighted
-and definitive action will be taken if you steal it in any way.  Those are
-the rules for now.  Use by permission only.</p>
-</div>
+<h1><a class="toc-backref" href="#id16" name="copyright-and-license">Copyright and License</a></h1>
+<p>Copyright (C) 2005  Martin Blais.  
+This code is distributed under the <a class="reference" href="COPYING">GNU General Public License</a>.</p>
 </div>
 <div class="section" id="author">
-<h1><a class="toc-backref" href="#id10" name="author">Author</a></h1>
+<h1><a class="toc-backref" href="#id17" name="author">Author</a></h1>
 <p>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</p>
 </div>
 </div>
