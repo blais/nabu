@@ -4,48 +4,49 @@
 #
 
 """
-Process the restructuredtext files.
+Process the document tree with a set of custom transforms.
 """
 
-# docutils imports
-import docutils.io
-import docutils.utils
-import docutils.writers.html4css1
-from docutils.frontend import OptionParser
-import docutils.readers.standalone
-import docutils.core
+# stdlib imports
+import StringIO
 
-__all__ = ['process_source']
+# docutils imports
+import docutils.utils
+import docutils.frontend
+from docutils.transforms import Transformer
 
 # nabu imports
-import nabu.entryforms
-# note: this triggers registration of all the entry forms types.
-from nabu.entryforms import *
-
-class NabuReader(docutils.readers.standalone.Reader):
-    """
-    Nabu restructured text reader.
-    This is used to add our transforms.
-    """
-    default_transforms = docutils.readers.standalone.Reader.default_transforms +\
-                        tuple(nabu.entryforms.registry.values())
+from nabu.extract import Extractor
 
 
-def extract( doctree ):
+def transform_doctree( unid, doctree, transforms ):
     """
-    Runs the Nabu transforms on an existing document tree, extracting various
-    kinds of entries from the document and return a map of all those extracted
-    entries, including the document itself.
+    Run the transforms on the document tree.  This may modify the tree,
+    which will have an effect later on if using that stored document tree as
+    a source for rendering.
     """
-##     document, parts = docutils.core.publish_doctree(
-##         source=contents,
-##         reader=NabuReader(),
-##         settings_overrides={'input_encoding': 'unicode'}
-##         )
-    
-    import cPickle as pickle
-    entries = {
-        'Document': {}
-        }
-    
-    return entries
+    # populate with transforms
+    doctree.transformer = Transformer(doctree)
+    for tclass, tdata in transforms:
+        assert issubclass(tclass, Extractor)
+        doctree.transformer.add_transform(tclass, data=(unid, tdata,))
+
+    # create an appropriate reporter
+    fend = docutils.frontend.OptionParser()
+    settings = fend.get_default_values()
+    errstream = StringIO.StringIO()
+    settings.update({
+        'warning_stream': errstream,
+        'error_encoding': 'UTF-8',
+        'halt_level': 100, # never halt
+        'report_level': 0,
+        }, fend)
+    doctree.reporter = docutils.utils.new_reporter('', settings)
+
+    # apply the transforms
+    doctree.transformer.apply_transforms()
+
+    # fix back the doctree to allow to be pickled 
+    doctree.transformer = doctree.reporter = None
+
+    return errstream.getvalue().decode('UTF-8')

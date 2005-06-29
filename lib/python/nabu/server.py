@@ -8,129 +8,151 @@ Server-side handlers for requests.
 """
 
 # stdlib imports
-import sys
 import xmlrpclib
 import md5
 import datetime
-import threading
 import StringIO
 import cPickle as pickle
-from pprint import pprint, pformat
 
 # docutils imports
 import docutils.core
-import docutils.utils
-import docutils.frontend
-from docutils.transforms import Transformer
-
-# other imports
-from sqlobject import *  ## FIXME remove
 
 # nabu imports
-import nabu.entryforms
-from nabu.entryforms import *
+from nabu import process
+from nabu.utils import ExceptionXMLRPCRequestHandler
 
-
-
-## FIXME move this into being simply the result of one of the transforms
-class Document(SQLObject):
-    """
-    Stored document.
-    """
-## FIXME _fromDatabase, what does it do?
-    unid = StringCol(alternateID=1, length=36, notNull=1)
-    title = UnicodeCol()
-    date = DateCol()
-
-
-sqlobject_classes = [Source, Document]
-
-def init_connection( connection ):
-    """
-    Initializes the connection for the SQLObject classes.
-    """
-    # Note: the following connection sharing makes it impossible to use
-    # threads.
-    for cls in sqlobject_classes:
-        cls._connection = connection
-
-    # Checks that the database tables exist and if they don't, creates them.
-    for cls in sqlobject_classes:
-        cls.createTable(ifNotExists=True)
-
-class ServerHandler:
+class PublishServerHandler:
     """
     Protocol server handler.
     """
     username = 'guest'
-    
-    def __init__( self, sources, connection, username=None ):
-        self.sources = sources
-        self.connection = connection
-        if username:
-            self.username = username
-        
-        init_connection(connection)
+
+    def __init__( self, srcstore, transforms, allow_reset=False ):
+        """
+        Create the server handler with the given source storage backend, and a
+        list of tranforms to apply when processing document trees.  The
+        `transforms` parameter should be an iterable of pairs, consisting of a
+        docutils.transform.Tranform class and an instance of an object that
+        implements the ExtractorStorage interface.
+        """
+        self.sources = srcstore
+        self.transforms = transforms
+        self.allow_reset = allow_reset
+
+        self.username = None
+
+    def reload( self, username ):
+        """
+        Use this it the server is reused between different requests.
+        """
+        self.username = username
 
     def ping( self ):
         return 0
 
     def getallids( self ):
-        return [r.unid for r in Source.select()]
+        return self.sources.getallids(self.username)
 
     def gethistory( self, idlist=None ):
         """
         Returns the digests for the list of requested ids.
         """
-        ret = {}
-
-        if idlist is None:
-            for r in Source.select():
-                ret[r.unid] = r.digest
-        else:
-            for unid in idlist:
-                try:
-                    rr = Source.byUnid(unid)
-                    ret[rr.unid] = rr.digest
-                except SQLObjectNotFound:
-                    pass
-
-        return ret
+        return self.sources.getdigests(self.username, idlist)
 
     def clearall( self ):
         """
         Clear the entire database.
         This is requested from the client interface.
         """
-        # drop the tables.  We're bold.
-        for cls in sqlobject_classes:
-            cls.dropTable(ifExists=True, cascade=True)
-## FIXME implement clearing for user only
+        # clear the extracted chunks of data that are associated with all
+        # documents.
+        for extractor, extractstore in self.transforms:
+            extractstore.clear()
+
+        # clear the source documents
+        self.sources.clear(self.username)
         return 0
 
     def clearids( self, idlist ):
         """
         Clear all entries for a set of ids.
         """
+        assert len(idlist) > 0
+
+        # clear the extracted chunks of data that are associated with these
+        # documents.
         for unid in idlist:
-            self.__clear_id(unid)
+            for extractor, extractstore in self.transforms:
+                extractstore.clear(unid)
 
-## FIXME implement clearing of specific ids only
-
-##         # drop the tables.  We're bold.
-##         for cls in sqlobject_classes:
-##             cls.dropTable(ifExists=True, cascade=True)
+        # clear the source documents
+        self.sources.clear(self.username, idlist)
         return 0
 
-    def __clear_id( self, unid ):
+    def reset_schema( self ):
         """
-        Removes all entries associated with a specific id.
+        Resets the schema for the extractors.
+        This may be used for development, debugging, and configuration.
         """
-        for cls in sqlobject_classes:
-            for r in cls.select(cls.q.unid == unid):
-                cls.delete(r.id)
+        if self.allow_reset:
+            self.sources.reset_schema()
+            for extractor, extractstore in self.transforms:
+                extractstore.reset_schema()
+            return 1
+        else:
+            return 0 # indicate no reset performed.
 
-        
+    def dumpall( self ):
+        """
+        Returns information about all the documents stored for a specific user.
+        """
+        return map(self.__xform_xmlrpc,
+                   self.sources.get(self.username,
+            attributes=('unid', 'filename', 'time', 'username', 'errors-p',)))
+
+    def dumpone( self, unid ):
+        """
+        Returns information about a single uploaded source.
+        """
+        # Note: we need to return some Unicode strings using a UTF-8 encoded as
+        # a binary, because we don't know if those long strings will contain
+        # line-feed characters, which do not go through the XML-RPC layer.
+
+        values = self.sources.get(self.username,
+            idlist=[unid],
+            attributes=('unid', 'filename', 'username', 'time', 'digest',
+                        'errors', 'doctree', 'source'))
+        dic = values[0]
+        return self.__xform_xmlrpc(dic)
+
+    def geterrors( self ):
+        """
+        Return a list of mappings with the error texts.
+        """
+        return map(self.__xform_xmlrpc,
+                   self.sources.get(self.username,
+                                    attributes=('unid', 'filename', 'errors',)))
+
+    def __xform_xmlrpc( self, odic ):
+        """
+        Transform dictionary values to be returnable thru xmlrpc.
+        Returns a new dictionary.
+        """
+        dic = odic.copy()
+        for k, v in dic.iteritems():
+            if k == 'time':
+                dic[k] = v.isoformat()
+            elif k in ('errors', 'source',):
+                dic[k] = xmlrpclib.Binary(
+                    v.encode('UTF-8'))
+            elif k == 'doctree':
+                doctree_utf8, parts = docutils.core.publish_from_doctree(
+                    v, writer_name='pseudoxml',
+                    settings_overrides={'output_encoding': 'UTF-8'})
+                dic['%s_str' % k] = xmlrpclib.Binary(doctree_utf8)
+                del dic[k]
+        return dic
+
     def process_source( self, unid, filename, contents_bin ):
         """
         Process a single file.
@@ -138,7 +160,7 @@ class ServerHandler:
         """
         # convert XML-RPC Binary into string
         contents_utf8 = contents_bin.data
-        
+
         # compute digest of contents
         m = md5.new(contents_utf8)
         digest = m.hexdigest()
@@ -149,16 +171,16 @@ class ServerHandler:
             source=contents_utf8, source_path=filename,
             settings_overrides={
             'input_encoding': 'UTF-8',
+            'error_encoding': 'UTF-8',
             'warning_stream': errstream,
             'halt_level': 100, # never halt
             },
             )
-        errortext = errstream.getvalue()
 
-        self.__process(unid, filename, digest,
-                       contents_utf8, doctree, None, errortext)
-
-        return errortext or ''
+        errortext = errstream.getvalue().decode('UTF-8')
+        messages = self.__process(unid, filename, digest,
+                                  contents_utf8, doctree, None, errortext)
+        return errortext, messages
 
     def process_doctree( self, unid, filename, digest,
                          contents_bin, doctree_bin, errortext ):
@@ -168,14 +190,16 @@ class ServerHandler:
         """
         contents_utf8 = contents_bin.data
 
+        # Note: errors unpickling are caught gracefully and reported to the
+        # client (but they should not occur anyway).
         docpickled = doctree_bin.data
         doctree = pickle.loads(docpickled)
-## FIXME return error to the client if there is an exception in unpickling here.
 
-        self.__process(unid, filename, digest,
-                       contents_utf8, doctree, docpickled, errortext)
-        return 0
-    
+        messages = self.__process(unid, filename, digest,
+                                  contents_utf8, doctree, docpickled,
+                                  errortext.decode('UTF-8'))
+        return '', messages
+
     def __process( self, unid, filename, digest, contents_utf8,
                    doctree, docpickled, errortext ):
         """
@@ -187,130 +211,67 @@ class ServerHandler:
           - `docpickled`: an optimization because we might already have a
             pickled version of the tree.  If left to None we create our own.
         """
+        assert isinstance(errortext, unicode)
 
         # remove all previous objects that were previously extracted from this
-        # document
-        for cls in sqlobject_classes:
-            sr = cls.select(cls.q.unid == unid)
-            for r in sr:
-                cls.delete(id=r.id)
+        # document, including this document, if it exists
+        self.clearids([unid])
 
-        # create a new history for the document
-        if docpickled is None:
-            docpickled = pickle.dumps(doctree)
-
-        newhist = Source(unid=unid,
-                         filename=filename.replace('\\', '/'),
-                         digest=digest,
-                         username=self.username,
-                         time=datetime.datetime.now(),
-                         source=contents_utf8.decode('utf-8'),
-                         doctree=docpickled,
-                         errors=errortext.decode('utf-8'))
-
-##         # process the custom transforms.
-##         entries = process_source(contents)
-## FIXME how do I detect errors here?
-
-
-
+        # transform the document tree
+        # Note: we apply the transforms before storing the document tree.
+        messages = process.transform_doctree(unid, doctree, self.transforms)
         
-        # apply extractor transforms
-        doctree.transformer = Transformer(doctree)
+        # add the transformed tree as a new uploaded source
+        self.sources.add(self.username, unid, filename.replace('\\', '/'),
+                         digest, datetime.datetime.now(),
+                         contents_utf8.decode('utf-8'),
+                         doctree, errortext,
+                         docpickled)
+        
+        return messages or u''
 
-## FIXME set settings manually
-        settings = docutils.frontend.OptionParser().get_default_values()
-        doctree.reporter = docutils.utils.new_reporter('<doctree>', settings)
-
-        doctree.transformer.add_transforms(
-            tuple(nabu.entryforms.registry.values()))
-        doctree.transformer.apply_transforms()
-
-        # create a map of the applied transforms
-        entries = {}
-        for transform, priority, transform_class, pending in \
-                doctree.transformer.applied:
-            ## FIXME FIXME find a per-xform generic way to return stuff
-            entries[transform_class.table] = transform.extracted
-
-## FIXME this should be in the "whole document" transform
-
-## FIXME entries should be the result of running all the transforms
-
-## FIXME create tables dynamically depending on what entries are returned
-
-
-        # For each available schema
-        for cls in sqlobject_classes:
-            try:
-                entry = entries[cls.__name__]
-            except KeyError:
-                continue
-
-            entry['unid'] = unid
-
-## FIXME check that the entry indeed has a value for the column
-## or perhaps create a column
-            params = dict( (k._name, entry[k._name]) for k in cls._columns )
-            newinst = cls(**params)
-
-        return 0
-    
-    def dumpall( self ):
+    def get_transforms_config( self ):
         """
-        Returns information about all the documents stored for a specific user.
+        Return a textual description of the supported transforms that this
+        server is configured with. We simply concatenate the docstrings of the
+        transform classes to provide this.
         """
-        allsources = []
-        attrs = ('unid', 'filename', 'username',)
-        for s in Source.select():
-            ret = {}
-            for a in attrs:
-                ret[a] = getattr(s, a)
-            # datetime objects cannot be marshalled
-            ret['time'] = s.time.isoformat()
-            ret['errors'] = bool(s.errors)
-            allsources.append(ret)
-        return allsources
+        helps = []
+        for x in self.transforms:
+            cls = x[0]
+            h = cls.__name__ + ':\n' + cls.__doc__
+            if not isinstance(h, unicode):
+                # most of our source code in latin-1 or ascii
+                h = h.decode('latin-1')
+            helps.append(h)
             
-    def dumpone( self, unid ):
-        """
-        Returns information about a single uploaded source.
-        """
-        # Note: we need to return some Unicode strings using a UTF-8 encoded as
-        # a binary, because we don't know if those long strings will contain
-        # line-feed characters, which do not go through the XML-RPC layer.
+        sep = unicode('\n' + '=' * 79 + '\n')
+        return sep.join(helps)
 
-        r = {}
-        try:
-            s = Source.byUnid(unid)
-        except SQLObjectNotFound:
-            return r
 
-        # FIXME: figure out policy for users. Now: all shared, all writable.
-        # if s.username != self.username:
-        #     return r
+def xmlrpc_handler( srcstore, transforms, username, allow_reset=0 ):
+    """
+    Given a source storage instance and a list of (transform class, transform
+    storage) pairs, implement a basic XMLRPC handler loop.
 
-        attrs = ('unid', 'filename', 'username', 'digest',)
-        for a in attrs:
-            r[a] = getattr(s, a)
-        r['time'] = s.time.isoformat()
-        r['errors'] = xmlrpclib.Binary(s.errors.encode('UTF-8'))
-        r['source'] = xmlrpclib.Binary(s.source.encode('UTF-8'))
+    Note: this is an example, you might want to handle the XMLRPC loop
+    differently, whatever you like.  This is being used by the example CGI
+    handler.
+    """
+    # create a publish handler
+    server_handler = PublishServerHandler(
+        srcstore, transforms, allow_reset=allow_reset)
 
-        doctree = pickle.loads(s.doctree)
-        doctree_utf8 = docutils.core.publish_from_doctree(
-            doctree, writer_name='pseudoxml',
-            settings_overrides={'output_encoding': 'UTF-8'})
-        r['doctree'] = xmlrpclib.Binary(doctree_utf8)
-        return r
-
-    def geterrors( self ):
-        """
-        Return a list of mappings with the error texts.
-        """
-        errors = []
-        fields = ['unid', 'filename', 'errors']
-        for s in Source.select(Source.q.errors != ''):
-            errors.append(dict((a, getattr(s, a)) for a in fields))
-        return errors
-
+    # prepare (reload) with the current user
+    #
+    # Note: this is designed this way to allow integration with mod_python,
+    # where we would not recreate the objects on every request.  This allows the
+    # handler to work with any web application framework (to tell people what
+    # they should use for building web applications is a debate we *really* do
+    # not want to get involved in...).
+    server_handler.reload(username)
+    
+    # create an XMLRPC server handler and bind interface
+    handler = ExceptionXMLRPCRequestHandler()
+    handler.register_instance(server_handler)
+    handler.handle_request()

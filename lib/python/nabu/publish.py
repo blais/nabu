@@ -46,11 +46,19 @@ switch.
 Configuration
 -------------
 
-All options can be set in a ~/.naburc file (or in the file pointed by the NABURC
-environment variable).  You must at least specify the server url somehow.
+All the command-line options offered by this program can be set in a
+configuration file, which is to be written in Python code.  Use the first long
+option name, with dashes replaced by underscores to set the options.
 
-Note: you can use the option to clear the database on its own to clean it up
-without pushing new files to the server.
+Parent directories for the files and directories specified on the command-line
+are searched (in order) to find a file named ``nabu.conf`` to contain this
+configuration.  If none are found, the file ``~/.naburc`` in the user's home
+directory is looked for.  To supersede this searching mechanism, you can set the
+environment variable NABURC and this will be used no matter what).
+
+Minimal configuration: you must at least specify the server URL, user and
+password.
+
 """
 
 __version__ = '$Revision$'
@@ -77,7 +85,7 @@ if sys.version_info[:2] < (2, 3):
 
 if sys.version_info[:2] < (2, 4):
     from sets import Set as set
-    
+
 #-------------------------------------------------------------------------------
 # Publish
 #-------------------------------------------------------------------------------
@@ -89,18 +97,29 @@ def get_server( opts ):
     """
     global _server
     if _server is None:
-        # if opts.verbose:
-        #     print '======= connecting to %s' % opts.server_url
-        try:
-            _server = xmlrpclib.ServerProxy(opts.server_url,
-                                            allow_none=1, verbose=0)
-            _server.ping()
-        except xmlrpclib.Error, e:
-            if e.errcode == 401:
+        if opts.process_locally != 3:
+            # if opts.verbose:
+            #     print '======= connecting to %s' % opts.server_url
+            try:
+                _server = xmlrpclib.ServerProxy(opts.server_url,
+                                                allow_none=1, verbose=0)
+                _server.ping()
+            except xmlrpclib.Error, e:
+                if e.errcode == 401:
+                    raise SystemExit(
+                        "Error: Cannot authenticate user '%s'." % opts.user)
+                else:
+                    raise
+        else:
+            try:
+                # You need to provide this module if you want to work locally.
+                import nabuserv
+                _server = nabuserv.get_server()
+            except ImportError, e:
                 raise SystemExit(
-                    "Error: Cannot authenticate user '%s'." % opts.user)
-            else:
-                raise
+                    "Cannot import local Nabu server for local processing: " +
+                    "'%s'" % e)
+
     return _server
 
 def opts_publish( parser ):
@@ -132,6 +151,17 @@ def opts_publish( parser ):
         "You would use this if it makes sense for the markers "
         "appear in your published documents somehow.")
 
+    group.add_option('-m', '--print-messages', action='store_true',
+                     help="Print informative messages indicating what "
+                     "the transforms have parsed.")
+
+    group.add_option('--dont-upload-source', action='store_true',
+                     help="When processing locally, do not upload the source "
+                     "document to the server.  Upload an empty string instead. "
+                     "This option only takes effect when you are processing "
+                     "the document locally (the server does not need the "
+                     "source.")
+
     parser.add_option_group(group)
 
 def opts_clear( parser ):
@@ -162,7 +192,7 @@ def publish( candidates, opts, args ):
             print '======= clearing {%s}' % iid
         server.clearids(idlist)
         return # nothing more to do
-        
+
     # check candidates against history (if not suppressed)
     if opts.force:
         proclist = candidates
@@ -170,7 +200,7 @@ def publish( candidates, opts, args ):
         proclist = []
     else:
         idhistory = server.gethistory([x.unid for x in candidates])
-
+        
         # compare digests and figure out which files to process
         proclist = []
         for candidate in candidates:
@@ -192,10 +222,12 @@ def publish( candidates, opts, args ):
             print '======= sending source for processing:  %s  {%s}' % \
                   (pfile.fn, pfile.unid)
 
-            errors = server.process_source(pfile.unid, pfile.fn,
-                                           xmlrpclib.Binary(pfile.contents))
+            errors, messages = server.process_source(
+                pfile.unid, pfile.fn, xmlrpclib.Binary(pfile.contents))
             if errors:
                 print errors
+            if opts.print_messages and messages:
+                print messages
             continue
 
         elif opts.process_locally >= 1:
@@ -247,30 +279,27 @@ def publish( candidates, opts, args ):
                 import cPickle as pickle
                 docpickled = pickle.dumps(doctree)
 
-                server.process_doctree(pfile.unid, pfile.fn, pfile.digest,
-                                       xmlrpclib.Binary(pfile.contents),
-                                       xmlrpclib.Binary(docpickled),
-                                       errors)
+                if opts._dont_upload_source:
+                    pfile.contents = '' #utf8
+
+                errors, messages = server.process_doctree(
+                    pfile.unid, pfile.fn, pfile.digest,
+                    xmlrpclib.Binary(pfile.contents),
+                    xmlrpclib.Binary(docpickled),
+                    errors)
+                if errors:
+                    print errors
+                if opts.print_messages and messages:
+                    print messages
 
             elif opts.process_locally == 2:
                 # do nothing, all we were asked to do is validate and don't
                 # send.
-                pass
+                print '======= (file validated)'
 
             elif opts.process_locally == 3:
-                print ('======= validating file with docutils and "'
-                       'extraction:  %s') % pfile.fn
-                try:
-                    import nabu.process
-
-                    raise NotImplementedError(
-                        "Local Nabu validation not implemented yet.")
-                    ## FIXME TODO finish extract method in Nabu and call it here
-                    ## and then print out the extracted fields.
-                except ImportError:
-                    raise SystemExit(
-                        "Error: you must have installed Nabu in order to "
-                        "process files with locally with extraction.")
+                # this case is already taken care of in get_server().
+                pass
 
     # remove documents that were not found (if requested)
     if opts.clear_not_found:
@@ -300,17 +329,18 @@ def opts_others( parser ):
                      "If you specify some unique ids, server information about "
                      "that document is printed.")
 
-    group.add_option('-X', '--clear-all', action='store_true',
-                      help="Clear the entire database for this user.")
+    group.add_option('-X', '--clear-all', action='count', default=0,
+                     help="Clear the entire database for this user.  If "
+                     "the server is configured in debug mode and allows it, "
+                     "this resets the schema by dropping all tables.")
 
-## FIXME implement this
-##     group.add_option('--help-transforms', action='store_true',
-##                       help="Don't publish, fetch the help for the transforms "
-##                      "that are supported by the server.  This is a simple "
-##                      "server-dependent documentation mechanism.")
+    group.add_option('--help-transforms', action='store_true',
+                     help="Don't publish, fetch the help for the transforms "
+                     "that are supported by the server.  This is a simple "
+                     "server-dependent documentation mechanism.")
 
     parser.add_option_group(group)
-        
+
 def errors( opts ):
     """
     Print last errors in the server.
@@ -326,9 +356,11 @@ def dump( opts, args ):
     """
     server = get_server(opts)
     if not args:
-        attrs = ['unid', 'filename', 'time', 'username', 'errors']
+        attrs = ['unid', 'filename', 'time', 'username', 'errors-p']
         headers = [dict( [(x, x.capitalize()) for x in attrs] )]
+        headers[0]['errors-p'] = 'Errors'
         sources_info = server.dumpall()
+
         countcols = dict( [(x, 0) for x in attrs] )
         for s in headers + sources_info:
             for a in attrs:
@@ -344,7 +376,7 @@ def dump( opts, args ):
             print fmt % s
     else:
         attrs = ('unid', 'filename', 'username', 'time', 'digest',)
-        attrs_bin = ('errors', 'doctree', 'source',)
+        attrs_bin = ('errors', 'doctree_str', 'source',)
         for unid in args:
             sources_info = server.dumpone(unid)
             if not sources_info:
@@ -357,16 +389,37 @@ def dump( opts, args ):
             for a in attrs_bin:
                 print '\f'
                 print a.capitalize()
-                print '=' * 80 
+                print '=' * 80
                 utf8_text = sources_info[a].data.decode('UTF-8')
                 # most consoles take latin-1
-                print utf8_text.encode('latin-1', 'replace') 
+                print utf8_text.encode('latin-1', 'replace')
                 print
-                
+
 def clear( opts ):
+    """
+    Issues a clear request to the server.
+    """
     print "======= clearing entire database for user '%s'." % opts.user
-    # note: this might be faster
-    get_server(opts).clearall()
+    if opts.clear_all == 1:
+        get_server(opts).clearall()
+    elif opts.clear_all == 2:
+        if get_server(opts).reset_schema():
+            # This only succeeds when the server allows it, i.e. for debugging
+            # and configuration.
+            print "Schema reset on server and all data dropped."
+        else:
+            raise SystemExit("Server does not allow to reset the schema.")
+
+def help_transforms( opts ):
+    """
+    Fetches the help about the server configuration and the transforms it
+    supports.
+    """
+    print
+    print 'Supported Transforms on the Server'
+    print '=================================='
+    print
+    print get_server(opts).get_transforms_config().encode('UTF-8')
 
 
 #-------------------------------------------------------------------------------
@@ -476,7 +529,7 @@ def find_to_publish( fnordns, opts ):
         except IOError, e:
             print >> sys.stderr, '======= skipping: %s' % e
             continue
-            
+
         header = f.read(opts.header_length)
 
         # find if it should be published
@@ -631,21 +684,36 @@ def opts_global( parser ):
 
     parser.add_option_group(group1)
 
-def parse_options( configvars ):
+def create_parser():
     """
-    Parse the command-line and config file options and return a pair of opts,
-    args like optparse.
+    Create a new parser with all the options we need.
     """
-    
-    # global parser
     parser = optparse.OptionParser(__doc__.strip(), version=__version__)
     opts_global(parser)
     opts_finder(parser)
     opts_publish(parser)
     opts_clear(parser)
     opts_others(parser)
+    return parser
 
-    # from optparse from 2.4, in order to be able to run on 2.3.
+def parse_options():
+    """
+    Parse the command-line and config file options and return a pair of opts,
+    args like optparse.
+    """
+    # first parse to find the names of files or directory arguments.
+    parser = create_parser()
+    opts, args = parser.parse_args()
+    if not args:
+        args = ['.']
+
+    # read the config file if found
+    configvars = read_config(opts, args)
+
+    # then parse again for real, setting the values in the config file as
+    # defaults (and verified by optparse).
+
+    # this next is from optparse from 2.4, in order to be able to run on 2.3.
     if sys.version_info[:2] < (2, 4):
         def _get_all_options(self):
             options = self.option_list[:]
@@ -655,7 +723,7 @@ def parse_options( configvars ):
         allopts = _get_all_options
     else:
         allopts = optparse.OptionParser._get_all_options
-        
+
     for option in allopts(parser):
         if option.dest in configvars:
             parser.defaults[option.dest] = configvars[option.dest]
@@ -663,9 +731,9 @@ def parse_options( configvars ):
     opts, args = parser.parse_args()
 
     # some server url is necessary
-    if opts.server_url is None:
+    if opts.server_url is None and opts.process_locally != 3:
         parser.error("You must specify a server url.")
-    
+
     # cook up server url with user and password, thus supporting both syntaxes
     # (separate user/pass or xml-rpc module syntax).  Final syntax is:
     # http://user:pass@host:port/path".
@@ -685,7 +753,11 @@ def parse_options( configvars ):
         if not opts.password:
             opts.password = fpass
 
-    ## FIXME TODO: query for password to avoid storing in file.
+    if not opts.password:
+        # Query for password if necessary.
+        import getpass
+        opts.password = getpass.getpass()
+
     purl[1] = '%s:%s@%s' % (opts.user, opts.password, purl[1])
     opts.server_url = urlparse.urlunparse(purl)
 
@@ -694,29 +766,65 @@ def parse_options( configvars ):
 
     return opts, args
 
-def read_config():
+def search_parents( fnordns, confname ):
+    """
+    Search the given list of files or directories and their parents, for the
+    file named `confname`.  The files and directories are searched in the order
+    in which they appear.  Return `None` if no file with such a name was found.
+    """
+    for dn in fnordns:
+        if not isdir(dn):
+            dn = dirname(dn)
+        dn = abspath(dn)
+            
+        prevdn = None
+        while dn != prevdn:
+            tentfn = join(dn, confname)
+            if exists(tentfn):
+                return tentfn
+            prevdn = dn
+            dn = dirname(dn)
+
+    return None
+
+def read_config( opts, args ):
     """
     Read, parse and verify values from config file.
     Returns a dictionary of all values read in the file.
     """
-    defvars = {}
+    # select config file.
     try:
+        # look at the environment variable
         rcfile = os.environ['NABURC']
     except KeyError:
-        rcfile = join(os.environ['HOME'], '.naburc')
-    if exists(rcfile):
-        try:
-            execfile(rcfile, defvars)
-        except Exception, e:
-            import traceback
-            print >> sys.stderr, \
-                  "Error: parsing configuration file '%s'" % rcfile
-            print >> sys.stderr, "Please fix errors below before running."
-            print >> sys.stderr, '----------------------------------------'
-            traceback.print_exc(file=sys.stderr)
-            print >> sys.stderr, '----------------------------------------'
-            print >> sys.stderr, '(exiting.)'
-            raise SystemExit(1)
+        # search the directories and parent directories for config file
+        rcfile = search_parents(args, 'nabu.conf')
+        if rcfile is None:
+            # look for the config file in the user's home
+            if 'HOME' in os.environ:
+                rcfile = join(os.environ['HOME'], '.naburc')
+            else:
+                rcfile = None
+
+    if rcfile is None or not exists(rcfile) or not os.access(rcfile, os.R_OK):
+        return {}
+            
+    # read and execute the file.
+    defvars = {}
+    if opts.verbose:
+        print "======= reading config file '%s'" % rcfile
+    try:
+        execfile(rcfile, defvars)
+    except Exception, e:
+        import traceback
+        print >> sys.stderr, \
+              "Error: parsing configuration file '%s'" % rcfile
+        print >> sys.stderr, "Please fix errors below before running."
+        print >> sys.stderr, '----------------------------------------'
+        traceback.print_exc(file=sys.stderr)
+        print >> sys.stderr, '----------------------------------------'
+        print >> sys.stderr, '(exiting.)'
+        raise SystemExit(1)
     return defvars
 
 #-------------------------------------------------------------------------------
@@ -733,8 +841,7 @@ def main():
     except:
         pass
 
-    configvars = read_config()
-    opts, args = parse_options(configvars)
+    opts, args = parse_options()
 
     try:
         if opts.errors:
@@ -743,6 +850,8 @@ def main():
             dump(opts, args)
         elif opts.clear_all:
             clear(opts)
+        elif opts.help_transforms:
+            help_transforms(opts)
         else:
             # if we're not requesting a complete clear of the database,
             # process files from current directory.  this is a bit of a special
