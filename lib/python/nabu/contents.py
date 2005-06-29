@@ -140,6 +140,7 @@ def render_html( doctree, uri ):
     scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
 
     settings = {'stylesheet': '%s://%s/docutils-style.css' % (scheme, netloc),
+    		'embed_stylesheet': False,
                 'output_encoding': 'UTF-8'}
 
     doctree_html, parts = docutils.core.publish_from_doctree(
