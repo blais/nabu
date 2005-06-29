@@ -1,6 +1,6 @@
-========================
-  Nabu Design Document
-========================
+=========================
+  Nabu: Design Document
+=========================
 
 :Author: Martin Blais <blais@furius.ca>
 :Date: 2005-06-22
@@ -9,8 +9,92 @@
    Design documentation for the Nabu publishing system.
 
 
+Components
+==========
+
+The system consists in a few components, described in the next sections.
+
+
 .. figure:: nabu1.png
 
    Nabu system components.
 
 
+Finder
+------
+
+The finder is the publisher client.  Its responsibilities are:
+
+- find the files that have a id marker in them;
+- query the server to find CRCs (MD5 sums) for these files;
+- compare the CRCs with the files on disk;
+- send the files that need to be updated to the server.
+
+You can find it in module ``publish``.
+
+Server (Handler)
+----------------
+
+The server receives files or document tree sent by the finder and processes
+them, stores them in a "sources upload database", and then runs the extractors
+on them which fill other tables in a database with various kinds of information.
+
+The server has to be configured with a specific set of extractors, which the
+person who sets up the server decides, depending on what information they want
+extracted from the document trees.
+
+Note that this server can be technically be instantiated locally (i.e. imported
+as a library from the finder), this could be used to fill a local database.
+Normally, we expect it to be set up over a network connection, using XML-RPC,
+with a simple CGI hook on a web server, or incorporated within some web
+application framework.
+
+You can find it in module ``server``.
+
+
+Uploaded Sources Storage
+------------------------
+
+This interface is used to implement storage of the uploaded source documents,
+information about them (time/date, user, original filename, etc.) and the
+document tree (stored as a pickled stream usually in a database blob).  You can
+create concrete implementations of the Source Storage to store this data in your
+favourite format and place.  There is a default implementation that uses
+SQLObject to store in an SQL database.
+
+You can find it in module ``sources``.
+
+
+Extractors and Extractor Storage
+--------------------------------
+
+Various extractors can be implemented to fetch information from the document
+tree, and/or to modify the document tree before it is stored for later
+retrieval.
+
+Each of these extractors is configured by the server setup with specific
+extractor storage objects associated with each of the extractors, which are used
+to abstract the storage mechanism.
+
+Thus, code for an extractor generally includes: a docutils transform -derived
+class (the extractor itself), and a class derived from ExtractorStorage for this
+extractor.
+
+You can find the base classes in module ``extract``.  The extractors are
+available in the ``nabu.extractors`` package.
+
+
+Other Modules
+=============
+
+Processing the Extractors
+-------------------------
+
+The ``process`` module contains some code to apply the transforms on an existing
+document tree.
+
+Debugging the Contents
+----------------------
+
+The ``contents`` module contains code to display a basic dump of the various
+contents of the uploaded sources storage via the web.

@@ -1,6 +1,6 @@
-==========================================
-   A Text-Based Content Creation System
-==========================================
+================================================
+   Nabu: A Text-Based Content Creation System
+================================================
 
 :Author: Martin Blais <blais@furius.ca>
 :Date: 2005-04-25
@@ -140,6 +140,150 @@ unneeded complications.  In many ways, software development is in the business
 of creating complexity.  We are essentially recognizing that keeping our designs
 and data models as simple as possible is the most efficient way of controlling
 the growth of this complexity.
+
+
+History
+-------
+
+This history behind the creation of this project stems from a long-standing need
+from its author to maintain personal information in a way that is most useful
+and that can be kept independent from specific software, over long periods of
+time.  The sections below outline some of the problems I have tackled in the
+past, and the partial solutions I have come to before creating the Nabu
+extraction system. Nabu is meant to replace all these tricks to allow me to
+extract, organize and selectively publish some of this information.
+
+
+Maintaining an Address Book
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I needed to maintain an address book.  At the time (circa 1993) on software was
+decent that output a textual format which could be read for converting the data
+into other formats.  Thus around 1997, I decided to transcribe all my physical
+address books in a text file, following my supervisor's advice at university at
+the time, used a paragraph-grep program to query it.  This worked great for many
+years, except that there was no integration with my email programs.  I could
+however grep and sed the address book file to generate a text file that could in
+turn be imported by various email systems.  Over time, the one address book file
+grew into many, and new contact information moved gradually into the documents
+which provided context for them.
+
+I think at some point I have started using the LDAP LDIF format to store the
+files, but the naming was a bit too long or annoying to add entries with a text
+editor, so I just created my own simple format, which looks like a list of
+entries like this::
+
+   n: New Navarino Bakery & Pastry Shop
+   p: 514-279-7725
+   a: 5563, avenue du parc, Montréal, QC H2V 4H2
+
+
+Cross-Browser Bookmarks
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Another issue is that of maintaining a set of bookmarks.  One of the problems is
+that every few years a new browser comes out, and I end up moving to it.  For
+example, I started using the web with Xmosaic, and eventually moved to Netscape.
+On Windows I eventually had to use IE, and eventually switched to Konqueror on a
+Linux machine, and then Mozilla, which was very heavy, so eventually to Firefox.
+Most of these browsers have slightly different bookmark storage formats which
+are not conveniently edited within emacs.
+
+A more important problem is that of the organization bookmarks.  Adding all
+bookmarks in a linear list makes it nearly impossible to reuse them efficiently
+(it is very hard to find a bookmark that you're looking for).  Tree structures
+help alleviate this problem to some extent, but add another problem: when you
+want to quickly add a bookmark (somehow, it always has to be quick), you have to
+choose a single most appropriate place to put it, and if you're not very careful
+with this you often have a hard time to find your bookmark back.
+
+I found this problem really annoying, so I designed a very simple textual format
+for bookmarks, where I would enter a description, url, and a list of keywords.
+I wrote Tengis, a program that can read this format and can quickly query the
+bookmarks with keywords.  Unfortunately, I never quite got used to using my own
+software on top of the browser, and always end up grepping for the file within
+emacs.
+
+Here is an example excerpt of a bookmarks file::
+
+    Babelfish
+    http://babelfish.altavista.com
+    search, languages, translation
+
+    Amazon
+    http://www.amazon.com
+    search, books, music
+
+    Abebooks
+    http://www.abebooks.com/
+    search, books
+
+
+Another problem is that various links end up being stored in documents, text
+files which I write when I accomplish some specific task. These do not make it
+to the global bookmarks file.
+
+For convenience, I wrote a script that could convert this file in a tree
+structure and automatically generate bookmarks files for whatever browser I'm
+using at the time.
+
+
+Project Ideas, Mind-Mapping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Whenever I have an idea for a project, something that I find interesting enough,
+I document it.  I would like to share these documents, but they change quite a
+bit over time, and they don't necessarily belong together for the presentation
+layer.
+
+
+Task Notes
+~~~~~~~~~~
+
+There is much information to be acquired when using computers.  A good habit
+that I have acquired is to start a text file to jot notes whenever I take on a
+task that is going to take a few hours.  This helps keep my focus organized, and
+serves as reference if I have to repeat that task in the future.  It is also
+very useful to just send those instructions when someone asks me how I
+accomplished this task in the past.  I also avoid wasting time when I need to
+make a new iteration of the same task-- I can review my thoughts at the time,
+the decisions I made, etc.
+
+
+Paper and Book Reviews
+~~~~~~~~~~~~~~~~~~~~~~
+
+When you are surveying a lot of scientific papers, it is good to take notes on
+ideas and to summarize the crux of each paper that you read.  This helps
+organize your thinking by forcing you to write and express your thoughts.  I
+always wrote short 5 or 6 paragraph reviews of the papers that I read.  These
+live in separate files and can sometimes be reused by friends when they ask me
+about specific subjects, when I point them to some paper or other. 
+
+Also, I like to take down quotes from the books that I read.  Whenever I read a
+book, I mark down interesting passages, and when I'm done with the reading, I
+take 30 mins to copy these passages in text files.  I sometimes like to feed
+from this body of quotations to add to my signature in email (although I must
+admit that I have eliminated using signatures at all for many years now).  In
+any case, I sometimes enjoy going back to those review files when I'm having an
+idea that relates to a book that I have read.
+
+
+Key Themes
+~~~~~~~~~~
+
+A key theme behind the problems described above, is that the software that you
+use to manipulate your personal information or notes files, is going to change.
+Therefore it is a bad idea to use closed formats like that produced by MS Word,
+or similar software, if you want to be able to maintain and use these documents
+for a long time.
+
+I very much trust simple text files.  They will always be readable, and
+interpretable, and they use little storage.  In this context, docutils_ is an
+amazing tool because it allows you to extract meaningful structure from them, as
+long as you follow minimal conventions.  One of the principal motivators behind
+this system is to provide the ability to maintain all sorts of personal
+information using simple text files.  This is a key aspect.
 
 
 Goal
@@ -306,12 +450,18 @@ Conclusion
 
 The key ideas driving our design are:
 
-- not all information a user produces is relevant, there is a lot of junk;
+- text files are forever.  Structure and some meaning can be extracted from text
+  files by following simple reStructuredText_ guidelines and using docutils_;
 
-- a user's editorial involvement can create a higher-quality, semantically rich
+- not all information a user produces is relevant, there is a lot of junk.  A
+  user's editorial involvement can create a higher-quality, semantically rich
   and valuable source of information;
 
-- it is possible to make this editorial participation simple for most people;
-
 - creating views on top of this semantically rich source of data allows the
-  possibility for value added services and easier personal publishing;
+  possibility for value added services and easier personal publishing.
+
+
+.. _docutils: http://docutils.sourceforge.net
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+
+

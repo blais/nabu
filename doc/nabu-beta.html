@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<title>Nabu: Test Drive</title>
+<meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
+<meta name="date" content="2005-06-25" />
+<link rel="stylesheet" href="../style.css" type="text/css" />
+</head>
+<body>
+
+<div id="project-header">
+  <a href="/"><img src="/home/project-header.png" id="logo"></a>
+  <div id="project-home"><a href="..">Project Home</a></div>
+</div>
+
+<div class="document" id="nabu-test-drive">
+<h1 class="title">Nabu: Test Drive</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2005-06-25</td></tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>Instructions for trying out the Nabu installed on furius.ca.</p>
+</div>
+<p>Want to try out Nabu?  We installed a Nabu server on this machine.  You can
+create a test account and upload some content to give it a try.</p>
+<ol class="arabic">
+<li><p class="first">Download the Nabu publisher client.</p>
+<ul class="simple">
+<li>Make sure that you have a Python interpreter installed and that the version
+is 2.3 or greater;</li>
+<li>Put the publisher in your path under the name <tt class="docutils literal"><span class="pre">nabu</span></tt>.</li>
+</ul>
+</li>
+<li><p class="first">Create a new user that will allow you to push content to our Nabu server:</p>
+<ul class="simple">
+<li>go to the <a class="reference" href="/nabu/test/cgi-bin/nabu-newuser.cgi">user creation page</a>;</li>
+<li>follow the instructions.</li>
+</ul>
+</li>
+<li><p class="first">Use the created user/password to configure your client, for the publisher at
+URL: <a class="reference" href="http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi">http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi</a></p>
+<ul>
+<li><p class="first">you can create a file in your home directory, with these contents:</p>
+<pre class="literal-block">
+user = '&lt;username&gt;'
+password = '&lt;password&gt;'
+server_url = 'http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi'
+</pre>
+</li>
+</ul>
+</li>
+<li><p class="first">Create some documents.</p>
+<ul class="simple">
+<li>create/edit a text file following the reStructuredText conventions anywhere
+on your local drive, with any text editor of your preference;</li>
+<li>put the string <tt class="docutils literal"><span class="pre">:Id:</span> <span class="pre">&lt;some-unique-id&gt;</span></tt> anywhere in the first 1024 bytes
+of the file.</li>
+</ul>
+</li>
+<li><p class="first">Publish the content.</p>
+<ul>
+<li><p class="first">invoke the publisher on the created document, or in the directory that
+contains it:</p>
+<pre class="literal-block">
+nabu &lt;filename&gt;
+</pre>
+<p>or, if you have many documents in that directory:</p>
+<pre class="literal-block">
+cd &lt;dir&gt;
+nabu
+</pre>
+</li>
+</ul>
+</li>
+<li><p class="first">View the contents of the database.</p>
+<ul class="simple">
+<li>you will need your user and password to log in;</li>
+<li>go to the <a class="reference" href="/nabu/cgi-bin/nabu-contents.cgi">contents/debug page</a></li>
+</ul>
+<p>This is not very fascinating, but you can see what gets uploaded.  We will
+soon prepare some extractors to display the data in a more interesting way.</p>
+</li>
+</ol>
+<p>For more information on client usage, see the <a class="reference" href="/nabu/doc/nabu-usage.html">Nabu usage document</a>.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li>this is just for fun, we may pull the plug any day;</li>
+<li>we are not responsible for the content that gets uploaded by users.</li>
+<li>we are very very busy.  Contacting the author may result in long delays.  Try
+the various options in the publisher client.  If this does not work, we'll fix
+it soon.</li>
+</ul>
+</div>
+</body>
+</html>

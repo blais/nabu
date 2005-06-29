@@ -1,6 +1,6 @@
-==============================
-  Usage Intructions for Nabu
-==============================
+===========================
+  Nabu: Usage Intructions
+===========================
 
 :Author: Martin Blais <blais@furius.ca>
 :Date: 2005-06-20
@@ -194,28 +194,57 @@ When should you run the publisher?
 Repository Triggers
 ~~~~~~~~~~~~~~~~~~~
 
+It can be nice to setup the publisher to run automatically everytime files are
+committed to a source code management repository.  This can be most easily setup
+by adding a trigger script on the repository host, by keeping a checkedout copy
+updated and running the publisher client on that copy [#]_.  The rest of this
+section contains recipes to accomplish this using various SCM systems.
+
+.. [#] Note that the Nabu server does not have to be the same host as the
+repository server.
+
+
 Server Triggers using CVS
 +++++++++++++++++++++++++
 
-To implement triggers using CVS, edit the ``CVSROOT/commitinfo`` file and ::
+To implement triggers using CVS, edit the ``CVSROOT/loginfo`` file and add a
+line like this::
 
-  FIXME add this
+  ^project1  (date; cat; (cd /some/dir/checkouts/project1;
+              cvs -q update -d; nabu; echo DONE) &)
+              >> $CVSROOT/CVSROOT/nabu.log 2>&1
+
+Where you would replace ``project1`` by your own directory.  Make sure that the
+repository will run with the appropriate Nabu configuration.
+
 
 Server Triggers using Subversion
 ++++++++++++++++++++++++++++++++
 
-To implement triggers using Subversion, edit the ``CVSROOT/commitinfo`` file and
-::
+To implement triggers using Subversion, create a ``post-commit`` script which
+updates an existing checkout of your body of text files and then simply runs the
+nabu publisher client on it, something like this::
 
-  FIXME add this
 
+   REPOS="$1"
+   REV="$2"
+   DIRS=$(/usr/bin/svnlook dirs-changed "$REPOS")
+   LOGFILE="/home/blais/tmp/copies/log"
+
+   for d in $DIRS; do
+       if [ "$d" = "notes/" ]; then
+           cd /home/blais/tmp/copies/$d
+           svn update >>$LOGFILE 2>&1
+           /usr/bin/nabu -v >>$LOGFILE 2>&1 &
+       fi
+   done
 
 
 Users Policy
 ============
 
 Right now, the way the Nabu servers are implemented, you can see, dump and
-overwrite the contents of other users [#]_.  
+overwrite the contents of other users [#]_.
 
 .. [#] It would be possible to implement per-user document sets by combining
        the unique id with the username to form the new unique id.  This

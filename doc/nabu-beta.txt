@@ -1,0 +1,81 @@
+====================
+  Nabu: Test Drive
+====================
+
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2005-06-25
+:Abstract:
+
+   Instructions for trying out the Nabu installed on furius.ca.
+
+
+Want to try out Nabu?  We installed a Nabu server on this machine.  You can
+create a test account and upload some content to give it a try.
+
+#. Download the Nabu publisher client.
+
+   - Make sure that you have a Python interpreter installed and that the version
+     is 2.3 or greater;
+
+   - Put the publisher in your path under the name ``nabu``.
+
+#. Create a new user that will allow you to push content to our Nabu server:
+
+   - go to the `user creation page </nabu/test/cgi-bin/nabu-newuser.cgi>`_;
+   - follow the instructions.
+
+#. Use the created user/password to configure your client, for the publisher at
+   URL: http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi
+
+   - you can create a file in your home directory, with these contents::
+
+       user = '<username>'
+       password = '<password>'
+       server_url = 'http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi'
+
+#. Create some documents.
+
+   - create/edit a text file following the reStructuredText conventions anywhere
+     on your local drive, with any text editor of your preference;
+
+   - put the string ``:Id: <some-unique-id>`` anywhere in the first 1024 bytes
+     of the file.
+
+#. Publish the content.
+
+   - invoke the publisher on the created document, or in the directory that
+     contains it::
+
+	nabu <filename>
+
+     or, if you have many documents in that directory::
+
+        cd <dir>
+	nabu
+
+#. View the contents of the database.
+
+   - you will need your user and password to log in;
+
+   - go to the `contents/debug page`__
+
+   This is not very fascinating, but you can see what gets uploaded.  We will
+   soon prepare some extractors to display the data in a more interesting way.
+
+__ /nabu/cgi-bin/nabu-contents.cgi
+
+  
+For more information on client usage, see the `Nabu usage document
+</nabu/doc/nabu-usage.html>`_.
+
+
+Notes:
+
+- this is just for fun, we may pull the plug any day;
+
+- we are not responsible for the content that gets uploaded by users.
+
+- we are very very busy.  Contacting the author may result in long delays.  Try
+  the various options in the publisher client.  If this does not work, we'll fix
+  it soon.
+

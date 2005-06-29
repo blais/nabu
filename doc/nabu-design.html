@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
-<title>Nabu Design Document</title>
+<title>Nabu: Design Document</title>
 <meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
 <meta name="date" content="2005-06-22" />
 <link rel="stylesheet" href="../style.css" type="text/css" />
@@ -17,7 +17,7 @@
 </div>
 
 <div class="document" id="nabu-design-document">
-<h1 class="title">Nabu Design Document</h1>
+<h1 class="title">Nabu: Design Document</h1>
 <table class="docinfo" frame="void" rules="none">
 <col class="docinfo-name" />
 <col class="docinfo-content" />
@@ -32,9 +32,76 @@
 <p class="topic-title first">Abstract</p>
 <p>Design documentation for the Nabu publishing system.</p>
 </div>
+<div class="section" id="components">
+<h1><a name="components">Components</a></h1>
+<p>The system consists in a few components, described in the next sections.</p>
 <div class="figure">
 <img alt="nabu1.png" src="nabu1.png" />
 <p class="caption">Nabu system components.</p>
+</div>
+<div class="section" id="finder">
+<h2><a name="finder">Finder</a></h2>
+<p>The finder is the publisher client.  Its responsibilities are:</p>
+<ul class="simple">
+<li>find the files that have a id marker in them;</li>
+<li>query the server to find CRCs (MD5 sums) for these files;</li>
+<li>compare the CRCs with the files on disk;</li>
+<li>send the files that need to be updated to the server.</li>
+</ul>
+<p>You can find it in module <tt class="docutils literal"><span class="pre">publish</span></tt>.</p>
+</div>
+<div class="section" id="server-handler">
+<h2><a name="server-handler">Server (Handler)</a></h2>
+<p>The server receives files or document tree sent by the finder and processes
+them, stores them in a &quot;sources upload database&quot;, and then runs the extractors
+on them which fill other tables in a database with various kinds of information.</p>
+<p>The server has to be configured with a specific set of extractors, which the
+person who sets up the server decides, depending on what information they want
+extracted from the document trees.</p>
+<p>Note that this server can be technically be instantiated locally (i.e. imported
+as a library from the finder), this could be used to fill a local database.
+Normally, we expect it to be set up over a network connection, using XML-RPC,
+with a simple CGI hook on a web server, or incorporated within some web
+application framework.</p>
+<p>You can find it in module <tt class="docutils literal"><span class="pre">server</span></tt>.</p>
+</div>
+<div class="section" id="uploaded-sources-storage">
+<h2><a name="uploaded-sources-storage">Uploaded Sources Storage</a></h2>
+<p>This interface is used to implement storage of the uploaded source documents,
+information about them (time/date, user, original filename, etc.) and the
+document tree (stored as a pickled stream usually in a database blob).  You can
+create concrete implementations of the Source Storage to store this data in your
+favourite format and place.  There is a default implementation that uses
+SQLObject to store in an SQL database.</p>
+<p>You can find it in module <tt class="docutils literal"><span class="pre">sources</span></tt>.</p>
+</div>
+<div class="section" id="extractors-and-extractor-storage">
+<h2><a name="extractors-and-extractor-storage">Extractors and Extractor Storage</a></h2>
+<p>Various extractors can be implemented to fetch information from the document
+tree, and/or to modify the document tree before it is stored for later
+retrieval.</p>
+<p>Each of these extractors is configured by the server setup with specific
+extractor storage objects associated with each of the extractors, which are used
+to abstract the storage mechanism.</p>
+<p>Thus, code for an extractor generally includes: a docutils transform -derived
+class (the extractor itself), and a class derived from ExtractorStorage for this
+extractor.</p>
+<p>You can find the base classes in module <tt class="docutils literal"><span class="pre">extract</span></tt>.  The extractors are
+available in the <tt class="docutils literal"><span class="pre">nabu.extractors</span></tt> package.</p>
+</div>
+</div>
+<div class="section" id="other-modules">
+<h1><a name="other-modules">Other Modules</a></h1>
+<div class="section" id="processing-the-extractors">
+<h2><a name="processing-the-extractors">Processing the Extractors</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">process</span></tt> module contains some code to apply the transforms on an existing
+document tree.</p>
+</div>
+<div class="section" id="debugging-the-contents">
+<h2><a name="debugging-the-contents">Debugging the Contents</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">contents</span></tt> module contains code to display a basic dump of the various
+contents of the uploaded sources storage via the web.</p>
+</div>
 </div>
 </div>
 </body>

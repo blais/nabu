@@ -1,0 +1,136 @@
+=======================================================
+  Nabu: Installing and Configuring a Publisher Server
+=======================================================
+
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2005-06-24
+:Abstract:
+
+   
+Introduction
+============
+
+This document describes issues in setting up and configuring a Nabu server
+handler.
+
+
+Authentication
+==============
+
+The current server requires the clients to authenticate themselves.  That is,
+when calling methods on the server handler, a username must be supplied.  This
+can be most easily implemented using the HTTP Authentication mechanism well
+supported by web servers.
+
+
+XML-RPC Server
+==============
+
+The server handler code is generic, but the client expects to be talking to an
+XML-RPC server.  There are various way to implement this, depending on your web
+application framework.  The simplest way is probably to create a CGI script to
+call the server handler.  There is a convenience method in the server code that
+does this.  See code below for the CGI script.
+
+
+Server Configuration
+====================
+
+When creating the server handler, you must decide which extractors you will want
+to run after processing.  The server expects a list of pairs, each of which
+consisting in the extractor class to instantiate, and an instance of a storage
+object used by that extractor to store the information it collects from the
+document.
+
+
+Example
+-------
+
+Here is an example CGI script that
+
+#. creates a connection to a data base;
+#. finds the current user relying on the HTTP Auth mechanism;
+#. creates a per-user source storage in a database;
+#. creates and configures the server to run 3 extractors (using the convenience
+   function in the server module).
+
+::
+
+  # stdlib imports
+  import sys, os
+  from os.path import dirname, join
+  
+  # add the nabu libraries to load path of our CGI script
+  root = dirname(dirname(sys.argv[0]))
+  sys.path.append(join(root, 'lib', 'python'))
+  
+  # sql imports
+  from sqlobject.postgres.pgconnection import PostgresConnection
+  
+  # nabu imports
+  from nabu import server, sources
+  from nabu.extractors import document, link, contact
+  
+  def main():
+      # connect to the PostgreSQL database
+      params = {
+          'db': 'nabu',
+          'user': 'admin',
+          'passwd': 'admpassw',
+          'host': 'localhost',
+      }
+      connection = PostgresConnection(**params)
+  
+      # make sure we're authenticated
+      username = os.environ.get('REMOTE_USER', None)
+      if username is None:
+          print 'Content-type:', 'text/plain'
+          print 'Status: 404 Document Not Found.'
+          print
+          return
+      
+      # create a storage space for the uploaded source data
+      src_pp = sources.DBSourceStorage(connection, restrict_user=1)
+      src = sources.PerUserSourceStorageProxy(src_pp)
+  
+      # configure this server with whatever transforms we want to apply
+      transforms = (
+          (document.DocumentExtractor, document.DocumentStorage(connection)),
+          (link.LinkExtractor, link.LinkStorage(connection)),
+          (contact.ContactExtractor, contact.ContactStorage(connection)),
+          )
+  
+      server.xmlrpc_handler(src, transforms, username, allow_reset=1)
+      
+  if __name__ == '__main__':
+      main()
+
+
+Per-user Document Sets
+======================
+
+The simple DBSourceStorage uploads database shares the unique ids between all
+users.  This means that users can see and erase each other's content ids in the
+database.  Clearing the database clears all documents, including other users'.
+This is a reasonable arrangment if the data is pushed from a common body of text
+files, perhaps controlled with a source-code management system.
+
+There is also a proxy sources storage class provided, which prepends the
+usernames to the unique ids stored in the database.  This effectively creates a
+separate document set for each user.  This is an interesting setup if users are
+expected to contribute disjoint document sets to the pool of information in the
+Nabu database.  However, this has important consequences if the users are
+pushing documents from a shared body of source texts: those documents will be
+stored twice in the database.  You need to choose the policy which matches your
+intended use.
+
+
+Viewing the Contents
+====================
+
+To view or debug the contents sent to the database, you can view the contents
+via a CGI script that is provided with the source distribution.  This is only
+meant as a debugging interface, you should create a custom presentation layer
+any other way you like.
+
+
