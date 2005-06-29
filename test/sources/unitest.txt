@@ -1,11 +1,12 @@
-.. -*- coding: UTF-8 -*-  
+.. -*- mode: text; coding: utf-8 -*-  
 .. :Id: unitest
 
 =================
    Coding Test
 =================
 
-éà
-utilitairé
+c'est l'été, français
+
+
 
 
