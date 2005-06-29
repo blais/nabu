@@ -5,15 +5,19 @@
 
 set -x
 
+SVNROOT=/home/blais/repos/svnroot
 VER=`svnlook youngest $SVNROOT`
-OUTNAME=nabu.$VER
-
-SVNROOT=file:///home/blais/repos/svnroot/nabu/trunk
+OUTNAME=nabu-svn$VER
 WEBROOT=/home/blais/w.furius
+
+if [ -z "$VER" ]; then
+   echo "Error finding version." 1>&2
+   exit 1
+fi
 
 echo "Exporting to $OUTNAME ..."
 cd /var/tmp
-svn export $SVNROOT $OUTNAME
+svn export file://$SVNROOT/nabu/trunk $OUTNAME
 tar jcvf $OUTNAME.tar.bz2 $OUTNAME
 cp $OUTNAME.tar.bz2 $WEBROOT/downloads/nabu
 rm -r $OUTNAME $OUTNAME.tar.bz2
