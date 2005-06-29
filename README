@@ -257,9 +257,15 @@ You can download the `Nabu Publisher Client`__ and save it under the name
 
 __ /nabu/bin/nabu
 
-The entire codebase is available from our Subversion server only, until we
-release a 1.0 version.  It consists mostly in server code, but it also contains
-the publisher client.
+
+Snapshots of the latest Nabu source code can be found in the `Download Area
+</downloads/nabu>`_.  It consists mostly in server code, but it also contains
+the publisher client.  When I get some feedback I will decide on the version
+number.
+
+Stability is a relative matter.  Personally, I consider these snapshots to
+correspond to a beta stability for a 1.0 release.  When I get some feedback I
+will select version number (probably 1.0).
 
 
 Reporting Bugs
@@ -272,7 +278,7 @@ Installation and Dependencies
 =============================
 
 Nabu Publisher Client
-  A single file written in Python. 
+  A single file written in Python.
 
   The publisher finds files on the local client filesystem and figures out which
   ones are meant for publication by detecting the ids within the top of the
@@ -320,7 +326,7 @@ Presentation Layer
 Copyright and License
 =====================
 
-Copyright (C) 2005  Martin Blais.  
+Copyright (C) 2005  Martin Blais.
 This code is distributed under the `GNU General Public License <COPYING>`_.
 
 
