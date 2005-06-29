@@ -194,6 +194,9 @@ class DBSourceStorage(SourceStorage):
         self.connection = connection
         Source._connection = connection
 
+        # Checks that the database tables exist and if they don't, creates them.
+        Source.createTable(ifNotExists=True)
+
         self.restrict_user = restrict_user
 
     def __select( self, user, op=None ):
