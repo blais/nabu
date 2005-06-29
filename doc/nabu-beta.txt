@@ -8,6 +8,8 @@
 
    Instructions for trying out the Nabu installed on furius.ca.
 
+.. contents::
+
 
 Want to try out Nabu?  We installed a Nabu server on this machine.  You can
 create a test account and upload some content to give it a try.

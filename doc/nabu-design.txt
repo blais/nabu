@@ -8,6 +8,8 @@
 
    Design documentation for the Nabu publishing system.
 
+.. contents::
+
 
 Components
 ==========

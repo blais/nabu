@@ -26,27 +26,36 @@
 <td>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td></tr>
 <tr><th class="docinfo-name">Date:</th>
 <td>2005-06-24</td></tr>
-<tr class="field"><th class="docinfo-name">Abstract:</th><td class="field-body"><div class="first last system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">/home/blais/p/nabu/doc/nabu-server.txt</tt>, line 7)</p>
-Cannot extract empty bibliographic field &quot;Abstract&quot;.</div>
-</td>
-</tr>
 </tbody>
 </table>
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#introduction" id="id1" name="id1">Introduction</a></li>
+<li><a class="reference" href="#authentication" id="id2" name="id2">Authentication</a></li>
+<li><a class="reference" href="#xml-rpc-server" id="id3" name="id3">XML-RPC Server</a></li>
+<li><a class="reference" href="#server-configuration" id="id4" name="id4">Server Configuration</a><ul>
+<li><a class="reference" href="#example" id="id5" name="id5">Example</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#per-user-document-sets" id="id6" name="id6">Per-user Document Sets</a></li>
+<li><a class="reference" href="#viewing-the-contents" id="id7" name="id7">Viewing the Contents</a></li>
+</ul>
+</div>
 <div class="section" id="introduction">
-<h1><a name="introduction">Introduction</a></h1>
+<h1><a class="toc-backref" href="#id1" name="introduction">Introduction</a></h1>
 <p>This document describes issues in setting up and configuring a Nabu server
 handler.</p>
 </div>
 <div class="section" id="authentication">
-<h1><a name="authentication">Authentication</a></h1>
+<h1><a class="toc-backref" href="#id2" name="authentication">Authentication</a></h1>
 <p>The current server requires the clients to authenticate themselves.  That is,
 when calling methods on the server handler, a username must be supplied.  This
 can be most easily implemented using the HTTP Authentication mechanism well
 supported by web servers.</p>
 </div>
 <div class="section" id="xml-rpc-server">
-<h1><a name="xml-rpc-server">XML-RPC Server</a></h1>
+<h1><a class="toc-backref" href="#id3" name="xml-rpc-server">XML-RPC Server</a></h1>
 <p>The server handler code is generic, but the client expects to be talking to an
 XML-RPC server.  There are various way to implement this, depending on your web
 application framework.  The simplest way is probably to create a CGI script to
@@ -54,14 +63,14 @@ call the server handler.  There is a convenience method in the server code that
 does this.  See code below for the CGI script.</p>
 </div>
 <div class="section" id="server-configuration">
-<h1><a name="server-configuration">Server Configuration</a></h1>
+<h1><a class="toc-backref" href="#id4" name="server-configuration">Server Configuration</a></h1>
 <p>When creating the server handler, you must decide which extractors you will want
 to run after processing.  The server expects a list of pairs, each of which
 consisting in the extractor class to instantiate, and an instance of a storage
 object used by that extractor to store the information it collects from the
 document.</p>
 <div class="section" id="example">
-<h2><a name="example">Example</a></h2>
+<h2><a class="toc-backref" href="#id5" name="example">Example</a></h2>
 <p>Here is an example CGI script that</p>
 <ol class="arabic simple">
 <li>creates a connection to a data base;</li>
@@ -123,7 +132,7 @@ if __name__ == '__main__':
 </div>
 </div>
 <div class="section" id="per-user-document-sets">
-<h1><a name="per-user-document-sets">Per-user Document Sets</a></h1>
+<h1><a class="toc-backref" href="#id6" name="per-user-document-sets">Per-user Document Sets</a></h1>
 <p>The simple DBSourceStorage uploads database shares the unique ids between all
 users.  This means that users can see and erase each other's content ids in the
 database.  Clearing the database clears all documents, including other users'.
@@ -139,7 +148,7 @@ stored twice in the database.  You need to choose the policy which matches your
 intended use.</p>
 </div>
 <div class="section" id="viewing-the-contents">
-<h1><a name="viewing-the-contents">Viewing the Contents</a></h1>
+<h1><a class="toc-backref" href="#id7" name="viewing-the-contents">Viewing the Contents</a></h1>
 <p>To view or debug the contents sent to the database, you can view the contents
 via a CGI script that is provided with the source distribution.  This is only
 meant as a debugging interface, you should create a custom presentation layer

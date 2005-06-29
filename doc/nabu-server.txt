@@ -4,7 +4,8 @@
 
 :Author: Martin Blais <blais@furius.ca>
 :Date: 2005-06-24
-:Abstract:
+
+.. contents::
 
    
 Introduction

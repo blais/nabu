@@ -12,6 +12,7 @@
 
 .. contents::
 
+
 What is Nabu?
 =============
 
@@ -201,7 +202,7 @@ updated and running the publisher client on that copy [#]_.  The rest of this
 section contains recipes to accomplish this using various SCM systems.
 
 .. [#] Note that the Nabu server does not have to be the same host as the
-repository server.
+       repository server.
 
 
 Server Triggers using CVS

@@ -32,15 +32,32 @@
 <p class="topic-title first">Abstract</p>
 <p>Design documentation for the Nabu publishing system.</p>
 </div>
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#components" id="id1" name="id1">Components</a><ul>
+<li><a class="reference" href="#finder" id="id2" name="id2">Finder</a></li>
+<li><a class="reference" href="#server-handler" id="id3" name="id3">Server (Handler)</a></li>
+<li><a class="reference" href="#uploaded-sources-storage" id="id4" name="id4">Uploaded Sources Storage</a></li>
+<li><a class="reference" href="#extractors-and-extractor-storage" id="id5" name="id5">Extractors and Extractor Storage</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#other-modules" id="id6" name="id6">Other Modules</a><ul>
+<li><a class="reference" href="#processing-the-extractors" id="id7" name="id7">Processing the Extractors</a></li>
+<li><a class="reference" href="#debugging-the-contents" id="id8" name="id8">Debugging the Contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section" id="components">
-<h1><a name="components">Components</a></h1>
+<h1><a class="toc-backref" href="#id1" name="components">Components</a></h1>
 <p>The system consists in a few components, described in the next sections.</p>
 <div class="figure">
 <img alt="nabu1.png" src="nabu1.png" />
 <p class="caption">Nabu system components.</p>
 </div>
 <div class="section" id="finder">
-<h2><a name="finder">Finder</a></h2>
+<h2><a class="toc-backref" href="#id2" name="finder">Finder</a></h2>
 <p>The finder is the publisher client.  Its responsibilities are:</p>
 <ul class="simple">
 <li>find the files that have a id marker in them;</li>
@@ -51,7 +68,7 @@
 <p>You can find it in module <tt class="docutils literal"><span class="pre">publish</span></tt>.</p>
 </div>
 <div class="section" id="server-handler">
-<h2><a name="server-handler">Server (Handler)</a></h2>
+<h2><a class="toc-backref" href="#id3" name="server-handler">Server (Handler)</a></h2>
 <p>The server receives files or document tree sent by the finder and processes
 them, stores them in a &quot;sources upload database&quot;, and then runs the extractors
 on them which fill other tables in a database with various kinds of information.</p>
@@ -66,7 +83,7 @@ application framework.</p>
 <p>You can find it in module <tt class="docutils literal"><span class="pre">server</span></tt>.</p>
 </div>
 <div class="section" id="uploaded-sources-storage">
-<h2><a name="uploaded-sources-storage">Uploaded Sources Storage</a></h2>
+<h2><a class="toc-backref" href="#id4" name="uploaded-sources-storage">Uploaded Sources Storage</a></h2>
 <p>This interface is used to implement storage of the uploaded source documents,
 information about them (time/date, user, original filename, etc.) and the
 document tree (stored as a pickled stream usually in a database blob).  You can
@@ -76,7 +93,7 @@ SQLObject to store in an SQL database.</p>
 <p>You can find it in module <tt class="docutils literal"><span class="pre">sources</span></tt>.</p>
 </div>
 <div class="section" id="extractors-and-extractor-storage">
-<h2><a name="extractors-and-extractor-storage">Extractors and Extractor Storage</a></h2>
+<h2><a class="toc-backref" href="#id5" name="extractors-and-extractor-storage">Extractors and Extractor Storage</a></h2>
 <p>Various extractors can be implemented to fetch information from the document
 tree, and/or to modify the document tree before it is stored for later
 retrieval.</p>
@@ -91,14 +108,14 @@ available in the <tt class="docutils literal"><span class="pre">nabu.extractors<
 </div>
 </div>
 <div class="section" id="other-modules">
-<h1><a name="other-modules">Other Modules</a></h1>
+<h1><a class="toc-backref" href="#id6" name="other-modules">Other Modules</a></h1>
 <div class="section" id="processing-the-extractors">
-<h2><a name="processing-the-extractors">Processing the Extractors</a></h2>
+<h2><a class="toc-backref" href="#id7" name="processing-the-extractors">Processing the Extractors</a></h2>
 <p>The <tt class="docutils literal"><span class="pre">process</span></tt> module contains some code to apply the transforms on an existing
 document tree.</p>
 </div>
 <div class="section" id="debugging-the-contents">
-<h2><a name="debugging-the-contents">Debugging the Contents</a></h2>
+<h2><a class="toc-backref" href="#id8" name="debugging-the-contents">Debugging the Contents</a></h2>
 <p>The <tt class="docutils literal"><span class="pre">contents</span></tt> module contains code to display a basic dump of the various
 contents of the uploaded sources storage via the web.</p>
 </div>

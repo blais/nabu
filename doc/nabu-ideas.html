@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<title>Nabu: Future, Postponed or Rejected Ideas</title>
+<meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
+<meta name="date" content="2005-06-25" />
+<link rel="stylesheet" href="../style.css" type="text/css" />
+</head>
+<body>
+
+<div id="project-header">
+  <a href="/"><img src="/home/project-header.png" id="logo"></a>
+  <div id="project-home"><a href="..">Project Home</a></div>
+</div>
+
+<div class="document" id="nabu-future-postponed-or-rejected-ideas">
+<h1 class="title">Nabu: Future, Postponed or Rejected Ideas</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2005-06-25</td></tr>
+</tbody>
+</table>
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#some-ideas" id="id1" name="id1">Some Ideas</a><ul>
+<li><a class="reference" href="#include-only-option-in-the-publisher" id="id2" name="id2"><tt class="docutils literal"><span class="pre">include-only</span></tt> option in the publisher</a></li>
+<li><a class="reference" href="#asynchronous-processing" id="id3" name="id3">Asynchronous Processing</a><ul>
+<li><a class="reference" href="#pending-queue-for-asynchronous-processing" id="id4" name="id4">Pending Queue for Asynchronous Processing</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#requirement-for-user-and-password" id="id5" name="id5">Requirement for User and Password</a></li>
+<li><a class="reference" href="#collisions-between-documents" id="id6" name="id6">Collisions between Documents</a></li>
+<li><a class="reference" href="#size-of-uploaded-data" id="id7" name="id7">Size of Uploaded Data</a></li>
+<li><a class="reference" href="#loose-data-models" id="id8" name="id8">Loose Data Models</a></li>
+<li><a class="reference" href="#doctrees-before-and-after-extractors" id="id9" name="id9">Doctrees Before and After Extractors</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#notes" id="id10" name="id10">Notes</a></li>
+</ul>
+</div>
+<div class="section" id="some-ideas">
+<h1><a class="toc-backref" href="#id1" name="some-ideas">Some Ideas</a></h1>
+<div class="section" id="include-only-option-in-the-publisher">
+<h2><a class="toc-backref" href="#id2" name="include-only-option-in-the-publisher"><tt class="docutils literal docutils literal"><span class="pre">include-only</span></tt> option in the publisher</a></h2>
+<blockquote>
+<ul class="simple">
+<li>restrict finder to certain extensions (default is all files)
+- test with .txt extensions</li>
+</ul>
+</blockquote>
+<p>For now, we think that the <tt class="docutils literal"><span class="pre">exclude</span></tt> option combined with the
+discrimintation of having markers in only certain files is sufficient for most
+usage.  And you can customize the marker.  Also, since we're just reading the
+header of the files, it is still really fast even when there are a lot of
+large binary files.</p>
+</div>
+<div class="section" id="asynchronous-processing">
+<h2><a class="toc-backref" href="#id3" name="asynchronous-processing">Asynchronous Processing</a></h2>
+<p>We need to find out if it is possible from a CGI script to let the client
+know that we're done, and to keep running on the server, while letting the
+client exit?  note that there might be some options in the client for that
+purpose. find out.</p>
+<p>Do this later. This could be interesting.</p>
+<ul>
+<li><p class="first">try this in headers from Nabu server script:</p>
+<pre class="literal-block">
+Connection: close
+</pre>
+</li>
+</ul>
+<div class="section" id="pending-queue-for-asynchronous-processing">
+<h3><a class="toc-backref" href="#id4" name="pending-queue-for-asynchronous-processing">Pending Queue for Asynchronous Processing</a></h3>
+<p>Print processing/pending queue (server must provide that information)</p>
+<p>We need an interface for servers that implement deferred processing.  We
+should be able to query this processing queue to find out if our documents
+have been processed so we can query for errors.</p>
+</div>
+</div>
+<div class="section" id="requirement-for-user-and-password">
+<h2><a class="toc-backref" href="#id5" name="requirement-for-user-and-password">Requirement for User and Password</a></h2>
+<p>Do we require a user/password?</p>
+<p>For now, yes.</p>
+</div>
+<div class="section" id="collisions-between-documents">
+<h2><a class="toc-backref" href="#id6" name="collisions-between-documents">Collisions between Documents</a></h2>
+<p>When pushing new documents to the server, spit a warning if there is a clash
+of documents between users?</p>
+<p>This should be in the server config and perhaps belongs to the domain of
+policy.</p>
+</div>
+<div class="section" id="size-of-uploaded-data">
+<h2><a class="toc-backref" href="#id7" name="size-of-uploaded-data">Size of Uploaded Data</a></h2>
+<p>Store length or number of nodes in the sources document, to be able to
+evaluate the size or time to perform a specific task on the data.</p>
+<p>Do this later.</p>
+</div>
+<div class="section" id="loose-data-models">
+<h2><a class="toc-backref" href="#id8" name="loose-data-models">Loose Data Models</a></h2>
+<p>Loose data models: automatically adding columns for entry &quot;fields&quot; that are
+not currently in the database, makes the data model looser</p>
+<ul class="simple">
+<li>find out how to programmatically add columns to the database</li>
+</ul>
+<p>Do this later, when I have a good demonstration of nicely extracted stuff.</p>
+<ul>
+<li><p class="first">find a way for the entryforms to be &quot;loosely coupled&quot; with the data model on
+the server.  This involves growing tables dynamically, depending on the found
+contents in the documents, i.e. unspecified type field lists.</p>
+<p>We can do this much later.  The fixed extractors are very cool as it is.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="doctrees-before-and-after-extractors">
+<h2><a class="toc-backref" href="#id9" name="doctrees-before-and-after-extractors">Doctrees Before and After Extractors</a></h2>
+<p>On the server, we could keep the doctrees before and after the nabu
+transforms, to be able to reprocess the entire documents after reconfiguring
+the server, without having to reparse nor upload, but we do not expect
+significant changes to be applied to the document by the transforms, and
+therefore it seems like a lot of data duplication for not much.  We will store
+only the processed doctrees for now.</p>
+<p>Worse case, you could always clear all the data and reload it, it should not
+be that big a deal.</p>
+</div>
+</div>
+<div class="section" id="notes">
+<h1><a class="toc-backref" href="#id10" name="notes">Notes</a></h1>
+<ul class="simple">
+<li>SQLObject does not support non integer indexes, but the site says &quot;yet&quot;, so it
+might in the future.  If we could make our <tt class="docutils literal"><span class="pre">unid</span></tt> the real database id
+rather than an alternate id we could save database columns.</li>
+</ul>
+</div>
+</div>
+</body>
+</html>
