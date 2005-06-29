@@ -35,8 +35,8 @@ def main():
     # connect to the PostgreSQL database
     params = {
         'db': 'nabu',
-        'user': 'blais',
-        'passwd': '$blais',
+        'user': 'nabu',
+        'passwd': 'pwnabu',
         'host': 'localhost',
     }
     connection = PostgresConnection(**params)

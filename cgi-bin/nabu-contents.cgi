@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+\#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 #
 # $Id$
@@ -38,8 +38,8 @@ def main():
     # connect to the database
     params = {
         'db': 'nabu',
-        'user': 'blais',
-        'passwd': '$blais',
+        'user': 'nabu',
+        'passwd': 'pwnabu',
         'host': 'localhost',
     }
     connection = PostgresConnection(**params)
