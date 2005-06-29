@@ -185,8 +185,8 @@ Nabu is cool, because:
   The client only requires Python to work;
 
 
-Nabu is not
------------
+Nabu is not ...
+---------------
 
 - a Wiki: although we upload documents (like Wiki pages) to a server, it may be
   that the presentation layer never serves the pages/documents themselves.
