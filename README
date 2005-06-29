@@ -339,13 +339,14 @@ Acknowledgements
 
 This project uses two important libraries to do its thing:
 
-- the `docutils <http://docutils.sourceforge.net>`_ project, which provides an
-  RST parser, the internal document structure, and the HTML writer (and more).
-  Docutils is a major facilitator for this system--without it this idea probably
-  would not have see the light of daya;
+- the `Docutils <http://docutils.sourceforge.net>`_ project (written mostly by
+  Dave Goodger), which provides a reStructuredText parser, the internal document
+  structure, and the HTML writer (and more).  Docutils is a major facilitator
+  for this system--without it this idea probably would not have see the light of
+  day;
 
-- the `SQLObject <http://sqlobject.org>`_ library, which provides easier access
-  to SQL storage.
+- the `SQLObject <http://sqlobject.org>`_ library (written by Ian Bicking),
+  which provides easier access to SQL storage.
 
 It is also built in the Python language.
 
