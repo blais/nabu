@@ -219,7 +219,20 @@ call it "Nabu".
 Documentation
 =============
 
+Technical
+---------
+
 - `Usage <doc/nabu-usage.html>`_: usage instructions for content pushers;
+
+- `Server Setup <doc/nabu-server.html>`_: instructions for installing and
+  configuring a Nabu server;
+
+- `TODO list <TODO>`_: list of future changes, broken things, etc.;
+
+- `Change Log <CHANGES>`_: recent changes, history;
+
+Design
+------
 
 - `Goals <doc/nabu-goals.html>`_: motivation behind this project, history of
   what led me to implement this;
@@ -228,10 +241,6 @@ Documentation
 
 - `Future <doc/nabu-ideas.html>`_: future, postponed or rejected ideas. Stuff
   that I would like to do that is not on the immediate list;
-
-- `TODO list <TODO>`_: list of future changes, broken things, etc.;
-
-- `Change Log <CHANGES>`_: recent changes, history;
 
 
 Test Drive Nabu
