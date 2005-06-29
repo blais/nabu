@@ -17,15 +17,16 @@ import sys, os
 from os.path import dirname, join
 ##import cgitb; cgitb.enable(display=0, logdir="/tmp") # for debugging
 
-# add the nabu libraries to load path
+# add the nabu libraries to load path of our CGI script
 root = dirname(dirname(sys.argv[0]))
 sys.path.append(join(root, 'lib', 'python'))
 
-
-# nabu and other imports
+# sql imports
 from sqlobject.postgres.pgconnection import PostgresConnection
-from nabu import server
-from nabu.utils import ExceptionXMLRPCRequestHandler
+
+# nabu imports
+from nabu import server, sources
+from nabu.extractors import document, link, contact
 
 def main():
     """
@@ -40,14 +41,27 @@ def main():
     }
     connection = PostgresConnection(**params)
 
-    # note: make sure we're authenticated
+    # make sure we're authenticated
     username = os.environ.get('REMOTE_USER', None)
+    if username is None:
+        print 'Content-type:', 'text/plain'
+        print 'Status: 404 Document Not Found.'
+        print
+        return
     
-    # create an XMLRPC server handler and bind methods
-    server_handler = server.ServerHandler(connection, username)
-    handler = ExceptionXMLRPCRequestHandler()
-    handler.register_instance(server_handler)
-    handler.handle_request()
+    # create a storage space for the uploaded source data
+    src_pp = sources.DBSourceStorage(connection, restrict_user=1)
+    src = sources.PerUserSourceStorageProxy(src_pp)
+
+    # configure this server with whatever transforms we want to apply
+    transforms = (
+        (document.DocumentExtractor, document.DocumentStorage(connection)),
+        (link.LinkExtractor, link.LinkStorage(connection)),
+        (contact.ContactExtractor, contact.ContactStorage(connection)),
+        )
+
+    server.xmlrpc_handler(src, transforms, username, allow_reset=1)
     
 if __name__ == '__main__':
     main()
+
