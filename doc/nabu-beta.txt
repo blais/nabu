@@ -74,7 +74,8 @@ For more information on client usage, see the `Nabu usage document
 
 Notes:
 
-- this is just for fun, we may pull the plug any day;
+- this test Nabu server is setup for your enjoyment only, we may pull the plug
+  any day, this is temporary, so you can try it out;
 
 - we are not responsible for the content that gets uploaded by users.
 
