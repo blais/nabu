@@ -43,12 +43,12 @@ class ContactExtractor(extract.Extractor):
 
     default_priority = 900
 
-    def apply( self ):
+    def apply( self, **kwargs ):
+        self.unid, self.storage = kwargs['unid'], kwargs['storage']
+
         v = self.Visitor(self.document)
         v.x = self
         self.document.walk(v)
-
-
 
     class Visitor(nodes.SparseNodeVisitor):
 

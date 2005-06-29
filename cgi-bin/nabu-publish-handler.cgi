@@ -57,7 +57,7 @@ def main():
     transforms = (
         (document.DocumentExtractor, document.DocumentStorage(connection)),
         (link.LinkExtractor, link.LinkStorage(connection)),
-        (contact.ContactExtractor, contact.ContactStorage(connection)),
+##        (contact.ContactExtractor, contact.ContactStorage(connection)),
         )
 
     server.xmlrpc_handler(src, transforms, username, allow_reset=1)

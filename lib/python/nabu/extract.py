@@ -19,19 +19,14 @@ class Extractor(docutils.transforms.Transform):
     Base class for extractors.
     Essentially, they're transforms which can modify the document or store
     stuff somewhere, using the storage instance given to it.
-    """
 
-    def __init__( self, document, startnode=None, data=None ):
-        """
-        Create this transform, and keep a reference to a storage interface
-        object and the unique id of the document that will be transformed by
-        this transform (this should be used to identify the extracted items in
-        the database, to associate them with the source document, this is
-        important in order to be able to clear the data of these items when a
-        document is reprocessed later on).
-        """
-        docutils.transforms.Transform.__init__(self, document, startnode, data)
-        self.unid, self.storage = data
+    A reference to a storage interface object and the unique id of the
+    document that will be transformed by this transform will be given when
+    calling apply. (This should be used to identify the extracted items in
+    the database, to associate them with the source document, this is
+    important in order to be able to clear the data of these items when a
+    document is reprocessed later on).
+    """
 
 
 class ExtractorStorage:

@@ -167,7 +167,7 @@ class PublishServerHandler:
 
         # process and store contents as a Unicode string
         errstream = StringIO.StringIO()
-        doctree, parts = docutils.core.publish_doctree(
+        doctree = docutils.core.publish_doctree(
             source=contents_utf8, source_path=filename,
             settings_overrides={
             'input_encoding': 'UTF-8',

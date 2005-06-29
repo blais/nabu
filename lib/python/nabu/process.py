@@ -27,9 +27,9 @@ def transform_doctree( unid, doctree, transforms ):
     """
     # populate with transforms
     doctree.transformer = Transformer(doctree)
-    for tclass, tdata in transforms:
+    for tclass, storage in transforms:
         assert issubclass(tclass, Extractor)
-        doctree.transformer.add_transform(tclass, data=(unid, tdata,))
+        doctree.transformer.add_transform(tclass, unid=unid, storage=storage)
 
     # create an appropriate reporter
     fend = docutils.frontend.OptionParser()

@@ -27,7 +27,9 @@ class DocumentExtractor(extract.Extractor):
     """
     default_priority = 900
 
-    def apply( self ):
+    def apply( self, **kwargs ):
+        self.unid, self.storage = kwargs['unid'], kwargs['storage']
+
         v = self.Visitor(self.document)
         self.document.walk(v)
         self.storage.store(self.unid, v.extracted)
