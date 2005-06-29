@@ -1,7 +1,7 @@
 .. -*- coding: utf-8 -*-  :Id: c0b24ed4-c9fe-4498-b3c0-2fd0f58bc78c
 
 =========================
-  Travel Notes: Toronto
+  Travel Notes: SomeWh
 =========================
 
 :Author: Martin Blais <blais@furius.ca>

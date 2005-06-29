@@ -1,0 +1,26 @@
+.. :Id: 506d35fc-17a4-463a-9a15-1437eafe7ee0
+
+==============================
+  Test for Links / Bookmarks
+==============================
+
+
+Transform that finds links represented as line-blocks of less than lines,
+where if it has three lines, the first line is taken to be a description,
+the second line is a URL (reference), and the third line a comma-separated
+set of keywords.  Like this:
+
+  |   From Montreal -- Classifieds for Japanese living in Montreal
+  |   http://www.from-montreal.com/
+  |   montreal, classified, ads, japan
+
+The following forms are also accepted.
+
+  | Description of a link, no keywords
+  | http://this-is-a-reference.com/target.html
+
+  | http://this-is-a-reference.com/target.html
+  | just, the, keywords
+
+  | http://this-is-a-reference.com/target.html
+
