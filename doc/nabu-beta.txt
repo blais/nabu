@@ -14,7 +14,8 @@
 Want to try out Nabu?  We installed a Nabu server on this machine.  You can
 create a test account and upload some content to give it a try.
 
-#. Download the Nabu publisher client.
+#. Download the Nabu publisher client.  Save it from `this link
+   </nabu/bin/nabu>`_.
 
    - Make sure that you have a Python interpreter installed and that the version
      is 2.3 or greater;
