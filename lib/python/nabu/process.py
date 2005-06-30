@@ -45,7 +45,7 @@ def transform_doctree( unid, doctree, transforms ):
 
     # apply the transforms
     doctree.transformer.apply_transforms()
-
+    
     # fix back the doctree to allow to be pickled 
     doctree.transformer = doctree.reporter = None
 

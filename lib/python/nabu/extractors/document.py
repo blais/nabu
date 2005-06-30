@@ -8,7 +8,9 @@ Process global information about the upload as a document.
 """
 
 # stdlib imports
-import re, datetime
+import re, datetime, copy
+import pickle
+##import cPickle as pickle
 
 # docutils imports
 from docutils import nodes
@@ -19,7 +21,60 @@ from sqlobject import *
 # nabu imports
 from nabu import extract
 
+#-------------------------------------------------------------------------------
+#
+class DoctreeExtractor(extract.Extractor):
+    """
+    Document tree storage. This is used to store the document tree at the point
+    of a transform.  Typically, we would not necessarily want the document tree
+    that is stored in the sources upload table to be reused, we would rather
+    store it explicitly for presentation and leave the Nabu mechanism alone.
 
+    Note that this results in more database storage.  I suppose that we could
+    forego storing the source and/or document tree in the sources upload
+    storage.
+    """
+
+    default_priority = 999
+
+    def apply( self, unid=None, storage=None ):
+        self.unid = unid
+        self.storage = storage
+        # Store the document at this point.
+        self.storage.store(self.unid, self.document)
+
+class Doctree(SQLObject):
+    """
+    Schema for document tree.
+    """
+    unid = StringCol(notNull=1)
+
+    doctree = BLOBCol() # pickled doctree.
+
+class DoctreeStorage(extract.SQLObjectExtractorStorage):
+    """
+    Document tree storage.
+    """
+    sqlobject_classes = [Doctree]
+
+    def store( self, unid, doctree ):
+
+        # Temporarily remove the reporter and transformer.
+        saved_reporter = doctree.reporter
+        saved_transformer = doctree.transformer
+        try:
+            doctree.reporter = None
+            doctree.transformer = None
+            doctree_pickled = pickle.dumps(doctree)
+        finally:
+            doctree.reporter = saved_reporter
+            doctree.transformer = saved_transformer
+
+        Doctree(unid=unid, doctree=doctree_pickled)
+
+
+#-------------------------------------------------------------------------------
+#
 class DocumentExtractor(extract.Extractor):
     """
     Transform that extracts some basic information about the document as a
@@ -28,7 +83,7 @@ class DocumentExtractor(extract.Extractor):
     default_priority = 900
 
     biblifields = ['category', 'serie', 'location']
-    
+
     def apply( self, unid=None, storage=None ):
         self.unid = unid
         self.storage = storage
@@ -61,7 +116,7 @@ class DocumentExtractor(extract.Extractor):
             fname = node.astext().lower()
             if fname in self.xform.biblifields:
                 self.catchname = fname.encode('ascii')
-            
+
         def visit_field_body( self, node ):
             if self.catchname:
                 self.extracted[self.catchname] = node.astext()

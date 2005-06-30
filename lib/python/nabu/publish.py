@@ -261,7 +261,7 @@ def publish( candidates, opts, args ):
 
             import StringIO
             errstream = StringIO.StringIO()
-            doctree, parts = docutils.core.publish_doctree(
+            doctree = docutils.core.publish_doctree(
                 source=pfile.contents, source_path=pfile.fn,
                 settings_overrides={
                 'input_encoding': 'UTF-8',
@@ -277,9 +277,10 @@ def publish( candidates, opts, args ):
                 print '======= sending parsed document to server: {%s}' % \
                       pfile.unid
                 import cPickle as pickle
+                doctree.reporter = None
                 docpickled = pickle.dumps(doctree)
 
-                if opts._dont_upload_source:
+                if opts.dont_upload_source:
                     pfile.contents = '' #utf8
 
                 errors, messages = server.process_doctree(

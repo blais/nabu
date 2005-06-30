@@ -24,6 +24,7 @@ class Source(SQLObject):
     run, so that we can reprocess the extraction on the server without having to
     reparse nor upload the documents.
     """
+
     class sqlmeta:
         table = '__sources__'
 
@@ -186,10 +187,16 @@ class PerUserSourceStorageProxy(SourceStorage):
 class DBSourceStorage(SourceStorage):
     """
     Concrete source storage using an SQLObject connection.
-    This one shares the documents, there is no per-user document store.
+    This one shares the uploaded sources, there is no per-user document store.
     For example, one user could completely remove everyone else's documents.
+
+    Note that the uploaded sources table may not contain the document tree nor
+    the source document.  This is a matter of policy and if you desire to store
+    the document tree, you should use the extractor appropriate for that
+    purpose.
     """
-    def __init__( self, connection, restrict_user=False ):
+    def __init__( self, connection, restrict_user=False,
+                  store_source=True, store_doctree=True ):
         "Initialize with an open SQLObject connection."
         self.connection = connection
         Source._connection = connection
@@ -198,6 +205,8 @@ class DBSourceStorage(SourceStorage):
         Source.createTable(ifNotExists=True)
 
         self.restrict_user = restrict_user
+        self.store_source = store_source
+        self.store_doctree = store_doctree
 
     def __select( self, user, op=None ):
         if self.restrict_user:
@@ -241,10 +250,17 @@ class DBSourceStorage(SourceStorage):
 
     def add( self, user, unid, filename, digest, time,
              source, doctree, errors, docpickled=None ):
+        
+        if not self.store_source:
+            source = u''
 
-        if docpickled is None:
+        if not self.store_doctree:
+            docpickled = ''
+        elif docpickled is None:
+            # remove reporter before pickling.
+            doctree.reporter = None
             docpickled = pickle.dumps(doctree)
-
+            
         Source(unid=unid,
                filename=filename,
                digest=digest,

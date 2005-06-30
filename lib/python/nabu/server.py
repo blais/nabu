@@ -179,6 +179,8 @@ class PublishServerHandler:
         errstream = StringIO.StringIO()
         doctree = docutils.core.publish_doctree(
             source=contents_utf8, source_path=filename,
+            reader_name='standalone',
+            parser_name='restructuredtext',
             settings_overrides={
             'input_encoding': 'UTF-8',
             'error_encoding': 'UTF-8',
@@ -229,6 +231,8 @@ class PublishServerHandler:
 
         # transform the document tree
         # Note: we apply the transforms before storing the document tree.
+        # Note (2): notice the docpickled parameter, which has already been
+        # computed.
         messages = process.transform_doctree(unid, doctree, self.transforms)
         
         # add the transformed tree as a new uploaded source
@@ -249,6 +253,9 @@ class PublishServerHandler:
         helps = []
         for x in self.transforms:
             cls = x[0]
+            if not cls.__doc__:
+                continue
+            
             h = cls.__name__ + ':\n' + cls.__doc__
             if not isinstance(h, unicode):
                 # most of our source code in latin-1 or ascii
@@ -256,7 +263,8 @@ class PublishServerHandler:
             helps.append(h)
             
         sep = unicode('\n' + '=' * 79 + '\n')
-        return sep.join(helps)
+        helptext = sep.join(helps)
+        return helptext
 
 
 def xmlrpc_handler( srcstore, transforms, username, allow_reset=0 ):
