@@ -165,6 +165,16 @@ class PublishServerHandler:
         m = md5.new(contents_utf8)
         digest = m.hexdigest()
 
+        # add directives from extractors
+        #
+        # Note: if you upload the tree from your local parser, it will not
+        # support special directives.  You should therefore pretty much always
+        # upload source and process on the server if you have special directives
+        # to be added for processing.  However, in general we will try to avoid
+        # doing that, for that specific reason, but the feature is here anyhoo.
+        for xcls, xstore in self.transforms:
+            xcls.init_parser()
+
         # process and store contents as a Unicode string
         errstream = StringIO.StringIO()
         doctree = docutils.core.publish_doctree(

@@ -28,6 +28,17 @@ class Extractor(docutils.transforms.Transform):
     document is reprocessed later on).
     """
 
+    @classmethod
+    def init_parser( cls ):
+        """
+        Initialization that is bound to occur before the parser.  By default
+        this method does nothing, and it's fine and dandy.
+
+        If you want to add new directives to the processing, this is the place
+        to do it.
+        """
+        # noop.
+
 
 class ExtractorStorage:
     """

@@ -14,21 +14,22 @@
 Description
 ===========
 
+Assuming that a user can easily create text documents --this is the case for
+most programmers and techies, we do this all day, and we all have our favourite
+text editors-- this system allows you to store various kinds of data *across*
+multiple documents.  You can create and maintain a body of text files from which
+various elements automatically could get stored in an organized manner in a
+database.
+
 Nabu is a simple framework that extracts chunks of various types of information
 from documents written in simple text files (written with reStructuredText_
 conventions) and that stores this information (including the document) in a
 remote database for later retrieval.  The processing and extraction of the
 document is handled on a server, and there is a small and simple client that is
 used to push the files to the server for processing and storage (think
-``rsync``).  The client requires only Python to work.  The presentation layer
-is left unspecified: you can use whichever web application framework to present
-the extracted data in the way that you prefer.
-
-Assuming that a user can easily create text documents --this is the case for
-most programmers and techies, we do this all day, and we all have our favourite
-text editors-- this system allows you to store various kinds of data *across*
-multiple documents.  You can create and maintain a body of text files from which
-various elements automatically get stored in an organized manner in a database.
+``rsync``).  The client requires only Python to work.  The presentation layer is
+left unspecified: you can use whichever web application framework you like to
+present the extracted data in the way that you prefer.
 
 It is probably best illustrated by some examples...
 
@@ -87,9 +88,11 @@ How about this one: I maintain a todo file in a text file, simply.  With a
 simple convention, like::
 
   :Event: 2005-06-28
+
     - dinner with Hannah @ funky restaurant
 
   :Event: 2005-07-10 13h30
+
     - presentation on quaternions (room C-117)
 
 These entries could be fed automatically in a shared Nabu, for a group of
@@ -102,8 +105,8 @@ There are many possibilities... I'm convinced I will find more serious uses for
 this system as well, which is why I built it in a generic manner.
 
 
-Customizeability: Writing Extractors
-------------------------------------
+Customizability: Writing Extractors
+-----------------------------------
 
 Various simple extractors will come with the Nabu package itself, but we suspect
 you will very soon want to write your own.  Writing extractors is very easy.
@@ -127,7 +130,7 @@ designed for your mother.  In order to be able to use this efficiently, you must
 1. understand the conventions and simple no-markup syntax of reStructuredText_;
 2. be able to edit simple text files.
 
-I suspect that this will cather to people who are already familiar with
+I suspect that this will cater to people who are already familiar with
 computers.
 
 
@@ -142,22 +145,22 @@ Nabu is cool, because:
 
 - it is flexible: you can use
 
-  * whichever text editor you like to edit the files;
-  * whichever source code control system you like to store and maintain them (or
+  * any text editor you like to edit the files;
+  * any source code control system you like to store and maintain them (or
     none);
-  * whichever database for storage;
-  * and whichever web application framework for presentation.  Nabu does not
+  * any database for storage;
+  * and any web application framework for presentation.  Nabu does not
     dictate how the information is presented/served to the clients;
 
 - you edit files *locally*, not in a bleeping web browser window (programmers
   will appreciate the value of this);
 
 - the organization of the source files in subdirectories has *nothing* to do
-  with how the content is presented.  We use a unique id system (similar to
+  with how the content is presented.  We use a unique ID system (similar to
   arch) where your document to be published must contain a unique string to mark
   it with that id.  You can put that string in a reStructuredText_ comment or a
   bibliographic field.  Unlike Wikis, this allows you to change the title of
-  your documents which keeping the possibility of a permanent link to them.
+  your documents while keeping the possibility of a permanent link to them.
 
   It effectively offers you a sandbox for creating content, and then how you
   organize and present the content is dictated by ways that *you* decide, most
@@ -165,14 +168,14 @@ Nabu is cool, because:
 
 - the input data is scattered over many files, it does not have to be stored
   per-category (for example, you don't have to store all your "contacts" in a
-  single "address book" file.  I conjecture that this may be closer to how
+  single "address book" file).  I conjecture that this may be closer to how
   humans think of this data.  This body of files can be used to create a
   mind-mapping system;
 
 - we recognize that the value of the information lies in the source itself, the
   text files.  This valuable source remains *with you*, and you are free to
   manage them in any way you prefer, with any version control system you like
-  (if you want to do that).  You can completely dump the data that lies on the
+  (if you want to do that).  You can completely dump the data stored in the
   database and rebuild it from the text files;
 
 - various semantic chunks of content are automatically extracted from your
@@ -180,7 +183,7 @@ Nabu is cool, because:
   configurable.  Nabu comes with example content extractors;
 
 - a light-weight program with minimal dependencies is used to upload the files
-  on the server.  The server processes the files for content.  This maximizes
+  to the server.  The server processes the files for content.  This maximizes
   the potential that you will be able to use Nabu anywhere, on any platform.
   The client only requires Python to work;
 
@@ -193,7 +196,7 @@ Nabu is not ...
   Maybe it just serves bits of information extracted from the files.  Also,
   documents are identified by a unique string, and not by Wiki names.  This
   allows one to use whatever title for single documents and to create permanent
-  links to specific documents (as long as the file id is maintained);
+  links to specific documents (as long as the file ID is maintained);
 
 - a Blogging system: it can be used to add any document set to a database.
   Organization by date and category is simply implemented, but not a
@@ -259,7 +262,7 @@ __ /nabu/bin/nabu
 
 
 Snapshots of the latest Nabu source code can be found in the `Download Area
-</downloads/nabu>`_.  It consists mostly in server code, but it also contains
+</downloads/nabu>`_.  It consists mostly of server code, but it also contains
 the publisher client.  When I get some feedback I will decide on the version
 number.
 
@@ -312,10 +315,6 @@ Nabu Server / Publisher Handler
   - if you use a database backend: `SQLObject <http://sqlobject.org>`_ and a
     supported wrapper for your database;
 
-  Otherwise, all you have to do with copy the example publisher that comes with
-  Nabu, change it to configure the transforms that you would like be processed
-  on your server.
-
 
 Presentation Layer
   This is up to you.  Nabu does not provide nor dictate the way in which you
@@ -342,7 +341,7 @@ This project uses two important libraries to do its thing:
 - the `Docutils <http://docutils.sourceforge.net>`_ project (written mostly by
   Dave Goodger), which provides a reStructuredText parser, the internal document
   structure, and the HTML writer (and more).  Docutils is a major facilitator
-  for this system--without it this idea probably would not have see the light of
+  for this system--without it this idea probably would not have seen the light of
   day;
 
 - the `SQLObject <http://sqlobject.org>`_ library (written by Ian Bicking),

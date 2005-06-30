@@ -26,7 +26,7 @@ from sqlobject.postgres.pgconnection import PostgresConnection
 
 # nabu imports
 from nabu import server, sources
-from nabu.extractors import document, link, contact
+from nabu.extractors import document, link, contact, event
 
 def main():
     """
@@ -53,10 +53,10 @@ def main():
     src_pp = sources.DBSourceStorage(connection, restrict_user=1)
     src = sources.PerUserSourceStorageProxy(src_pp)
 
-    # configure this server with whatever transforms we want to apply
     transforms = (
         (document.DocumentExtractor, document.DocumentStorage(connection)),
         (link.LinkExtractor, link.LinkStorage(connection)),
+        (event.EventExtractor, event.EventStorage(connection)),
 ##        (contact.ContactExtractor, contact.ContactStorage(connection)),
         )
 

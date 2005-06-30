@@ -27,22 +27,45 @@ class DocumentExtractor(extract.Extractor):
     """
     default_priority = 900
 
-    def apply( self, **kwargs ):
-        self.unid, self.storage = kwargs['unid'], kwargs['storage']
+    biblifields = ['category', 'serie', 'location']
+    
+    def apply( self, unid=None, storage=None ):
+        self.unid = unid
+        self.storage = storage
 
         v = self.Visitor(self.document)
+        v.xform = self
         self.document.walk(v)
-        self.storage.store(self.unid, v.extracted)
 
         from pprint import pformat
         self.document.reporter.info(
             'Document extractor: %s' % pformat(v.extracted))
+
+        self.storage.store(self.unid, v.extracted)
+
 
     class Visitor(nodes.SparseNodeVisitor):
 
         def __init__( self, *args, **kwds ):
             nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
             self.extracted = {}
+            self.catchname = None
+
+        def visit_docinfo( self, node ):
+            self.in_docinfo = 1
+
+        def depart_docinfo( self, node ):
+            self.in_docinfo = 0
+
+        def visit_field_name( self, node ):
+            fname = node.astext().lower()
+            if fname in self.xform.biblifields:
+                self.catchname = fname.encode('ascii')
+            
+        def visit_field_body( self, node ):
+            if self.catchname:
+                self.extracted[self.catchname] = node.astext()
+                self.catchname = None
 
         def visit_title( self, node ):
             if 'title' not in self.extracted:
@@ -58,6 +81,7 @@ class DocumentExtractor(extract.Extractor):
             if mo:
                 self.extracted['date'] = datetime.date(*map(int,mo.groups()))
 
+
 class Document(SQLObject):
     """
     Storage for document information.
@@ -68,6 +92,9 @@ class Document(SQLObject):
     author = UnicodeCol()
     date = DateCol()
     abstract = UnicodeCol(notNull=0)
+    category = UnicodeCol(notNull=0)
+    serie = UnicodeCol(notNull=0)
+    location = UnicodeCol(notNull=0)
 
 class DocumentStorage(extract.SQLObjectExtractorStorage):
     """
@@ -80,10 +107,10 @@ class DocumentStorage(extract.SQLObjectExtractorStorage):
 
     sqlobject_classes = [Document]
 
-    def store( self, unid, *args ):
-        data, = args
-        Document(unid=unid,
-                 title=data.get('title', ''),
-                 date=data.get('date'),
-                 author=data.get('author', ''),
-                 abstract=data.get('abstract', ''))
+    def store( self, unid, data ):
+        data['unid'] = unid
+        for n in ['title', 'author', 'date', 'abstract',
+                  'category', 'serie', 'location']:
+            data.setdefault(n, '')
+        Document(**data)
+
