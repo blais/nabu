@@ -290,7 +290,10 @@ class DBSourceStorage(SourceStorage):
         for a in attributes:
             if a == 'doctree':
                 for x in sr:
-                    x.sdict['doctree'] = pickle.loads(s.doctree)
+                    if s.doctree:
+                        x.sdict['doctree'] = pickle.loads(s.doctree)
+                    else:
+                        x.sdict['doctree'] = None
             elif a == 'errors-p':
                 for x in sr:
                     x.sdict[a] = bool(x.errors)

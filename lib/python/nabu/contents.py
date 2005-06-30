@@ -89,11 +89,15 @@ def render_source_info( src, uri ):
     Render a basic page that dumps all the information available for a source
     upload.
     """
-    # Render the full debug page that displays the contents of an uploaded
-    # source and parsed results.
-    doctree_str, parts = docutils.core.publish_from_doctree(
-        src['doctree'], writer_name='pseudoxml',
-        settings_overrides={'output_encoding': 'UTF-8'})
+    doctree = src['doctree']
+    if doctree is not None:
+        # Render the full debug page that displays the contents of an uploaded
+        # source and parsed results.
+        doctree_str, parts = docutils.core.publish_from_doctree(
+            doctree, writer_name='pseudoxml',
+            settings_overrides={'output_encoding': 'UTF-8'})
+    else:
+        doctree_str = ''
 
     print 'Content-Type:', 'text/html; charset=UTF-8'
     print
@@ -181,7 +185,13 @@ def contents_handler( srcstore, uri, username, unid, ashtml ):
     # render document in HTML and leave
     if ashtml:
         doctree = src['doctree']
-        return render_html(doctree, uri)
+        if doctree is None:
+            print 'Content-type:', 'text/plain'
+            print
+            print '(No document tree in sources upload.)'
+            return
+        else:
+            return render_html(doctree, uri)
 
     return render_source_info(src, uri)
 

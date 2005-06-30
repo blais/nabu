@@ -47,7 +47,7 @@ class Doctree(SQLObject):
     """
     Schema for document tree.
     """
-    unid = StringCol(notNull=1)
+    unid = StringCol(alternateID=1, notNull=1)
 
     doctree = BLOBCol() # pickled doctree.
 
@@ -141,7 +141,7 @@ class Document(SQLObject):
     """
     Storage for document information.
     """
-    unid = StringCol(notNull=1)
+    unid = StringCol(alternateID=1, notNull=1)
 
     title = UnicodeCol()
     author = UnicodeCol()
