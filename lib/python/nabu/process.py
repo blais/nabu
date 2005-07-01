@@ -19,7 +19,7 @@ from docutils.transforms import Transformer
 from nabu.extract import Extractor
 
 
-def transform_doctree( unid, doctree, transforms ):
+def transform_doctree( unid, doctree, transforms, pickle_receiver=None ):
     """
     Run the transforms on the document tree.  This may modify the tree,
     which will have an effect later on if using that stored document tree as
@@ -29,7 +29,9 @@ def transform_doctree( unid, doctree, transforms ):
     doctree.transformer = Transformer(doctree)
     for tclass, storage in transforms:
         assert issubclass(tclass, Extractor)
-        doctree.transformer.add_transform(tclass, unid=unid, storage=storage)
+        doctree.transformer.add_transform(
+            tclass, unid=unid, storage=storage,
+            pickle_receiver=pickle_receiver)
 
     # create an appropriate reporter
     fend = docutils.frontend.OptionParser()

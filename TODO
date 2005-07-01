@@ -2,21 +2,6 @@
     TODO: nabu
 ==================
 
-:client:
-- add config notes to server? to docs?
-
-
-
-:web:
-- create a separate demo page with explanations, etc.
-
-
-:publisher:
-- setup automated publish on commit using
-  - CVS
-  - Subversion
-  ---> and document!
-
 - support encrypted files from the publisher
 
   - problem: how do we identify documents to be published without decrypting?
@@ -28,27 +13,24 @@
 :server setup:
 - implement asynchronous document processing on the server
 
-- database locking issues?
-
-
-
-:tests:
-  - test with files with DOS CRLF chars
-  - test with other encodings than utf-8 in source file
+- check database locking issues in more detail?
 
 
 :extractors:
-- warn on files that have no titles (add minimum requirements entryform)
+- warn on files that have no titles (add minimum requirements extractor)
+
+- there should be and .. end directive to stop the processing from that point on.
+  - .. disclosure:: private directive could achieve something similar
 
 - add a generic field list parser for creating new types of records without
   code: the entry type is the first field list, if it matches some pattern
   (e.g. if it's empty);
 
+
+:presentation:
 - add my own HTML writer to remove comment nodes completely, so they don't show
   up in the HTML as comments;
 
-- there should be and .. end directive to stop the processing from that point on.
-  - .. disclosure:: private directive could achieve something similar
 
 
 

@@ -1,0 +1,34 @@
+.. :Id: 61c3173a-2504-4a9d-b8a2-35b7ed9b3e42
+
+=============
+  My Events
+=============
+
+:Publish: No.
+
+
+- :Event: 2005-06-29
+    - dinner with Gijsbert
+    - movie afterwards
+
+:Event: 2005-07-02
+  Jazz festival outing with discreet friends.
+
+
+..
+
+  "sjdjsd'jsdsjdsjdsj"
+
+  -- sjds djsds
+
+  :Event: 2005-06-12
+     shjdsj
+     sdjsdjs
+	
+     Each node class has corresponding methods, doing nothing by
+     default; override individual methods for specific and useful
+     behaviour.  The `dispatch_visit()` method is called by
+     `Node.walk()` upon entering a node.  `Node.walkabout()` also calls
+     the `dispatch_departure()` method before exiting a node.
+ 
+  

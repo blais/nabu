@@ -21,6 +21,16 @@ import docutils.core
 from nabu import process
 from nabu.utils import ExceptionXMLRPCRequestHandler
 
+class SimpleAccumulator:
+    """
+    Simple accumulator object that can only grow a list one item at a time.
+    """
+    def __init__( self, lis ):
+        self.acc = lis
+
+    def append( self, new ):
+        self.acc.append(new)
+
 class PublishServerHandler:
     """
     Protocol server handler.
@@ -229,12 +239,32 @@ class PublishServerHandler:
         # document, including this document, if it exists
         self.clearids([unid])
 
+        # Create a pickle receiver, an object whose tasks is to receive and
+        # accumulate pickled versions of a document; this is a best-effort
+        # mechanism to avoid pickling the document twice.  Worse case we pickle
+        # anyway.
+        #
+        # The way it works is that the transform object has the option to append
+        # a new pickled document to the end of the receiver.  Later we decide
+        # which one we use, most probably the latest one produced.  This means
+        # that if you have multiple transforms which pickle a document make sure
+        # you order them correctly (usually there is only a single one).
+        pickles = []
+        pickle_receiver = SimpleAccumulator(pickles)
+        if docpickled:
+            pickle_receiver.append(docpickled)
+
         # transform the document tree
         # Note: we apply the transforms before storing the document tree.
-        # Note (2): notice the docpickled parameter, which has already been
-        # computed.
-        messages = process.transform_doctree(unid, doctree, self.transforms)
+        messages = process.transform_doctree(unid, doctree, self.transforms,
+                                             pickle_receiver)
         
+        # get the last of the received pickled documents (the most transformed).
+        # We reuse that to store the doucment in the database.
+        # If there is none, we pickled our own in the source.
+        if pickles:
+            docpickled = pickles[-1]
+
         # add the transformed tree as a new uploaded source
         self.sources.add(self.username, unid, filename.replace('\\', '/'),
                          digest, datetime.datetime.now(),

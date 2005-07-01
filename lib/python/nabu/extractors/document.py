@@ -37,11 +37,14 @@ class DoctreeExtractor(extract.Extractor):
 
     default_priority = 999
 
-    def apply( self, unid=None, storage=None ):
+    def apply( self, unid=None, storage=None, pickle_receiver=None ):
         self.unid = unid
         self.storage = storage
         # Store the document at this point.
-        self.storage.store(self.unid, self.document)
+        pickled = self.storage.store(self.unid, self.document)
+        if pickled:
+            pickle_receiver.append(pickled)
+
 
 class Doctree(SQLObject):
     """
@@ -59,7 +62,7 @@ class DoctreeStorage(extract.SQLObjectExtractorStorage):
 
     def store( self, unid, doctree ):
 
-        # Temporarily remove the reporter and transformer.
+        # Temporarily remove the reporter and transformer, just for pickling.
         saved_reporter = doctree.reporter
         saved_transformer = doctree.transformer
         try:
@@ -72,6 +75,7 @@ class DoctreeStorage(extract.SQLObjectExtractorStorage):
 
         Doctree(unid=unid, doctree=doctree_pickled)
 
+        return doctree_pickled
 
 #-------------------------------------------------------------------------------
 #
@@ -84,7 +88,7 @@ class DocumentExtractor(extract.Extractor):
 
     biblifields = ['category', 'serie', 'location']
 
-    def apply( self, unid=None, storage=None ):
+    def apply( self, unid=None, storage=None, pickle_receiver=None ):
         self.unid = unid
         self.storage = storage
 
@@ -168,4 +172,3 @@ class DocumentStorage(extract.SQLObjectExtractorStorage):
                   'category', 'serie', 'location']:
             data.setdefault(n, '')
         Document(**data)
-
