@@ -288,8 +288,9 @@ number.
    	       This does not affect clients.
 
 Stability is a relative matter.  Personally, I consider these snapshots to
-correspond to a beta stability for a 1.0 release.  When I get some feedback I
-will select version number (probably 1.0).
+correspond to a beta stability for a 1.0 release.  I'm already using the system
+on personal projects (works for me), and I'm committed to fix bugs reported by
+others.  When I get some feedback I will select version number (probably 1.0).
 
 
 Reporting Bugs
