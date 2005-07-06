@@ -166,11 +166,12 @@ Nabu is cool, because:
   organize and present the content is dictated by ways that *you* decide, most
   likely independent of the source file organization structure;
 
-- the input data is scattered over many files, it does not have to be stored
-  per-category (for example, you don't have to store all your "contacts" in a
-  single "address book" file).  I conjecture that this may be closer to how
-  humans think of this data.  This body of files can be used to create a
-  mind-mapping system;
+- the input data can be scattered over many files, it does not have to be stored
+  in files per-category (for example, you don't have to store all your
+  "contacts" in a single "address book" file, they can be found within/across
+  all your body of published file and a server might present as a single list if
+  desired).  I conjecture that this may be closer to how humans think of this
+  data.  This body of files can be used to create a mind-mapping system;
 
 - we recognize that the value of the information lies in the source itself, the
   text files.  This valuable source remains *with you*, and you are free to
