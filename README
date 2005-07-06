@@ -192,7 +192,7 @@ Nabu is cool, because:
 Nabu is not ...
 ---------------
 
-A Wiki
+Not a Wiki
   Although we upload documents (like Wiki pages) to a server, it may
   be that the presentation layer never serves the pages/documents themselves.
   Maybe it just serves bits of information extracted from the files.  Also,
@@ -200,7 +200,7 @@ A Wiki
   allows one to use whatever title for single documents and to create permanent
   links to specific documents (as long as the file ID is maintained);
 
-A Blogging system
+Not just a Blogging system
   It can be used to add any document set to a database.
   Organization by date and category is simply implemented, but not a
   requirement.  You present the data set (which can be anything) in your
@@ -209,7 +209,7 @@ A Blogging system
   You could, however, very easily implement a flexible and very complete
   blogging system using Nabu.
 
-Word Processing system
+Not a Word Processing system
   It is not meant to just serve documents.  You
   can use it to publish just the information that is found within documents,
   used to contain that information.
@@ -218,7 +218,7 @@ Word Processing system
   reStructuredText_, so it is not really like a Word processing system.  You
   must use a simple text editor.
 
-A generic data entry format
+Not a generic data entry format
   Although you could potentially use it to
   enter larges lists of similarly structured data, the overhead of document
   processing does not make it the most efficient way to do this.  If you have
