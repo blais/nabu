@@ -7,7 +7,18 @@
 <title>Nabu: Test Drive</title>
 <meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
 <meta name="date" content="2005-06-25" />
-<link rel="stylesheet" href="../style.css" type="text/css" />
+<style type="text/css">
+
+@import url("/docutils-style.css");
+@import url("/project-header.css");
+
+div#project-header {
+  background-image: url("etc/header-nikko3.jpg");
+  background-color: black;
+}
+
+
+</style>
 </head>
 <body>
 
@@ -84,12 +95,17 @@ nabu
 </ul>
 </li>
 <li><p class="first">View the contents of the database.</p>
-<ul class="simple">
-<li>you will need your user and password to log in;</li>
-<li>go to the <a class="reference" href="/nabu/cgi-bin/nabu-contents.cgi">contents/debug page</a></li>
-</ul>
+<ul>
+<li><p class="first">you will need your user and password to log in;</p>
+</li>
+<li><p class="first">go to the <a class="reference" href="/nabu/cgi-bin/nabu-contents.cgi">contents/debug page</a></p>
 <p>This is not very fascinating, but you can see what gets uploaded.  We will
 soon prepare some extractors to display the data in a more interesting way.</p>
+</li>
+<li><p class="first">or go to the <a class="reference" href="/nabu/cgi-bin/nabu-test-presentation.cgi">test presentation page</a>, a simplistic blog-like view of the
+contents that I'm fiddling with.</p>
+</li>
+</ul>
 </li>
 </ol>
 <p>For more information on client usage, see the <a class="reference" href="/nabu/doc/nabu-usage.html">Nabu usage document</a>.</p>

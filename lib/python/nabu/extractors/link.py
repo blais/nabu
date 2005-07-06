@@ -12,7 +12,7 @@ Process links inside of documents.
 """
 
 # stdlib imports
-import re, datetime
+import re
 
 # docutils imports
 from docutils import nodes

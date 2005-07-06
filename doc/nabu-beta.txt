@@ -62,12 +62,15 @@ create a test account and upload some content to give it a try.
 
    - go to the `contents/debug page`__
 
-   This is not very fascinating, but you can see what gets uploaded.  We will
-   soon prepare some extractors to display the data in a more interesting way.
+     This is not very fascinating, but you can see what gets uploaded.  We will
+     soon prepare some extractors to display the data in a more interesting way.
+  
+   - or go to the `example presentation page`__, a simplistic blog-like view of
+     the contents that I'm fiddling with.
 
 __ /nabu/cgi-bin/nabu-contents.cgi
+__ /nabu/cgi-bin/nabu-example-presentation.cgi
 
-  
 For more information on client usage, see the `Nabu usage document
 </nabu/doc/nabu-usage.html>`_.
 

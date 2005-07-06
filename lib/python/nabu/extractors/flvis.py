@@ -36,10 +36,10 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
     def finalize( self ):
         if self.curlist:
             self.fieldlists.append(self.curlist)
-            self.curlist = None
+            self.curlist = {}
 
     def getfieldlists( self ):
-        assert self.curlist is None # you need to finalize
+        assert self.curlist == {} # you need to finalize
         return self.fieldlists
 
     def visit_field_list( self, node ):

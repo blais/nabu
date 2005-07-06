@@ -4,7 +4,6 @@
   Test for Links / Bookmarks
 ==============================
 
-
 Transform that finds links represented as line-blocks of less than lines,
 where if it has three lines, the first line is taken to be a description,
 the second line is a URL (reference), and the third line a comma-separated

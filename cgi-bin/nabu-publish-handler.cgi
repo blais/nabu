@@ -58,6 +58,7 @@ def main():
 
     transforms = (
         (document.DocumentExtractor, document.DocumentStorage(connection)),
+        (document.DoctreeExtractor, document.DoctreeStorage(connection)),
         (link.LinkExtractor, link.LinkStorage(connection)),
         (event.EventExtractor, event.EventStorage(connection)),
         (contact.ContactExtractor, contact.ContactStorage(connection)),

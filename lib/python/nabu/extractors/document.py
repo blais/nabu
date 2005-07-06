@@ -175,4 +175,6 @@ class DocumentStorage(extract.SQLObjectExtractorStorage):
         for n in ['title', 'author', 'date', 'abstract',
                   'category', 'serie', 'location']:
             data.setdefault(n, '')
+        if not data['date']:
+            data['date'] = datetime.date.today()
         Document(**data)
