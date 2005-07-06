@@ -12,7 +12,7 @@ Process global information about the upload as a contact.
 """
 
 # stdlib imports
-import re
+import re, types
 
 # docutils imports
 from docutils import nodes
@@ -22,6 +22,7 @@ from sqlobject import *
 
 # nabu imports
 from nabu import extract
+from nabu.extractors.flvis import FieldListVisitor
 
 
 class ContactExtractor(extract.Extractor):
@@ -47,24 +48,37 @@ class ContactExtractor(extract.Extractor):
 
     default_priority = 900
 
+    def store( self, flist ):
+        for k, v in flist.iteritems():
+            if isinstance(v, types.ListType):
+                flist[k] = ', '.join([x.astext() for x in v])
+            else:
+                flist[k] = v.astext()
+
+        # it's a contact info! store it.
+        self.storage.store(self.unid, flist)
+
     def apply( self, **kwargs ):
         self.unid, self.storage = kwargs['unid'], kwargs['storage']
 
-        v = self.Visitor(self.document)
-        v.x = self
+        v = FieldListVisitor(self.document)
+        v.initialize()
         self.document.walk(v)
+        v.finalize()
 
-    class Visitor(nodes.SparseNodeVisitor):
-
-        def __init__( self, *args, **kwds ):
-            nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
-            self.extracted = {}
-
-        def visit_field_list( self, node ):
-            import sys; from pprint import pprint, pformat
-            print >> sys.stderr,  pformat(node.astext())
-##         self.storage.store(self.unid, v.extracted)
-## FIXME todo
+        for flist in v.getfieldlists():
+            # translate short names
+            for _from, _to in (('n', 'name'),
+                               ('e', 'email'),
+                               ('p', 'phone')):
+                try:
+                    flist[_to] = flist[_from]
+                except KeyError:
+                    pass
+                
+            if 'name' in flist and \
+               ('email' in flist or 'phone' in flist or 'address' in flist):
+                self.store(flist)
 
 
 class Contact(SQLObject):

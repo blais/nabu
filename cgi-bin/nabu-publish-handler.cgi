@@ -60,7 +60,7 @@ def main():
         (document.DocumentExtractor, document.DocumentStorage(connection)),
         (link.LinkExtractor, link.LinkStorage(connection)),
         (event.EventExtractor, event.EventStorage(connection)),
-##        (contact.ContactExtractor, contact.ContactStorage(connection)),
+        (contact.ContactExtractor, contact.ContactStorage(connection)),
         )
 
     server.xmlrpc_handler(src, transforms, username, allow_reset=1)

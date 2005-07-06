@@ -1,0 +1,36 @@
+==========================================
+   Some Example Contact Info Extraction
+==========================================
+
+:Id: d09c2ab7-193a-4154-b05c-b6157f58b47e
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2005-07-06
+
+Some text.
+
+:Name: Martin Blais
+:Email: blais@furius.ca
+:Address: 1 rue du Un, Unoland
+
+.. we need to separate field lists with something, not just whitespace.
+.. this is a minor inconvenience due the way that rst is defined.
+
+:Title: Free Culture
+:Author: Lawrence Lessig
+:URL: http://www.amazon.com/o/ASIN/0143034650/
+
+..
+
+:n: New Navarino Bakery & Pastry Shop
+:p: 514-279-7725
+:a: 5563, avenue du parc, Montréal, QC H2V 4H2
+
+..
+
+:n: Australian Taxation Office
+:p: General - 13 2861
+:p: GST enquiries - 13 6140
+:p: Australian Business Number enquiries - 13 2478
+:w: http://www.ato.gov.au/
+:w: http://www.taxinstitute.com.au/
+

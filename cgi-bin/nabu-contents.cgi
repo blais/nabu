@@ -8,10 +8,11 @@
 #
 
 """
-Nabu test content dumper.
+Nabu content dumper.
 
 This is a CGI script that is meant to be invoked from a browser to debug/dump
-the contents of the uploaded sources.
+the contents of the uploaded sources.  This is NOT meant as a presentation
+layer, this is really just for debugging stuff.
 """
 
 # stdlib imports
