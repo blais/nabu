@@ -239,10 +239,13 @@ call it "Nabu".
 Documentation
 =============
 
-Technical
----------
+For Content Writers
+-------------------
 
 - `Usage <doc/nabu-usage.html>`_: usage instructions for content pushers;
+
+Technical
+---------
 
 - `Server Setup <doc/nabu-server.html>`_: instructions for installing and
   configuring a Nabu server;
@@ -357,10 +360,10 @@ Acknowledgements
 This project uses two important libraries to do its thing:
 
 - the `Docutils <http://docutils.sourceforge.net>`_ project (written mostly by
-  Dave Goodger), which provides a reStructuredText parser, the internal document
-  structure, and the HTML writer (and more).  Docutils is a major facilitator
-  for this system--without it this idea probably would not have seen the light of
-  day;
+  Dave Goodger), which provides the reStructuredText parser, the internal
+  document structure, and the HTML writer (and more).  Docutils is a major
+  facilitator for this system--without it this idea probably would not have seen
+  the light of day;
 
 - the `SQLObject <http://sqlobject.org>`_ library (written by Ian Bicking),
   which provides easier access to SQL storage.
