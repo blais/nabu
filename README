@@ -153,7 +153,7 @@ Nabu is cool, because:
     dictate how the information is presented/served to the clients;
 
 - you edit files *locally*, not in a bleeping web browser window (programmers
-  will appreciate the value of this);
+  will appreciate the value of this), in your favourite editor environment;
 
 - the organization of the source files in subdirectories has *nothing* to do
   with how the content is presented.  We use a unique ID system (similar to

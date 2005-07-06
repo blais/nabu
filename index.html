@@ -5,7 +5,18 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
 <title>nabu: a Publishing System using Text Files</title>
-<link rel="stylesheet" href="style.css" type="text/css" />
+<style type="text/css">
+
+@import url("/docutils-style.css");
+@import url("/project-header.css");
+
+div#project-header {
+  background-image: url("etc/header-nikko3.jpg");
+  background-color: black;
+}
+
+
+</style>
 </head>
 <body>
 
@@ -30,7 +41,7 @@ the grandson of Ea.&quot;</p>
 <li><a class="reference" href="#example-blogging-system" id="id7" name="id7">Example: Blogging System</a></li>
 <li><a class="reference" href="#example-automatic-bookmarks-list" id="id8" name="id8">Example: Automatic Bookmarks List</a></li>
 <li><a class="reference" href="#example-shared-events-calendar" id="id9" name="id9">Example: Shared Events Calendar</a></li>
-<li><a class="reference" href="#customizeability-writing-extractors" id="id10" name="id10">Customizeability: Writing Extractors</a></li>
+<li><a class="reference" href="#customizability-writing-extractors" id="id10" name="id10">Customizability: Writing Extractors</a></li>
 <li><a class="reference" href="#target-audience" id="id11" name="id11">Target Audience</a></li>
 </ul>
 </li>
@@ -54,20 +65,21 @@ the grandson of Ea.&quot;</p>
 </div>
 <div class="section" id="description">
 <h1><a class="toc-backref" href="#id5" name="description">Description</a></h1>
+<p>Assuming that a user can easily create text documents --this is the case for
+most programmers and techies, we do this all day, and we all have our favourite
+text editors-- this system allows you to store various kinds of data <em>across</em>
+multiple documents.  You can create and maintain a body of text files from which
+various elements automatically could get stored in an organized manner in a
+database.</p>
 <p>Nabu is a simple framework that extracts chunks of various types of information
 from documents written in simple text files (written with <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>
 conventions) and that stores this information (including the document) in a
 remote database for later retrieval.  The processing and extraction of the
 document is handled on a server, and there is a small and simple client that is
 used to push the files to the server for processing and storage (think
-<tt class="docutils literal"><span class="pre">rsync</span></tt>).  The client requires only Python to work.  The presentation layer
-is left unspecified: you can use whichever web application framework to present
-the extracted data in the way that you prefer.</p>
-<p>Assuming that a user can easily create text documents --this is the case for
-most programmers and techies, we do this all day, and we all have our favourite
-text editors-- this system allows you to store various kinds of data <em>across</em>
-multiple documents.  You can create and maintain a body of text files from which
-various elements automatically get stored in an organized manner in a database.</p>
+<tt class="docutils literal"><span class="pre">rsync</span></tt>).  The client requires only Python to work.  The presentation layer is
+left unspecified: you can use whichever web application framework you like to
+present the extracted data in the way that you prefer.</p>
 <p>It is probably best illustrated by some examples...</p>
 <div class="section" id="example-extracting-contact-info">
 <h2><a class="toc-backref" href="#id6" name="example-extracting-contact-info">Example: Extracting Contact Info</a></h2>
@@ -115,9 +127,11 @@ extracted.</p>
 simple convention, like:</p>
 <pre class="literal-block">
 :Event: 2005-06-28
+
   - dinner with Hannah &#64; funky restaurant
 
 :Event: 2005-07-10 13h30
+
   - presentation on quaternions (room C-117)
 </pre>
 <p>These entries could be fed automatically in a shared Nabu, for a group of
@@ -127,8 +141,8 @@ somehow.</p>
 <p>There are many possibilities... I'm convinced I will find more serious uses for
 this system as well, which is why I built it in a generic manner.</p>
 </div>
-<div class="section" id="customizeability-writing-extractors">
-<h2><a class="toc-backref" href="#id10" name="customizeability-writing-extractors">Customizeability: Writing Extractors</a></h2>
+<div class="section" id="customizability-writing-extractors">
+<h2><a class="toc-backref" href="#id10" name="customizability-writing-extractors">Customizability: Writing Extractors</a></h2>
 <p>Various simple extractors will come with the Nabu package itself, but we suspect
 you will very soon want to write your own.  Writing extractors is very easy.</p>
 <p>All of this is built using the very powerful <a class="reference" href="http://docutils.sourceforge.net">docutils</a> tools, which includes the
@@ -148,7 +162,7 @@ designed for your mother.  In order to be able to use this efficiently, you must
 <li>understand the conventions and simple no-markup syntax of <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>;</li>
 <li>be able to edit simple text files.</li>
 </ol>
-<p>I suspect that this will cather to people who are already familiar with
+<p>I suspect that this will cater to people who are already familiar with
 computers.</p>
 <p>For more details, see the design document and project proposal under the
 <tt class="docutils literal"><span class="pre">doc</span></tt> subdirectory.</p>
@@ -160,37 +174,37 @@ computers.</p>
 <ul>
 <li><p class="first">it is flexible: you can use</p>
 <ul class="simple">
-<li>whichever text editor you like to edit the files;</li>
-<li>whichever source code control system you like to store and maintain them (or
+<li>any text editor you like to edit the files;</li>
+<li>any source code control system you like to store and maintain them (or
 none);</li>
-<li>whichever database for storage;</li>
-<li>and whichever web application framework for presentation.  Nabu does not
+<li>any database for storage;</li>
+<li>and any web application framework for presentation.  Nabu does not
 dictate how the information is presented/served to the clients;</li>
 </ul>
 </li>
 <li><p class="first">you edit files <em>locally</em>, not in a bleeping web browser window (programmers
-will appreciate the value of this);</p>
+will appreciate the value of this), in your favourite editor environment;</p>
 </li>
 <li><p class="first">the organization of the source files in subdirectories has <em>nothing</em> to do
-with how the content is presented.  We use a unique id system (similar to
+with how the content is presented.  We use a unique ID system (similar to
 arch) where your document to be published must contain a unique string to mark
 it with that id.  You can put that string in a <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> comment or a
 bibliographic field.  Unlike Wikis, this allows you to change the title of
-your documents which keeping the possibility of a permanent link to them.</p>
+your documents while keeping the possibility of a permanent link to them.</p>
 <p>It effectively offers you a sandbox for creating content, and then how you
 organize and present the content is dictated by ways that <em>you</em> decide, most
 likely independent of the source file organization structure;</p>
 </li>
 <li><p class="first">the input data is scattered over many files, it does not have to be stored
 per-category (for example, you don't have to store all your &quot;contacts&quot; in a
-single &quot;address book&quot; file.  I conjecture that this may be closer to how
+single &quot;address book&quot; file).  I conjecture that this may be closer to how
 humans think of this data.  This body of files can be used to create a
 mind-mapping system;</p>
 </li>
 <li><p class="first">we recognize that the value of the information lies in the source itself, the
 text files.  This valuable source remains <em>with you</em>, and you are free to
 manage them in any way you prefer, with any version control system you like
-(if you want to do that).  You can completely dump the data that lies on the
+(if you want to do that).  You can completely dump the data stored in the
 database and rebuild it from the text files;</p>
 </li>
 <li><p class="first">various semantic chunks of content are automatically extracted from your
@@ -198,7 +212,7 @@ document.  These semantic things are easily written with little code and are
 configurable.  Nabu comes with example content extractors;</p>
 </li>
 <li><p class="first">a light-weight program with minimal dependencies is used to upload the files
-on the server.  The server processes the files for content.  This maximizes
+to the server.  The server processes the files for content.  This maximizes
 the potential that you will be able to use Nabu anywhere, on any platform.
 The client only requires Python to work;</p>
 </li>
@@ -211,7 +225,7 @@ that the presentation layer never serves the pages/documents themselves.
 Maybe it just serves bits of information extracted from the files.  Also,
 documents are identified by a unique string, and not by Wiki names.  This
 allows one to use whatever title for single documents and to create permanent
-links to specific documents (as long as the file id is maintained);</li>
+links to specific documents (as long as the file ID is maintained);</li>
 <li>a Blogging system: it can be used to add any document set to a database.
 Organization by date and category is simply implemented, but not a
 requirement.  You present the data set (which can be anything) in your
@@ -264,7 +278,7 @@ that I would like to do that is not on the immediate list;</li>
 <h1><a class="toc-backref" href="#id18" name="download">Download</a></h1>
 <p>You can download the <a class="reference" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name
 <tt class="docutils literal"><span class="pre">nabu</span></tt>.  Usage instructions can be found <a class="reference" href="doc/nabu-usage.html">here</a>.</p>
-<p>Snapshots of the latest Nabu source code can be found in the <a class="reference" href="/downloads/nabu">Download Area</a>.  It consists mostly in server code, but it also contains
+<p>Snapshots of the latest Nabu source code can be found in the <a class="reference" href="/downloads/nabu">Download Area</a>.  It consists mostly of server code, but it also contains
 the publisher client.  When I get some feedback I will decide on the version
 number.</p>
 <div class="important">
@@ -305,15 +319,12 @@ content is stored in a database after having been parsed.</p>
 to a CGI script with XML-RPC (very simple) or within your own server system
 (if you can write a little bit of Python code, still very simple).  On the
 server, you must have:</p>
-<ul class="simple">
+<ul class="last simple">
 <li><a class="reference" href="http://python.org">Python-2.4</a> or greater;</li>
 <li><a class="reference" href="http://docutils.sourceforge.net">docutils</a>;</li>
 <li>if you use a database backend: <a class="reference" href="http://sqlobject.org">SQLObject</a> and a
 supported wrapper for your database;</li>
 </ul>
-<p class="last">Otherwise, all you have to do with copy the example publisher that comes with
-Nabu, change it to configure the transforms that you would like be processed
-on your server.</p>
 </dd>
 <dt>Presentation Layer</dt>
 <dd><p class="first">This is up to you.  Nabu does not provide nor dictate the way in which you
@@ -337,7 +348,7 @@ This code is distributed under the <a class="reference" href="COPYING">GNU Gener
 <li>the <a class="reference" href="http://docutils.sourceforge.net">Docutils</a> project (written mostly by
 Dave Goodger), which provides a reStructuredText parser, the internal document
 structure, and the HTML writer (and more).  Docutils is a major facilitator
-for this system--without it this idea probably would not have see the light of
+for this system--without it this idea probably would not have seen the light of
 day;</li>
 <li>the <a class="reference" href="http://sqlobject.org">SQLObject</a> library (written by Ian Bicking),
 which provides easier access to SQL storage.</li>
