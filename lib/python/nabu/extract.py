@@ -109,6 +109,7 @@ class SQLObjectExtractorStorage(ExtractorStorage):
         """
         for cls in self.sqlobject_classes:
             cls.dropTable()
+            cls.createTable()
 
 
 def get_generic_table_values( connection, tablename, unid=None ):

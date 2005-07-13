@@ -105,7 +105,9 @@ def render_front_page():
     # get list of documents uploaded
     print '<h1>Documents</h1>'
     print '<ul>'
-    for doc in document.Document.select():
+    documents = list(document.Document.select())
+    documents.sort(lambda x, y: cmp(x.date, y.date))
+    for doc in documents:
         print ('<li><a href="%s">%s</a> (%s) &nbsp; '
                '<span class="date">%s</span></li>') % \
               (uri + '?method=document&unid=%s' % doc.unid,
