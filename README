@@ -36,7 +36,8 @@ present the extracted data in the way that you prefer.
 
    Nabu does not really fit into any single category... it is a simple
    implementation of a simple idea that "sits" between all these things and that
-   can be used to feed data into similar presentation layers.
+   can be used to feed data into databases for presentations similar as the ones
+   mentioned above.
 
 It is probably best illustrated by some examples...
 
