@@ -1,0 +1,263 @@
+======================================
+Cascading Style-Sheet Notes and Tricks
+======================================
+
+:Id: 5250c67a-bbd8-4c90-9334-58b561799084
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2003-09-28
+:Category: Web Design
+:Abstract:
+
+   Personal notes and links on CSS tricks and things.
+
+Design sites
+============
+
+- http://www.csszengarden.com
+
+    Incredible site with single XHTML page / multiple CSS designs concept.
+    Absolutely stunning results.  This should act as an ultimate resource for
+    tricks.
+
+- http://www.mezzoblue.com/zengarden/resources/
+
+    Links to LOTS of interesting CSS design tricks.
+
+
+- http://www.stopdesign.com/also/articles
+
+    Interesting articles on CSS.
+
+- http://www.bluerobot.com/web/layouts/
+
+    The Layout Reservoir trick I used on the Santeria DB site.  Simple layouts
+    using CSS.
+
+- http://www.bluerobot.com/web/css/fouc.asp
+
+    Avoiding the Flash of Unstyled Content (FOUC) effect.
+
+
+- http://developer.gnome.org/
+
+    Nice simple design for a development site.
+
+- http://antipixel.com/
+
+    Cool site in Japan (with blog) with nice design
+
+
+
+
+Validation
+==========
+
+- CSS validator
+
+    http://jigsaw.w3.org/css-validator/
+
+
+Interesting Fonts
+=================
+
+::
+
+  font: 9pt/17pt georgia;
+  font: italic normal 12pt georgia;
+
+  font: 8pt/11pt "Times New Roman", serif, georgia;
+  font: italic 10pt/22pt georgia;
+
+  font: 8pt/16pt georgia;
+
+From http://www.oreillynet.com/pub/a/javascript/2001/07/26/css_fonts.html?page=2:
+
+  There are five generic font families, although two of them are not particularly
+  useful. These families are:
+
+  * Serif: fonts such as Times, New Century Schoolbook, and Garamond. The
+    letters in a Serif font feature small caps, lines, and other decorations
+    -- the serifs which give this family its name.
+
+  * Sans-serif: fonts such as Geneva, Helvetica, and Arial. The letters of
+    Sans-serif fonts have no serifs.
+
+  * Monospace: fonts where each character is the same width. This is in
+    contrast to the vast majority of fonts, which are proportional -- that is,
+    the amount of horizontal space taken up by each letter is in proportion to
+    its width, so that i is not as wide as w. Courier is the most commonly
+    used monospace font. Note that monospace fonts can also be either Serif or
+    Sans-serif. Courier is a Serif font, for example.  *
+
+  * Cursive: fonts which emulate human handwriting, such as Author. Cursive
+    fonts are typically quite difficult to read on-screen, and their use is
+    generally discouraged. Some browsers cannot even find and use cursive
+    fonts.
+
+  * Fantasy: fonts which do not fit into the previous four families, such as
+    Zapf Dingbats, Ventilate, or Klingon. Because this is a catch-all
+    category, it is defined more by what it is not (the other four font
+    families) than what it is.
+
+  **Cross-Platform Fonts**
+
+  In a world with many different operating systems, it is important to know what
+  fonts are widely available across platforms, and what close alternatives
+  exist. Although you may like the look of Sand, and you know it's installed on
+  most modern Macs, its non-existence on Windows machines means that your page
+  will turn out looking very different on various machines.
+
+  For a basic guide, please consult the following table. Note that the entry for
+  Fantasy fonts is fairly suspect, since the catch-all nature of this font family
+  means that the lack of a specific font could cause another, wildly different
+  font to be substituted.
+
+  Generic Family	Common Macintosh Fonts			   Common Windows Fonts
+
+  Serif		Times, New Century Schoolbook, Palatino	   Times New Roman, Georgia
+
+  Sans-serif 	Helvetica, Arial, Verdana*		   Arial, Tahoma, Verdana*
+
+  Monospace 	Courier					   Courier New
+
+  Cursive 	-- 	--
+
+  Fantasy 	WingDings, Symbol			   WingDings, Symbol
+
+
+
+
+
+Individual Tricks
+=================
+
+Justify your text
+-----------------
+
+::
+
+  text-align: justify;
+
+Use Acronym where it makes sense
+--------------------------------
+
+The ACRONYM element is used to markup acronyms. The TITLE attribute is useful in
+conjunction with ACRONYM to give the long form of the acronym, allowing visual
+browsers to provide the long form as a "tooltip". Examples::
+
+  <ACRONYM TITLE="North Atlantic Treaty Organization">NATO</ACRONYM>
+
+It may be a good idea to make them look nicer::
+
+  acronym {
+    border-bottom: none; }
+
+
+Replacing text by an image
+--------------------------
+
+::
+
+  div {
+    background-image:url("hello_world.gif");
+    background-repeat:no-repeat;
+    height:35px; }
+
+  span {
+    display:none; }
+
+  ...
+
+  <div>
+    <span>Hello world!</span>
+  </div>
+
+Assign a class to all text that needs to be "swapped" to images, to put CSS
+declarations in common::
+
+  h1.swap {
+    height:22px;
+    background-repeat:no-repeat; }
+
+  h1.swap span {
+    display:none; }
+
+
+Centered elastic column with nice borders (no images)
+-----------------------------------------------------
+
+::
+
+  #Content {
+  	margin:0 50px 0 125px;
+  	padding:3.5em 1.36em;
+  	border-color:#666;
+  	border-style:solid;
+  	border-width:0 1em;
+  	background-color:#eee;
+  	}
+
+  <body>
+
+  <div id="Content">
+
+  ...
+
+
+Corner image at the bottom of the page
+--------------------------------------
+
+Place an image anchored to the bottom of the document::
+
+  background: #fff url(/001/blossoms.jpg) no-repeat bottom right;
+  margin: 0px;
+  padding: 0px;
+
+
+
+Graphic Design
+==============
+
+:: 
+
+  Nice Graphical Depiction of Principles in Flash -- Andrew Mundi
+  http://www.mundidesign.com/presentation/index2.html
+  
+  Principles
+  http://www.math.duke.edu/education/ccp/resources/write/design/graphicindex.html
+  
+  Color Scheme Chooser online, nice app
+  http://www.pixy.cz/apps/barvy/index-en.html
+  
+
+Summary: La lecture facile à l'écran
+====================================
+
+- common errors in choosing background image:
+
+  - to omuch contrast
+  - pattern that is too "alive" (i.e. eyes gets lost in it)
+
+- ideal line length: 60 chars; at normal font size (3), 400px = 80chars
+
+- paragraph ``<p align="justify">`` is <400px only.
+
+- long text: you must give vertical cues
+
+  - images
+  - avoid fixed background at all costs
+  - block of text ith one sentence (could be an image too)
+  - underline and visible links provide anchoring for the eye
+  - subsections with different style is good
+
+- fonts
+
+  - Times: originally designed for newspaper print
+
+  - Verdana and Georgia (both from MS) were designed to be read on the screen
+
+  - sizes:
+
+    - ``normal`` could be anything on the client (good)
+    - ``12pt`` forces client size (bad)
+

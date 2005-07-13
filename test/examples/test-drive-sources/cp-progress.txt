@@ -1,0 +1,16 @@
+==================
+Copy with progress
+==================
+
+:Id: 774a3fa5-3004-4f14-85f4-ffefb16e1175
+:Author: Martin Blais <blais@furius.ca>
+:Category: Technical
+:Date: 2004-02-06
+
+It would be nice to have a cp-progress wrapper for the ``cp`` command, that
+would also pop-up a little dialog that monitors the size of the file that is
+copied.  I would make this program automatically visible from all workspaces and
+it would show a special color/window when the copy operation is done, and
+disappear shortly thereafter.
+
+

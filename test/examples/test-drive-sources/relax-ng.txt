@@ -1,0 +1,38 @@
+==================================================
+ Using and Installing RELAX-NG for XML Validation
+==================================================
+
+:Id: 496a48ee-9e21-48b4-8b8f-78c92cef3dd6
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2004-02-04
+:Category: Technical
+:Abstract:
+
+   Personal notes on installing RELAX-NG -related tools to be able to validate
+   my XML documents with it.
+
+Notes
+=====
+
+There are two forms of RELAX-NG schemas:
+
+1. XML syntax: ``.rng``;
+2. XML syntax: ``.rnc``;
+
+Converting DTD to RNG
+=====================
+
+Installed a program called ``trang`` in ``/usr/local`` to convert my DTDs into
+RELAX-NG XML documents.  Downloaded the GCJ version and compiled Java code into
+an executable (had to fiddle with CLASSPATH, see ``linux-config`` doc).
+
+Validation
+==========
+
+This does it::
+
+  xmllint --noout  --relaxng ../share/rng/album.rng album-1.xml
+
+Output::
+
+  album-1.xml validates

@@ -1,0 +1,25 @@
+=========================================
+  ZZStructures or Ted Nelson's Zig-Zags
+=========================================
+
+:Id: 4e4bce0c-d9db-4678-ad59-13fc2d7739b2
+:Category: Technical
+:Date: 2005-07-12
+
+(Introduced by McGuff.)
+
+Keywords: ZigZag, zzStructure, Ted Nelson (the guy who coined the words
+hypertext and hypermedia circa 1965), Xanadu
+
+ZigZag is the registered trademark, zzstructure is the generic name, for a
+data structure or way of organizing information that generalizes lists,
+n-dimensional arrays, and trees
+
+My online tutorial: http://www.dgp.toronto.edu/~mjmcguff/research/zigzag/
+
+My subsequent paper: published at ACM Hypertext 2004;
+  electronic copy at http://www.dgp.toronto.edu/~mjmcguff/research/
+
+For Nelson's writings on ZigZag, google "zigzag" or see references in the above.
+
+
