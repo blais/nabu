@@ -17,7 +17,7 @@ n-dimensional arrays, and trees
 
 My online tutorial: http://www.dgp.toronto.edu/~mjmcguff/research/zigzag/
 
-My subsequent paper: published at ACM Hypertext 2004;
+Paper: published at ACM Hypertext 2004;
   electronic copy at http://www.dgp.toronto.edu/~mjmcguff/research/
 
 For Nelson's writings on ZigZag, google "zigzag" or see references in the above.
