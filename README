@@ -105,6 +105,15 @@ There are many possibilities... I'm convinced I will find more serious uses for
 this system as well, which is why I built it in a generic manner.
 
 
+.. important::
+
+   If you have a commercial use need for a system similar to this one, the
+   author is generally available for consulting to implement customizations or
+   build a system on top of Nabu.  See `contact information for consulting
+   </home/consulting.html>`_.  I'm very interested in new ways to publish and
+   organize information online.
+
+
 Customizability: Writing Extractors
 -----------------------------------
 
