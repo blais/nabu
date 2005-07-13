@@ -70,6 +70,12 @@ used to push the files to the server for processing and storage (think
 <tt class="docutils literal"><span class="pre">rsync</span></tt>).  The client requires only Python to work.  The presentation layer is
 left unspecified: you can use whichever web application framework you like to
 present the extracted data in the way that you prefer.</p>
+<div class="figure">
+<img alt="doc/nabusit.png" src="doc/nabusit.png" />
+<p class="caption">Nabu does not really fit into any single category... it is a simple
+implementation of a simple idea that &quot;sits&quot; between all these things and that
+can be used to feed data into similar presentation layers.</p>
+</div>
 <p>It is probably best illustrated by some examples...</p>
 <div class="section" id="example-extracting-contact-info">
 <h2><a class="toc-backref" href="#id6" name="example-extracting-contact-info">Example: Extracting Contact Info</a></h2>
@@ -150,6 +156,15 @@ new type of entry, all you need to do is write code that visits the tree, finds
 what you want, and write a simple object to store it in the way you prefer.  You
 can use SQLObject or another library to store the data in a database or in text
 files.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">At the moment I have not had time to write complex extractors yet, due to
+work/time constraints, but I will soon write a system to selectively publish
+lots of disparate documents using Nabu and the extractors I will write for
+this will come with the Nabu distribution. I'll be happy to include external
+contributions of extractor codes in the distribution if anyone cares to
+provide them.</p>
+</div>
 </div>
 <div class="section" id="target-audience">
 <h2><a class="toc-backref" href="#id11" name="target-audience">Target Audience</a></h2>
@@ -349,7 +364,9 @@ supported wrapper for your database;</li>
 <dt>Presentation Layer</dt>
 <dd><p class="first">This is up to you.  Nabu does not provide nor dictate the way in which you
 present your content, it only deals with the upload and processing of the
-source documents and the storage of extracted information.</p>
+source documents and the storage of extracted information.  You can use any
+computer language or framework you prefer to build a front-end for data fed
+into a database by Nabu.</p>
 <p class="last">However, we provide a simple CGI script that allows you to browse the uploaded
 contents for debugging and visualizing what has been stored in the Nabu
 database.</p>

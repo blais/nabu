@@ -6,3 +6,6 @@ div#project-header {
   background-color: black;
 }
 
+div.important { 
+  background-color: #FAC;
+}

@@ -31,7 +31,15 @@ used to push the files to the server for processing and storage (think
 left unspecified: you can use whichever web application framework you like to
 present the extracted data in the way that you prefer.
 
+
+.. figure:: doc/nabusit.png
+
+   Nabu does not really fit into any single category... it is a simple
+   implementation of a simple idea that "sits" between all these things and that
+   can be used to feed data into similar presentation layers.
+
 It is probably best illustrated by some examples...
+
 
 
 Example: Extracting Contact Info
@@ -128,6 +136,15 @@ new type of entry, all you need to do is write code that visits the tree, finds
 what you want, and write a simple object to store it in the way you prefer.  You
 can use SQLObject or another library to store the data in a database or in text
 files.
+
+.. note:: 
+
+   At the moment I have not had time to write complex extractors yet, due to
+   work/time constraints, but I will soon write a system to selectively publish
+   lots of disparate documents using Nabu and the extractors I will write for
+   this will come with the Nabu distribution. I'll be happy to include external
+   contributions of extractor codes in the distribution if anyone cares to
+   provide them.
 
 
 Target Audience
@@ -349,7 +366,9 @@ Nabu Server / Publisher Handler
 Presentation Layer
   This is up to you.  Nabu does not provide nor dictate the way in which you
   present your content, it only deals with the upload and processing of the
-  source documents and the storage of extracted information.
+  source documents and the storage of extracted information.  You can use any
+  computer language or framework you prefer to build a front-end for data fed
+  into a database by Nabu.
 
   However, we provide a simple CGI script that allows you to browse the uploaded
   contents for debugging and visualizing what has been stored in the Nabu
