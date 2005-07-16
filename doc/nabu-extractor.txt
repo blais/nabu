@@ -230,7 +230,7 @@ Before we write the extractor storage class, we will introduce a third class,
 which is used to define a database table into which to store the book
 references. This is due to our use of SQLObject to access the database, it uses
 classes to define the schema of the tables we access.  This class will be used
-by the extractor storage object.
+by the extractor storage object. ::
 
   class Book(SQLObject):
       """

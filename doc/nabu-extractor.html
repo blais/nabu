@@ -256,21 +256,19 @@ which is used to define a database table into which to store the book
 references. This is due to our use of SQLObject to access the database, it uses
 classes to define the schema of the tables we access.  This class will be used
 by the extractor storage object.</p>
-<blockquote>
-<dl class="docutils">
-<dt>class Book(SQLObject):</dt>
-<dd><p class="first">&quot;&quot;&quot;
-Storage for book information.
-&quot;&quot;&quot;
-unid = StringCol(notNull=1)</p>
-<p class="last">title = UnicodeCol()
-author = UnicodeCol()
-year = UnicodeCol()
-url = UnicodeCol()
-review = UnicodeCol()</p>
-</dd>
-</dl>
-</blockquote>
+<pre class="literal-block">
+class Book(SQLObject):
+    &quot;&quot;&quot;
+    Storage for book information.
+    &quot;&quot;&quot;
+    unid = StringCol(notNull=1)
+
+    title = UnicodeCol()
+    author = UnicodeCol()
+    year = UnicodeCol()
+    url = UnicodeCol()
+    review = UnicodeCol()
+</pre>
 <p>The fields are self-explanatory.  We store all this information in as unicode
 strings to be able to support exotic character sets.</p>
 <p>Note that we declared a <tt class="docutils literal"><span class="pre">unid</span></tt> field that is required not to be null.  This is
