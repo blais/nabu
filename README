@@ -32,12 +32,10 @@ left unspecified: you can use whichever web application framework you like to
 present the extracted data in the way that you prefer.
 
 
-.. figure:: doc/nabusit.png
+.. figure:: doc/nabu2.png
 
-   Nabu does not really fit into any single category... it is a simple
-   implementation of a simple idea that "sits" between all these things and that
-   can be used to feed data into databases for presentations similar as the ones
-   mentioned above.
+   Dataflow diagram of Nabu framework.
+
 
 It is probably best illustrated by some examples...
 
@@ -75,9 +73,16 @@ example::
 
    Ahh, I like to talk about cookies and cream...
 
-
 All you would have to do is present the documents in an orderly way, e.g. by
 category, by date, just the most recent, whatever you like.
+
+
+.. figure:: doc/nabusit.png
+
+   Nabu does not really fit into any single category... it is a simple
+   implementation of a simple idea that "sits" between all these things and that
+   can be used to feed data into databases for presentations similar as the ones
+   mentioned above.
 
 
 Example: Automatic Bookmarks List

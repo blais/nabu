@@ -15,7 +15,7 @@ Introduction
 Nabu offers a framework for the extraction of meaningful portions of documents
 into structured storage (e.g. database tables).  This extraction will generally
 be customized for each end application and therefore we anticipate that people
-will write their own extractors.  
+will write their own extractors.
 
 This document provides an example of that.  It aims at demonstrating the
 simplicity of the task.
@@ -39,7 +39,7 @@ like BibTeX entries, for example::
    :author: Peter Burian, Bob Caputo
    :isbn: 079225676X
    :review:
-   
+
      Excellent diversified advice from top photographers.  The book
      manages to pack lots of relevant content in a small format.  It
      contains a nice section on composition, which is what originally
@@ -63,7 +63,7 @@ anywhere within the document [#]_, for example, in an item list, e.g.::
    - :title: Free Culture
      :author: Lawrence Lessig
      :url: http://www.amazon.com/o/ASIN/0143034650/
-   
+
    - :title: A Scanner Darkly
      :author: Philip K. Dick
      :isbn: 0679736654
@@ -75,7 +75,38 @@ be nice if the parser could just figure that out by itself.  For example, the
 empty ``:book:`` field in the first example above should not be mandatory for
 the book reference to be detected.
 
+  
+.. note:: 
 
+   One additional detail is that the field lists should be separate.  In
+   reStructuredText, fields are allowed to have whitespace between them, so
+   that::
+   
+      :title: A Scanner Darkly
+   
+      :author: Philip K. Dick
+   
+      :isbn: 0679736654
+      :url: http://www.amazon.com/o/ASIN/0679736654/
+   
+   is a single field list.  This means that you cannot separate field lists with
+   just whitespace.  I'm using an itemized list in the previous example, but
+   other document structures could be used as well (see the `docutils document
+   tree`_ a list of constructs that get recognized in reStructuredText).  This
+   example exhibits a subtlety that may arise when you choose which structures
+   will be parsed: you have to think about how the docutils parser will
+   represent the data in the tree of nodes.  For example, the following would
+   not work because it gets parsed as a single field list::
+   
+      :title: Free Culture
+      :author: Lawrence Lessig
+      :url: http://www.amazon.com/o/ASIN/0143034650/
+    
+      :title: A Scanner Darkly
+      :author: Philip K. Dick
+      :isbn: 0679736654
+
+ 
 Looking at the Document Structure
 =================================
 
@@ -196,10 +227,10 @@ We start our Python script with a brief description and some imports::
   """
   Extract book entries.
   """
-  
+
   # other imports
   from sqlobject import *
-  
+
   # nabu imports
   from nabu import extract
   from nabu.extractors.flvis import FieldListVisitor
@@ -218,13 +249,13 @@ We then define the extractor class, which is a docutils ``Transform``::
       """
       Transform that looks at field lists and that heuristically attempts
       to find references to books.  For example,
-  
+
         :title: National Geographic Photography Field Guide 2nd Edition:
                 Secrets to Making Great Pictures
         :author: Peter Burian, Bob Caputo
         :url: http://www.amazon.com/o/ASIN/079225676X/
         :review:
-        
+
           Excellent diversified advice from top photographers.  The book
           manages to pack lots of relevant content in a small format.  It
           contains a nice section on composition, which is what originally
@@ -232,12 +263,12 @@ We then define the extractor class, which is a docutils ``Transform``::
           photography section useless, but for the most part, the
           information available in this book is of great value.  This is
           the best general book about photography that I've read.
-  
+
       The heuristic looks at an empty :book: field, an :ISBN: field, or
       some list that has an author and a title. See the Book class below to
       find out which fields are stored.
       """
-  
+
       default_priority = 900
 
 Note that we put the full description in the docstring of the extractor class
@@ -261,7 +292,7 @@ transforms are run by docutils)::
   ...
       def apply( self, **kwargs ):
           self.unid, self.storage = kwargs['unid'], kwargs['storage']
-  
+
           v = FieldListVisitor(self.document)
           v.initialize()
           self.document.walk(v)
@@ -278,7 +309,7 @@ This special visitor accumulates all the field lists in the document into a
 dictionary that we then process and implement our heuristic to find the field
 lists that match our criteria::
 
-  ...      
+  ...
           for flist in v.getfieldlists():
               book = 0
               # if there is an empty book field, this is explicitly a book.
@@ -293,7 +324,7 @@ lists that match our criteria::
 
               if book:
                   self.store(flist) # store the book
-  
+
 Next, we implement a store method that converts the field value nodes returned
 by the ``FieldListVisitor`` into Unicode text and calls our associated storage
 object to actually put the data somewhere::
@@ -303,7 +334,7 @@ object to actually put the data somewhere::
           emap = {}
           for k, v in flist.iteritems():
               emap[k] = v.astext()
-  
+
           self.storage.store(self.unid, emap)
 
 That's it for the extractor class!
@@ -322,7 +353,7 @@ by the extractor storage object. ::
       Storage for book information.
       """
       unid = StringCol(notNull=1)
-  
+
       title = UnicodeCol()
       author = UnicodeCol()
       year = UnicodeCol()
@@ -345,9 +376,9 @@ Next, we write the extractor storage class::
       """
       Book storage.
       """
-  
+
       sqlobject_classes = [Book]
-  
+
       def store( self, unid, *args ):
           data, = args
           Book( unid=unid,
@@ -385,7 +416,7 @@ Run it like this, on a test document in reStructuredText format ``reading.txt``,
 which presumably contains book references (create your own test document with
 your favourite books)::
 
-   $ ./testextr.py book.py ~/reading.txt 
+   $ ./testextr.py book.py ~/reading.txt
 
 
 Publisher Handler Configuration Code
@@ -428,10 +459,10 @@ convenience::
   """
   Extract book entries.
   """
-  
+
   # other imports
   from sqlobject import *
-  
+
   # nabu imports
   from nabu import extract
   from nabu.extractors.flvis import FieldListVisitor
@@ -441,13 +472,13 @@ convenience::
       """
       Transform that looks at field lists and that heuristically attempts
       to find references to books.  For example,
-  
+
         :title: National Geographic Photography Field Guide 2nd Edition:
                 Secrets to Making Great Pictures
         :author: Peter Burian, Bob Caputo
         :url: http://www.amazon.com/o/ASIN/079225676X/
         :review:
-        
+
           Excellent diversified advice from top photographers.  The book
           manages to pack lots of relevant content in a small format.  It
           contains a nice section on composition, which is what originally
@@ -455,17 +486,17 @@ convenience::
           photography section useless, but for the most part, the
           information available in this book is of great value.  This is
           the best general book about photography that I've read.
-  
+
       The heuristic looks at an empty :book: field, an :ISBN: field, or
       some list that has an author and a title. See the Book class below to
       find out which fields are stored.
       """
-  
+
       default_priority = 900
 
       def apply( self, **kwargs ):
           self.unid, self.storage = kwargs['unid'], kwargs['storage']
-  
+
           v = FieldListVisitor(self.document)
           v.initialize()
           self.document.walk(v)
@@ -485,12 +516,12 @@ convenience::
 
               if book:
                   self.store(flist) # store the book
-  
+
       def store( self, flist ):
           emap = {}
           for k, v in flist.iteritems():
               emap[k] = v.astext()
-  
+
           self.storage.store(self.unid, emap)
 
 
@@ -499,7 +530,7 @@ convenience::
       Storage for book information.
       """
       unid = StringCol(notNull=1)
-  
+
       title = UnicodeCol()
       author = UnicodeCol()
       year = UnicodeCol()
@@ -511,9 +542,9 @@ convenience::
       """
       Book storage.
       """
-  
+
       sqlobject_classes = [Book]
-  
+
       def store( self, unid, *args ):
           data, = args
           Book( unid=unid,
@@ -561,6 +592,5 @@ contact the author with questions.
        of document structure.  See the `docutils document tree`__ document for
        information about what kinds of nodes the document tree is made of.
 
-__ http://docutils.sourceforge.net/docs/ref/doctree.html
-
+.. _`docutils document tree`: http://docutils.sourceforge.net/docs/ref/doctree.html
 
