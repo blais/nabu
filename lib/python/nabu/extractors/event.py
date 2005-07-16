@@ -8,7 +8,7 @@
 #
 
 """
-Process global information about the upload as a event.
+Extract calendar events.
 """
 
 # stdlib imports

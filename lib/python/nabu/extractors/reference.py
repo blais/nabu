@@ -8,7 +8,7 @@
 #
 
 """
-Store all external references from documents in a table.
+Extract external references, simply.
 """
 
 # docutils imports

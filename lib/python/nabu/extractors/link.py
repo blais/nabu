@@ -8,7 +8,7 @@
 #
 
 """
-Process links inside of documents.
+Extract links with description and keywords from line-blocks.
 """
 
 # stdlib imports

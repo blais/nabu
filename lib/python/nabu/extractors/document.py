@@ -8,7 +8,7 @@
 #
 
 """
-Process global information about the upload as a document.
+Extract document tree and bibliographic fields.
 """
 
 # stdlib imports

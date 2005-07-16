@@ -8,7 +8,7 @@
 #
 
 """
-Process global information about the upload as a contact.
+Extract contact info.
 """
 
 # stdlib imports

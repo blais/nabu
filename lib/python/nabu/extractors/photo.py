@@ -11,6 +11,8 @@
 Process photos inside of documents.
 """
 
+raise NotImplementedError("FIXME this extractor is unfinished.")
+
 # stdlib imports
 import re, datetime
 
