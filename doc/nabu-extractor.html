@@ -46,11 +46,9 @@ saving parts of documents from within Nabu.</p>
 </ul>
 </li>
 <li><a class="reference" href="#testing-your-extractor" id="id11" name="id11">Testing Your Extractor</a></li>
-<li><a class="reference" href="#publisher-handler-configuration-code" id="id12" name="id12">Publisher Handler Configuration Code</a><ul>
-<li><a class="reference" href="#complete-source" id="id13" name="id13">Complete Source</a></li>
-</ul>
-</li>
-<li><a class="reference" href="#notes" id="id14" name="id14">Notes</a></li>
+<li><a class="reference" href="#publisher-handler-configuration-code" id="id12" name="id12">Publisher Handler Configuration Code</a></li>
+<li><a class="reference" href="#complete-source-code" id="id13" name="id13">Complete Source Code</a></li>
+<li><a class="reference" href="#final-notes" id="id14" name="id14">Final Notes</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
@@ -346,8 +344,9 @@ transforms = (
     (book.BookExtractor, book.BookStorage(connection)),
     )
 </pre>
-<div class="section" id="complete-source">
-<h2><a class="toc-backref" href="#id13" name="complete-source">Complete Source</a></h2>
+</div>
+<div class="section" id="complete-source-code">
+<h1><a class="toc-backref" href="#id13" name="complete-source-code">Complete Source Code</a></h1>
 <p>The complete source code for the book example is reproduced here for
 convenience:</p>
 <pre class="literal-block">
@@ -451,9 +450,12 @@ class BookStorage(extract.SQLObjectExtractorStorage):
               review=data.get('review', '') )
 </pre>
 </div>
-</div>
-<div class="section" id="notes">
-<h1><a class="toc-backref" href="#id14" name="notes">Notes</a></h1>
+<div class="section" id="final-notes">
+<h1><a class="toc-backref" href="#id14" name="final-notes">Final Notes</a></h1>
+<p>As you can see, writing extractors is very easy.  You can create as many
+extractors as you want.  Nabu comes with a small library of extractors which
+will grow as I leverage it more and more for my own applications, and with
+contribution from other people if they care to send them to me.</p>
 <p>If you have found any part of this document unclear and you still do not
 understand the nature of Nabu after reading this example, please feel free to
 contact the author with questions.</p>

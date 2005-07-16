@@ -325,8 +325,8 @@ configured with::
         )
 
 
-Complete Source
----------------
+Complete Source Code
+====================
 
 The complete source code for the book example is reproduced here for
 convenience::
@@ -432,8 +432,13 @@ convenience::
                 review=data.get('review', '') )
 
 
-Notes
-=====
+Final Notes
+===========
+
+As you can see, writing extractors is very easy.  You can create as many
+extractors as you want.  Nabu comes with a small library of extractors which
+will grow as I leverage it more and more for my own applications, and with
+contribution from other people if they care to send them to me.
 
 If you have found any part of this document unclear and you still do not
 understand the nature of Nabu after reading this example, please feel free to
