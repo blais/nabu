@@ -3,7 +3,7 @@
 ==============================
 
 :Author: Martin Blais <blais@furius.ca>
-:Date: 2005-06-22
+:Date: 2005-07-15
 :Abstract:
 
    This document shows an example of writing an extractor for identifying and
