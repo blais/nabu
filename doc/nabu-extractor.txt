@@ -173,6 +173,7 @@ does just that.  This can be easily leveraged to implement a Wiki or a Blog).
 We then implement the ``apply()`` method which is called by docutils, after it
 sets the ``.document`` attribute on the extractor::
 
+  ...
       def apply( self, **kwargs ):
           self.unid, self.storage = kwargs['unid'], kwargs['storage']
   
@@ -192,6 +193,7 @@ This special visitor accumulates all the field lists in the document into a
 dictionary that we then process and implement our heuristic to find the field
 lists that match our criteria::
 
+  ...      
           for flist in v.getfieldlists():
               book = 0
               # if there is an empty book field, this is explicitly a book.
@@ -211,6 +213,7 @@ Next, we implement a store method that converts the field value nodes returned
 by the ``FieldListVisitor`` into Unicode text and calls our associated storage
 object to actually put the data somewhere::
 
+  ...
       def store( self, flist ):
           emap = {}
           for k, v in flist.iteritems():

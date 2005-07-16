@@ -201,13 +201,14 @@ does just that.  This can be easily leveraged to implement a Wiki or a Blog).</p
 <p>We then implement the <tt class="docutils literal"><span class="pre">apply()</span></tt> method which is called by docutils, after it
 sets the <tt class="docutils literal"><span class="pre">.document</span></tt> attribute on the extractor:</p>
 <pre class="literal-block">
-def apply( self, **kwargs ):
-    self.unid, self.storage = kwargs['unid'], kwargs['storage']
+...
+    def apply( self, **kwargs ):
+        self.unid, self.storage = kwargs['unid'], kwargs['storage']
 
-    v = FieldListVisitor(self.document)
-    v.initialize()
-    self.document.walk(v)
-    v.finalize()
+        v = FieldListVisitor(self.document)
+        v.initialize()
+        self.document.walk(v)
+        v.finalize()
 </pre>
 <p>The keyword arguments are always the unique id for the source document and the
 extractor storage object that is configured on the publisher handler.</p>
@@ -218,31 +219,33 @@ This special visitor accumulates all the field lists in the document into a
 dictionary that we then process and implement our heuristic to find the field
 lists that match our criteria:</p>
 <pre class="literal-block">
-for flist in v.getfieldlists():
-    book = 0
-    # if there is an empty book field, this is explicitly a book.
-    if 'book' in flist and not flist['book'].strip():
-        book = 1
-    # if there is an ISBN number, then it is *definitely* a book.
-    elif 'isbn' in flist:
-        book = 1
-    # if there is an author and a title
-    elif 'author' in flist and 'title' in flist:
-        book = 1
+...      
+        for flist in v.getfieldlists():
+            book = 0
+            # if there is an empty book field, this is explicitly a book.
+            if 'book' in flist and not flist['book'].strip():
+                book = 1
+            # if there is an ISBN number, then it is *definitely* a book.
+            elif 'isbn' in flist:
+                book = 1
+            # if there is an author and a title
+            elif 'author' in flist and 'title' in flist:
+                book = 1
 
-    if book:
-        self.store(flist) # store the book
+            if book:
+                self.store(flist) # store the book
 </pre>
 <p>Next, we implement a store method that converts the field value nodes returned
 by the <tt class="docutils literal"><span class="pre">FieldListVisitor</span></tt> into Unicode text and calls our associated storage
 object to actually put the data somewhere:</p>
 <pre class="literal-block">
-def store( self, flist ):
-    emap = {}
-    for k, v in flist.iteritems():
-        emap[k] = v.astext()
+...
+    def store( self, flist ):
+        emap = {}
+        for k, v in flist.iteritems():
+            emap[k] = v.astext()
 
-    self.storage.store(self.unid, emap)
+        self.storage.store(self.unid, emap)
 </pre>
 <p>That's it for the extractor class!</p>
 </div>
