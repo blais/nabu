@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<title>Nabu: Writing an Extractor</title>
+<meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
+<meta name="date" content="2005-06-22" />
+<link rel="stylesheet" href="../style.css" type="text/css" />
+</head>
+<body>
+
+<div id="project-header">
+  <a href="/"><img src="/home/project-header.png" id="logo"></a>
+  <div id="project-home"><a href="..">Project Home</a></div>
+</div>
+
+<div class="document" id="nabu-writing-an-extractor">
+<h1 class="title">Nabu: Writing an Extractor</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2005-06-22</td></tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>This document shows an example of writing an extractor for identifying and
+saving parts of documents from within Nabu.</p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#introduction" id="id4" name="id4">Introduction</a></li>
+<li><a class="reference" href="#example-application-extracting-books-from-field-lists" id="id5" name="id5">Example Application: Extracting Books from Field Lists</a></li>
+<li><a class="reference" href="#the-extractor-and-the-extractorstorage" id="id6" name="id6">The Extractor and the ExtractorStorage</a></li>
+<li><a class="reference" href="#example-code" id="id7" name="id7">Example code</a><ul>
+<li><a class="reference" href="#imports" id="id8" name="id8">Imports</a></li>
+<li><a class="reference" href="#the-extractor-class" id="id9" name="id9">The Extractor Class</a></li>
+<li><a class="reference" href="#the-extractorstorage-class" id="id10" name="id10">The ExtractorStorage Class</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#testing-your-extractor" id="id11" name="id11">Testing Your Extractor</a></li>
+<li><a class="reference" href="#publisher-handler-configuration-code" id="id12" name="id12">Publisher Handler Configuration Code</a><ul>
+<li><a class="reference" href="#complete-source" id="id13" name="id13">Complete Source</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#notes" id="id14" name="id14">Notes</a></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h1><a class="toc-backref" href="#id4" name="introduction">Introduction</a></h1>
+<p>Nabu offers a framework for the extraction of meaningful portions of documents
+into structured storage (e.g. database tables).  This extraction will generally
+be customized for each end application and therefore we anticipate that people
+will write their own extractors.</p>
+<p>This document provides an example of that.  It aims at demonstrating the
+simplicity of the task.</p>
+<p>Note that we are reusing the SQLObject wrapper library which we already use for
+storing Nabu's uploaded sources.  SQLObject is a very flexible library that
+provides a pythonic object mapping to SQL database tables, with support for most
+popular open source databases.</p>
+</div>
+<div class="section" id="example-application-extracting-books-from-field-lists">
+<h1><a class="toc-backref" href="#id5" name="example-application-extracting-books-from-field-lists">Example Application: Extracting Books from Field Lists</a></h1>
+<p>For our example, we will examine the task of extracting information for book
+references.  Imagine that we want to be able to put field lists that are book
+references, scattered all over our documents, something that looks more or less
+like BibTeX entries, for example:</p>
+<pre class="literal-block">
+:book:
+:title: National Geographic Photography Field Guide 2nd Edition:
+        Secrets to Making Great Pictures
+:author: Peter Burian, Bob Caputo
+:url: http://www.amazon.com/o/ASIN/079225676X/
+:review:
+
+  Excellent diversified advice from top photographers.  The book
+  manages to pack lots of relevant content in a small format.  It
+  contains a nice section on composition, which is what originally
+  attracted me to it.  As per usual, I found the digital
+  photography section useless, but for the most part, the
+  information available in this book is of great value.  This is
+  the best general book about photography that I've read.
+</pre>
+<p>Since the docutils parser works recursively, those field lists can be located
+anywhere within the document, for example, in an item list, e.g.:</p>
+<pre class="literal-block">
+Recent books read:
+
+- :title: Animal Farm
+  :author: George Orwell
+  :url: http://www.online-literature.com/orwell/animalfarm/
+
+- :title: Free Culture
+  :author: Lawrence Lessig
+  :url: http://www.amazon.com/o/ASIN/0143034650/
+
+- :title: A Scanner Darkly
+  :author: Philip K. Dick
+  :url: http://www.amazon.com/o/ASIN/0679736654/
+
+...
+</pre>
+<p>We would like to avoid having to say that the field list is for a book; it would
+be nice if the parser could just figure that out by itself.  For example, the
+empty <tt class="docutils literal"><span class="pre">:book:</span></tt> field in the first example above should not be mandatory for
+the book reference to be detected.</p>
+</div>
+<div class="section" id="the-extractor-and-the-extractorstorage">
+<h1><a class="toc-backref" href="#id6" name="the-extractor-and-the-extractorstorage">The Extractor and the ExtractorStorage</a></h1>
+<p>In order to extract some stuff from our documents, we need to provide at least
+two classes:</p>
+<ol class="arabic">
+<li><p class="first">an extractor class, which is essentially a class derived from the docutils
+<tt class="docutils literal"><span class="pre">Transform</span></tt> class, whose role is to visit the parsed document tree and to
+find the stuff that it wants to find.  In our example, this class will be
+running a visitor to look for docutils field lists nodes and it will check
+the field names to find out if they are for books;</p>
+</li>
+<li><p class="first">an extractor storage class, whose role is to put detected book references
+into whatever storage is desired.  It is decoupled from the extractor so that
+the same extractor algorithm can support different storage mechanisms.  This
+storage object is normally provided by the publisher handler script in its
+configuration.</p>
+<p>Typically, we would store the references in a database, or convert them into
+BibTeX format and store them sequentially in a file for later use.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="example-code">
+<h1><a class="toc-backref" href="#id7" name="example-code">Example code</a></h1>
+<p>All the code for implementing the book algorithm above fits neatly in a short
+file.  Let's name it <tt class="docutils literal"><span class="pre">book.py</span></tt>.</p>
+<div class="section" id="imports">
+<h2><a class="toc-backref" href="#id8" name="imports">Imports</a></h2>
+<p>We start our Python script with a brief description and some imports:</p>
+<pre class="literal-block">
+#!/usr/bin/env python
+&quot;&quot;&quot;
+Extract book entries.
+&quot;&quot;&quot;
+
+# other imports
+from sqlobject import *
+
+# nabu imports
+from nabu import extract
+from nabu.extractors.flvis import FieldListVisitor
+</pre>
+<p>We import symbols from SQLObject since we will use that to access a database
+table to store our references into.  In addition, we import the <tt class="docutils literal"><span class="pre">nabu.extract</span></tt>
+module which contains the base class that we need.  We also import a utility
+class that knows how to visit docutils field lists <a class="footnote-reference" href="#id2" id="id1" name="id1">[1]</a>.</p>
+</div>
+<div class="section" id="the-extractor-class">
+<h2><a class="toc-backref" href="#id9" name="the-extractor-class">The Extractor Class</a></h2>
+<p>We then define the extractor class, which is a docutils <tt class="docutils literal"><span class="pre">Transform</span></tt>:</p>
+<pre class="literal-block">
+class BookExtractor(extract.Extractor):
+    &quot;&quot;&quot;
+    Transform that looks at field lists and that heuristically attempts
+    to find references to books.  For example,
+
+      :title: National Geographic Photography Field Guide 2nd Edition:
+              Secrets to Making Great Pictures
+      :author: Peter Burian, Bob Caputo
+      :url: http://www.amazon.com/o/ASIN/079225676X/
+      :review:
+      
+        Excellent diversified advice from top photographers.  The book
+        manages to pack lots of relevant content in a small format.  It
+        contains a nice section on composition, which is what originally
+        attracted me to it.  As per usual, I found the digital
+        photography section useless, but for the most part, the
+        information available in this book is of great value.  This is
+        the best general book about photography that I've read.
+
+    The heuristic looks at an empty :book: field, an :ISBN: field, or
+    some list that has an author and a title. See the Book class below to
+    find out which fields are stored.
+    &quot;&quot;&quot;
+
+    default_priority = 900
+</pre>
+<p>Note that we put the full description in the docstring of the extractor class
+rather than in the module docstring because the Nabu publisher program can
+concatenate all the document strings of the extractors configured in the publish
+handler CGI script and return that to the client, so that people who publish
+content to a specific Nabu store can get an idea of what structures are
+configured on the server (see the <tt class="docutils literal"><span class="pre">--help-transforms</span></tt> option to the Nabu
+publisher program).</p>
+<p>We also set the default priority that will specify the order in which the
+extractors get to run.  This is important for extractors which modify the
+document tree (the document tree can be stored and then served on a web server
+just like extracted content--in fact, there is a trivial extractor provided that
+does just that.  This can be easily leveraged to implement a Wiki or a Blog).</p>
+<p>We then implement the <tt class="docutils literal"><span class="pre">apply()</span></tt> method which is called by docutils, after it
+sets the <tt class="docutils literal"><span class="pre">.document</span></tt> attribute on the extractor:</p>
+<pre class="literal-block">
+def apply( self, **kwargs ):
+    self.unid, self.storage = kwargs['unid'], kwargs['storage']
+
+    v = FieldListVisitor(self.document)
+    v.initialize()
+    self.document.walk(v)
+    v.finalize()
+</pre>
+<p>The keyword arguments are always the unique id for the source document and the
+extractor storage object that is configured on the publisher handler.</p>
+<p>Note that we use a special FieldListVisitor class that we've built to simplify
+visiting generic field lists.  You could use any of the docutils visitors here
+instead.  We run the visitor on the document by calling the <tt class="docutils literal"><span class="pre">walk()</span></tt> method.
+This special visitor accumulates all the field lists in the document into a
+dictionary that we then process and implement our heuristic to find the field
+lists that match our criteria:</p>
+<pre class="literal-block">
+for flist in v.getfieldlists():
+    book = 0
+    # if there is an empty book field, this is explicitly a book.
+    if 'book' in flist and not flist['book'].strip():
+        book = 1
+    # if there is an ISBN number, then it is *definitely* a book.
+    elif 'isbn' in flist:
+        book = 1
+    # if there is an author and a title
+    elif 'author' in flist and 'title' in flist:
+        book = 1
+
+    if book:
+        self.store(flist) # store the book
+</pre>
+<p>Next, we implement a store method that converts the field value nodes returned
+by the <tt class="docutils literal"><span class="pre">FieldListVisitor</span></tt> into Unicode text and calls our associated storage
+object to actually put the data somewhere:</p>
+<pre class="literal-block">
+def store( self, flist ):
+    emap = {}
+    for k, v in flist.iteritems():
+        emap[k] = v.astext()
+
+    self.storage.store(self.unid, emap)
+</pre>
+<p>That's it for the extractor class!</p>
+</div>
+<div class="section" id="the-extractorstorage-class">
+<h2><a class="toc-backref" href="#id10" name="the-extractorstorage-class">The ExtractorStorage Class</a></h2>
+<p>Before we write the extractor storage class, we will introduce a third class,
+which is used to define a database table into which to store the book
+references. This is due to our use of SQLObject to access the database, it uses
+classes to define the schema of the tables we access.  This class will be used
+by the extractor storage object.</p>
+<blockquote>
+<dl class="docutils">
+<dt>class Book(SQLObject):</dt>
+<dd><p class="first">&quot;&quot;&quot;
+Storage for book information.
+&quot;&quot;&quot;
+unid = StringCol(notNull=1)</p>
+<p class="last">title = UnicodeCol()
+author = UnicodeCol()
+year = UnicodeCol()
+url = UnicodeCol()
+review = UnicodeCol()</p>
+</dd>
+</dl>
+</blockquote>
+<p>The fields are self-explanatory.  We store all this information in as unicode
+strings to be able to support exotic character sets.</p>
+<p>Note that we declared a <tt class="docutils literal"><span class="pre">unid</span></tt> field that is required not to be null.  This is
+used to be able to clear the objects from the database before a source document
+is reprocessed.  All information extracted from a document is required to be
+associated with the source document using this unique id so that when documents
+change we can correctly remove the old information extracted from it before
+filling it up again with the new.</p>
+<p>Next, we write the extractor storage class:</p>
+<pre class="literal-block">
+class BookStorage(extract.SQLObjectExtractorStorage):
+    &quot;&quot;&quot;
+    Book storage.
+    &quot;&quot;&quot;
+
+    sqlobject_classes = [Book]
+
+    def store( self, unid, *args ):
+        data, = args
+        Book( unid=unid,
+              title=data.get('title', ''),
+              author=data.get('author'),
+              year=data.get('year', ''),
+              url=data.get('url', ''),
+              review=data.get('review', '') )
+</pre>
+<p>Here we derive it from the special <tt class="docutils literal"><span class="pre">SQLObjectExtractorStorage</span></tt> that Nabu
+provides for storing stuff in databases using SQLObject.  Knowing which schemas
+the storage class uses, this base class simply implements the protocol to
+initialize the database connection for the wrapper objects, implements the
+protocol for clearing objects extracted from a specific document, and to reset
+the tables (see the source code if desired, it is very very simple).  The
+expected schema classes are specified in the class attribute
+<tt class="docutils literal"><span class="pre">sqlobject_classes</span></tt>.</p>
+<p>The class basically just creates a new book reference entry by instantiating the
+<tt class="docutils literal"><span class="pre">Book</span></tt> schema class.  It fills in default empty values for the entries that
+have not been found by the extractor (we could have implemented this in the
+extractor itself--this is by choice of contract between the extractor and the
+storage object).</p>
+<p>This completes the source code for our example.</p>
+</div>
+</div>
+<div class="section" id="testing-your-extractor">
+<h1><a class="toc-backref" href="#id11" name="testing-your-extractor">Testing Your Extractor</a></h1>
+<p>Before setting up your Nabu publisher handler with the new extractor, you can
+test it using the <tt class="docutils literal"><span class="pre">nabu-test-extractor</span></tt> code provided with Nabu (installed
+under <tt class="docutils literal"><span class="pre">nabu/lib/python/nabu/testextr.py</span></tt>).</p>
+<p>Run it like this, on a test document in reStructuredText format <tt class="docutils literal"><span class="pre">reading.txt</span></tt>,
+which presumably contains book references (create your own test document with
+your favourite books):</p>
+<pre class="literal-block">
+$ ./testextr.py book.py ~/reading.txt 
+</pre>
+</div>
+<div class="section" id="publisher-handler-configuration-code">
+<h1><a class="toc-backref" href="#id12" name="publisher-handler-configuration-code">Publisher Handler Configuration Code</a></h1>
+<p>The only part that remains to be done in order to feed a database with book
+references is to configure your Nabu publisher handler with the new extractor.
+The Nabu publisher handler is the script that you should install on your web
+server to receive the source documents and run the extractors on them.  There is
+an example publisher handler under <tt class="docutils literal"><span class="pre">nabu/cgi-bin/nabu-publish-handler.cgi</span></tt> in
+the source distribution.</p>
+<p>First import your extractor code at the top of the file:</p>
+<pre class="literal-block">
+...
+import book
+...
+</pre>
+<p>Then add the new extractor to the list of transforms that the server will be
+configured with:</p>
+<pre class="literal-block">
+transforms = (
+    ...
+    (book.BookExtractor, book.BookStorage(connection)),
+    )
+</pre>
+<div class="section" id="complete-source">
+<h2><a class="toc-backref" href="#id13" name="complete-source">Complete Source</a></h2>
+<p>The complete source code for the book example is reproduced here for
+convenience:</p>
+<pre class="literal-block">
+#!/usr/bin/env python
+&quot;&quot;&quot;
+Extract book entries.
+&quot;&quot;&quot;
+
+# other imports
+from sqlobject import *
+
+# nabu imports
+from nabu import extract
+from nabu.extractors.flvis import FieldListVisitor
+
+
+class BookExtractor(extract.Extractor):
+    &quot;&quot;&quot;
+    Transform that looks at field lists and that heuristically attempts
+    to find references to books.  For example,
+
+      :title: National Geographic Photography Field Guide 2nd Edition:
+              Secrets to Making Great Pictures
+      :author: Peter Burian, Bob Caputo
+      :url: http://www.amazon.com/o/ASIN/079225676X/
+      :review:
+      
+        Excellent diversified advice from top photographers.  The book
+        manages to pack lots of relevant content in a small format.  It
+        contains a nice section on composition, which is what originally
+        attracted me to it.  As per usual, I found the digital
+        photography section useless, but for the most part, the
+        information available in this book is of great value.  This is
+        the best general book about photography that I've read.
+
+    The heuristic looks at an empty :book: field, an :ISBN: field, or
+    some list that has an author and a title. See the Book class below to
+    find out which fields are stored.
+    &quot;&quot;&quot;
+
+    default_priority = 900
+
+    def apply( self, **kwargs ):
+        self.unid, self.storage = kwargs['unid'], kwargs['storage']
+
+        v = FieldListVisitor(self.document)
+        v.initialize()
+        self.document.walk(v)
+        v.finalize()
+
+        for flist in v.getfieldlists():
+            book = 0
+            # if there is an empty book field, this is explicitly a book.
+            if 'book' in flist and not flist['book'].strip():
+                book = 1
+            # if there is an ISBN number, then it is *definitely* a book.
+            elif 'isbn' in flist:
+                book = 1
+            # if there is an author and a title
+            elif 'author' in flist and 'title' in flist:
+                book = 1
+
+            if book:
+                self.store(flist) # store the book
+
+    def store( self, flist ):
+        emap = {}
+        for k, v in flist.iteritems():
+            emap[k] = v.astext()
+
+        self.storage.store(self.unid, emap)
+
+
+class Book(SQLObject):
+    &quot;&quot;&quot;
+    Storage for book information.
+    &quot;&quot;&quot;
+    unid = StringCol(notNull=1)
+
+    title = UnicodeCol()
+    author = UnicodeCol()
+    year = UnicodeCol()
+    url = UnicodeCol()
+    review = UnicodeCol()
+
+
+class BookStorage(extract.SQLObjectExtractorStorage):
+    &quot;&quot;&quot;
+    Book storage.
+    &quot;&quot;&quot;
+
+    sqlobject_classes = [Book]
+
+    def store( self, unid, *args ):
+        data, = args
+        Book( unid=unid,
+              title=data.get('title', ''),
+              author=data.get('author'),
+              year=data.get('year', ''),
+              url=data.get('url', ''),
+              review=data.get('review', '') )
+</pre>
+</div>
+</div>
+<div class="section" id="notes">
+<h1><a class="toc-backref" href="#id14" name="notes">Notes</a></h1>
+<p>If you have found any part of this document unclear and you still do not
+understand the nature of Nabu after reading this example, please feel free to
+contact the author with questions.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1" name="id2">[1]</a></td><td>The code for this class is very simple and you could write similar
+utilities to enhance code reuse for different patterns of document
+structure.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a name="id3">[2]</a></td><td>If the field list appears at the top of the document, it will have been
+parsed by the bibliographic fields parser and thus the <tt class="docutils literal"><span class="pre">:author:</span></tt> field
+will have been converted into an author node, and a tiny little bit more
+work would have to be done to look into those fields if we want a book
+reference to be specifiable at the top of the document as the
+bibliographic field.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

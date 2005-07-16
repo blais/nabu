@@ -29,7 +29,7 @@ from sqlobject.postgres.pgconnection import PostgresConnection
 
 # nabu imports
 from nabu import server, sources
-from nabu.extractors import document, link, contact, event, reference
+from nabu.extractors import document, link, contact, event, reference, book
 
 def main():
     """
@@ -63,6 +63,7 @@ def main():
         (event.EventExtractor, event.EventStorage(connection)),
         (contact.ContactExtractor, contact.ContactStorage(connection)),
         (reference.ReferenceExtractor, reference.ReferenceStorage(connection)),
+        (book.BookExtractor, book.BookStorage(connection)),
         )
 
     server.xmlrpc_handler(src, transforms, username, allow_reset=1)

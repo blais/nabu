@@ -277,9 +277,17 @@ Technical
 - `Server Setup <doc/nabu-server.html>`_: instructions for installing and
   configuring a Nabu server;
 
+- `Writing an Extractor <doc/nabu-extractor.html>`_: an example extractor source
+  code, with details and commentary.  Since you are expected to provide or at
+  least configure your own extractors for your application, this will be useful
+  if you intend to put Nabu to good use.  This could also help you understand
+  more precisely the nature of what Nabu actually provides and what it does not
+  provide;
+
 - `TODO list <TODO>`_: list of future changes, broken things, etc.;
 
 - `Change Log <CHANGES>`_: recent changes, history;
+
 
 Design
 ------

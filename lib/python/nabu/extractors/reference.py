@@ -38,7 +38,8 @@ class ReferenceExtractor(extract.Extractor):
 
         def visit_reference( self, node ):
             # store the bookmark
-            self.x.storage.store(self.x.unid, node.attributes['refuri'])
+            if 'refuri' in node.attributes:
+                self.x.storage.store(self.x.unid, node.attributes['refuri'])
                 
 
 class Reference(SQLObject):
