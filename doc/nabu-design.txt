@@ -100,3 +100,17 @@ Debugging the Contents
 
 The ``contents`` module contains code to display a basic dump of the various
 contents of the uploaded sources storage via the web.
+
+
+Association Between Extracted Stuff and Source Documents
+========================================================
+
+A key aspect of the system design is that source documents that get uploaded to
+the server may be uploaded again later for reprocessing.  This implies that we
+need to replace all the data that had previously been extracted from a document
+when it is sent a 2nd time for processing.  The way we achieve this, is by
+making sure that the extractor storage object stores this association for each
+extracted piece of data by storing the unique id of the document along with it,
+and the extractor storage has a protocol to clear all data associated with a
+specific document.
+

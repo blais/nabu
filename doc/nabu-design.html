@@ -47,6 +47,7 @@
 <li><a class="reference" href="#debugging-the-contents" id="id8" name="id8">Debugging the Contents</a></li>
 </ul>
 </li>
+<li><a class="reference" href="#association-between-extracted-stuff-and-source-documents" id="id9" name="id9">Association Between Extracted Stuff and Source Documents</a></li>
 </ul>
 </div>
 <div class="section" id="components">
@@ -119,6 +120,17 @@ document tree.</p>
 <p>The <tt class="docutils literal"><span class="pre">contents</span></tt> module contains code to display a basic dump of the various
 contents of the uploaded sources storage via the web.</p>
 </div>
+</div>
+<div class="section" id="association-between-extracted-stuff-and-source-documents">
+<h1><a class="toc-backref" href="#id9" name="association-between-extracted-stuff-and-source-documents">Association Between Extracted Stuff and Source Documents</a></h1>
+<p>A key aspect of the system design is that source documents that get uploaded to
+the server may be uploaded again later for reprocessing.  This implies that we
+need to replace all the data that had previously been extracted from a document
+when it is sent a 2nd time for processing.  The way we achieve this, is by
+making sure that the extractor storage object stores this association for each
+extracted piece of data by storing the unique id of the document along with it,
+and the extractor storage has a protocol to clear all data associated with a
+specific document.</p>
 </div>
 </div>
 </body>
