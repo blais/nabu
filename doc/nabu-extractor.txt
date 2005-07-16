@@ -58,6 +58,9 @@ anywhere within the document [#]_, for example, in an item list, e.g.::
    - :title: Animal Farm
      :author: George Orwell
      :url: http://www.online-literature.com/orwell/animalfarm/
+     :review:
+
+        A classic work.
 
    - :title: Free Culture
      :author: Lawrence Lessig
@@ -69,11 +72,88 @@ anywhere within the document [#]_, for example, in an item list, e.g.::
 
    ...
 
-
 We would like to avoid having to say that the field list is for a book; it would
 be nice if the parser could just figure that out by itself.  For example, the
 empty ``:book:`` field in the first example above should not be mandatory for
 the book reference to be detected.
+
+Here is a pseudo-xml rendering of how the above example gets parsed by docutils
+into a tree of nodes.  This is the tree that we will have to visit to extract
+the references from::
+
+  <document source="/tmp/example.txt">
+      <paragraph>
+          Recent books read:
+      <bullet_list bullet="-">
+          <list_item>
+              <field_list>
+                  <field>
+                      <field_name>
+                          title
+                      <field_body>
+                          <paragraph>
+                              Animal Farm
+                  <field>
+                      <field_name>
+                          author
+                      <field_body>
+                          <paragraph>
+                              George Orwell
+                  <field>
+                      <field_name>
+                          url
+                      <field_body>
+                          <paragraph>
+                              <reference refuri="http://www.online-literature.com/orwell/animalfarm/">
+                                  http://www.online-literature.com/orwell/animalfarm/
+                  <field>
+                      <field_name>
+                          review
+                      <field_body>
+                          <paragraph>
+                              A classic work.
+          <list_item>
+              <field_list>
+                  <field>
+                      <field_name>
+                          title
+                      <field_body>
+                          <paragraph>
+                              Free Culture
+                  <field>
+                      <field_name>
+                          author
+                      <field_body>
+                          <paragraph>
+                              Lawrence Lessig
+                  <field>
+                      <field_name>
+                          url
+                      <field_body>
+                          <paragraph>
+                              <reference refuri="http://www.amazon.com/o/ASIN/0143034650/">
+                                  http://www.amazon.com/o/ASIN/0143034650/
+          <list_item>
+              <field_list>
+                  <field>
+                      <field_name>
+                          title
+                      <field_body>
+                          <paragraph>
+                              A Scanner Darkly
+                  <field>
+                      <field_name>
+                          author
+                      <field_body>
+                          <paragraph>
+                              Philip K. Dick
+                  <field>
+                      <field_name>
+                          isbn
+                      <field_body>
+                          <paragraph>
+                              0679736654
+
 
 The Extractor and the ExtractorStorage
 ======================================

@@ -94,6 +94,9 @@ Recent books read:
 - :title: Animal Farm
   :author: George Orwell
   :url: http://www.online-literature.com/orwell/animalfarm/
+  :review:
+
+     A classic work.
 
 - :title: Free Culture
   :author: Lawrence Lessig
@@ -109,6 +112,83 @@ Recent books read:
 be nice if the parser could just figure that out by itself.  For example, the
 empty <tt class="docutils literal"><span class="pre">:book:</span></tt> field in the first example above should not be mandatory for
 the book reference to be detected.</p>
+<p>Here is a pseudo-xml rendering of how the above example gets parsed by docutils
+into a tree of nodes.  This is the tree that we will have to visit to extract
+the references from:</p>
+<pre class="literal-block">
+&lt;document source=&quot;/tmp/example.txt&quot;&gt;
+    &lt;paragraph&gt;
+        Recent books read:
+    &lt;bullet_list bullet=&quot;-&quot;&gt;
+        &lt;list_item&gt;
+            &lt;field_list&gt;
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        title
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            Animal Farm
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        author
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            George Orwell
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        url
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            &lt;reference refuri=&quot;http://www.online-literature.com/orwell/animalfarm/&quot;&gt;
+                                http://www.online-literature.com/orwell/animalfarm/
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        review
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            A classic work.
+        &lt;list_item&gt;
+            &lt;field_list&gt;
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        title
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            Free Culture
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        author
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            Lawrence Lessig
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        url
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            &lt;reference refuri=&quot;http://www.amazon.com/o/ASIN/0143034650/&quot;&gt;
+                                http://www.amazon.com/o/ASIN/0143034650/
+        &lt;list_item&gt;
+            &lt;field_list&gt;
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        title
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            A Scanner Darkly
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        author
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            Philip K. Dick
+                &lt;field&gt;
+                    &lt;field_name&gt;
+                        isbn
+                    &lt;field_body&gt;
+                        &lt;paragraph&gt;
+                            0679736654
+</pre>
 </div>
 <div class="section" id="the-extractor-and-the-extractorstorage">
 <h1><a class="toc-backref" href="#id8" name="the-extractor-and-the-extractorstorage">The Extractor and the ExtractorStorage</a></h1>
