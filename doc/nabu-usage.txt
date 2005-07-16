@@ -2,8 +2,6 @@
   Nabu: Usage Intructions
 ===========================
 
-:Author: Martin Blais <blais@furius.ca>
-:Date: 2005-06-20
 :Abstract:
 
    Instructions for Nabu users. Intended audience: people writing content to be

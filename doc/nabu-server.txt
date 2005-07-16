@@ -2,9 +2,6 @@
   Nabu: Installing and Configuring a Publisher Server
 =======================================================
 
-:Author: Martin Blais <blais@furius.ca>
-:Date: 2005-06-24
-
 .. contents::
 
    

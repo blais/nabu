@@ -2,8 +2,6 @@
   Nabu: Test Drive
 ====================
 
-:Author: Martin Blais <blais@furius.ca>
-:Date: 2005-06-25
 :Abstract:
 
    Instructions for trying out the Nabu installed on furius.ca.

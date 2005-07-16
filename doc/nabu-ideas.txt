@@ -2,9 +2,6 @@
   Nabu: Future, Postponed or Rejected Ideas
 =============================================
 
-:Author: Martin Blais <blais@furius.ca>
-:Date: 2005-06-25
-
 .. contents::
 
 
