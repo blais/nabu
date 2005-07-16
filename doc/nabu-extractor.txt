@@ -7,7 +7,7 @@
 :Abstract:
 
    This document shows an example of writing an extractor for identifying and
-   saving parts of documents from within Nabu.
+   saving parts of documents from within a Nabu server.
 
 .. contents::
 
