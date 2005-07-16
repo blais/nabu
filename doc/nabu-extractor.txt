@@ -171,7 +171,8 @@ just like extracted content--in fact, there is a trivial extractor provided that
 does just that.  This can be easily leveraged to implement a Wiki or a Blog).
 
 We then implement the ``apply()`` method which is called by docutils, after it
-sets the ``.document`` attribute on the extractor::
+sets the ``.document`` attribute on the extractor (that is part of how
+transforms are run by docutils)::
 
   ...
       def apply( self, **kwargs ):
@@ -326,6 +327,10 @@ configured with::
         ...
         (book.BookExtractor, book.BookStorage(connection)),
         )
+
+(The connection object here is the SQLObject connection that has been created
+previously in the script.  It is used by the ``SQLObjectExtractorStorage`` to
+initialize the schema objects connections.)
 
 
 Complete Source Code
