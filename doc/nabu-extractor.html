@@ -118,8 +118,9 @@ the book reference to be detected.</p>
 <h1><a class="toc-backref" href="#id8" name="looking-at-the-document-structure">Looking at the Document Structure</a></h1>
 <p>Here is a pseudo-xml rendering of how the above example gets parsed by docutils
 into a tree of nodes.  This is the tree that we will have to visit to extract
-the references from.  You can generate such a tree to be able to visualize the
-document structure, and to help design and write your extractor/visitor:</p>
+the references from.  You can use docutils' <tt class="docutils literal"><span class="pre">rst2pseudoxml.py</span></tt> tool to
+generate such a tree to be able to visualize the document structure, and to help
+design and write your extractor/visitor:</p>
 <pre class="literal-block">
 &lt;document source=&quot;/tmp/example.txt&quot;&gt;
     &lt;paragraph&gt;
