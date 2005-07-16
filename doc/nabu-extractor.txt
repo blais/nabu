@@ -77,9 +77,14 @@ be nice if the parser could just figure that out by itself.  For example, the
 empty ``:book:`` field in the first example above should not be mandatory for
 the book reference to be detected.
 
+
+Looking at the Document Structure
+=================================
+
 Here is a pseudo-xml rendering of how the above example gets parsed by docutils
 into a tree of nodes.  This is the tree that we will have to visit to extract
-the references from::
+the references from.  You can generate such a tree to be able to visualize the
+document structure, and to help design and write your extractor/visitor::
 
   <document source="/tmp/example.txt">
       <paragraph>
