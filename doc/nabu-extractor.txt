@@ -449,8 +449,7 @@ will grow as I leverage it more and more for my own applications, and with
 contribution from other people if they care to send them to me.
 
 You can find other extractors--including this one--in the Nabu source
-distribution under `nabu/lib/python/nabu/extractors
-</nabu/lib/python/nabu/extractors>`_.
+distribution under ``nabu/lib/python/nabu/extractors``.
 
 If you have found any part of this document unclear and you still do not
 understand the nature of Nabu after reading this example, please feel free to
