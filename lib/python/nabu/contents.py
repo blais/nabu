@@ -97,7 +97,7 @@ def render_source_info( src, uri ):
     if doctree is not None:
         # Render the full debug page that displays the contents of an uploaded
         # source and parsed results.
-        doctree_str, parts = docutils.core.publish_from_doctree(
+        doctree_str = docutils.core.publish_from_doctree(
             doctree, writer_name='pseudoxml',
             settings_overrides={'output_encoding': 'UTF-8'})
     else:
@@ -151,8 +151,10 @@ def render_html( doctree, uri ):
     		'embed_stylesheet': False,
                 'output_encoding': 'UTF-8'}
 
-    doctree_html, parts = docutils.core.publish_from_doctree(
-        doctree, writer_name='html', settings_overrides=settings)
+    parts = core.publish_parts(
+       reader_name='doctree', source_class=io.DocTreeInput, source=doctree,
+       source_path='test',
+       writer_name='html', settings_overrides=settings)
 
     print 'Content-type:', 'text/html'
     print
