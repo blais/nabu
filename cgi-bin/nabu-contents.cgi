@@ -30,6 +30,8 @@ from sqlobject.postgres.pgconnection import PostgresConnection
 # nabu imports
 from nabu import sources, contents, extract
 
+admins = ['blasssis']
+
 def main():
     """
     CGI handler for debugging/dumping the contents of the source upload.
@@ -56,6 +58,9 @@ def main():
         unid = None
     ashtml = form.getvalue("ashtml")
     if not form.getvalue("extracted"):
+        # do not restrict when it's the administrator
+        if user in admins:
+	    src = sources.DBSourceStorage(connection)
         contents.contents_handler(src, uri, user, unid, ashtml)
     else:
         print 'Content-Type:', 'text/html'
