@@ -589,8 +589,9 @@ contact the author with questions.
 
 .. [#] The code for this class is very simple and you could write similar
        utilities to enhance code reuse for detecting different generic patterns
-       of document structure.  See the `docutils document tree`__ document for
+       of document structure.  See the `docutils document tree`_ document for
        information about what kinds of nodes the document tree is made of.
 
-.. _`docutils document tree`: http://docutils.sourceforge.net/docs/ref/doctree.html
+.. _`docutils document tree`:
+   http://docutils.sourceforge.net/docs/ref/doctree.html
 
