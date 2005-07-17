@@ -152,8 +152,8 @@ def render_html( doctree, uri ):
                 'output_encoding': 'UTF-8'}
 
     parts = docutils.core.publish_parts(
-       reader_name='doctree', source_class=io.DocTreeInput, source=doctree,
-       source_path='test',
+       reader_name='doctree', source_class=docutils.io.DocTreeInput,
+       source=doctree, source_path='test',
        writer_name='html', settings_overrides=settings)
 
     print 'Content-type:', 'text/html'
