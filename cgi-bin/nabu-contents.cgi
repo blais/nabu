@@ -30,7 +30,7 @@ from sqlobject.postgres.pgconnection import PostgresConnection
 # nabu imports
 from nabu import sources, contents, extract
 
-admins = ['blasssis']
+admins = ['blais']
 
 def main():
     """
