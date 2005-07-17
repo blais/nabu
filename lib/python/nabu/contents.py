@@ -151,7 +151,7 @@ def render_html( doctree, uri ):
     		'embed_stylesheet': False,
                 'output_encoding': 'UTF-8'}
 
-    parts = core.publish_parts(
+    parts = docutils.core.publish_parts(
        reader_name='doctree', source_class=io.DocTreeInput, source=doctree,
        source_path='test',
        writer_name='html', settings_overrides=settings)
