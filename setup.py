@@ -9,6 +9,13 @@ __author__ = "Martin Blais <blais@furius.ca>"
 import sys
 from distutils.core import setup
 
+def read_version():
+    try:
+        return open('VERSION', 'r').readline().strip()
+    except IOError, e:
+        raise SystemExit(
+            "Error: you must run setup from the root directory (%s)" % str(e))
+
 print >> sys.stderr,  """
 
   Warning: this installation is needed only if you're installing a Nabu server.
@@ -17,7 +24,7 @@ print >> sys.stderr,  """
 
 """
 setup(name="nabu",
-      version='devel',
+      version=read_version(),
       description=\
       "A simple framework to publish and extract info from rst documents to a server database.",
       long_description="""
