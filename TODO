@@ -26,6 +26,9 @@
   code: the entry type is the first field list, if it matches some pattern
   (e.g. if it's empty);
 
+- url extractor: when right after a title, a list of URLs should use the title
+  as the description string
+
 
 :presentation:
 - add my own HTML writer to remove comment nodes completely, so they don't show
