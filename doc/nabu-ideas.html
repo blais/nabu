@@ -16,8 +16,8 @@
 
 <div class="document" id="nabu-future-postponed-or-rejected-ideas">
 <h1 class="title">Nabu: Future, Postponed or Rejected Ideas</h1>
-<div class="contents topic" id="contents">
-<p class="topic-title first"><a name="contents">Contents</a></p>
+<div class="contents topic">
+<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
 <li><a class="reference" href="#some-ideas" id="id1" name="id1">Some Ideas</a><ul>
 <li><a class="reference" href="#include-only-option-in-the-publisher" id="id2" name="id2"><tt class="docutils literal"><span class="pre">include-only</span></tt> option in the publisher</a></li>
@@ -35,10 +35,10 @@
 <li><a class="reference" href="#notes" id="id10" name="id10">Notes</a></li>
 </ul>
 </div>
-<div class="section" id="some-ideas">
-<h1><a class="toc-backref" href="#id1" name="some-ideas">Some Ideas</a></h1>
-<div class="section" id="include-only-option-in-the-publisher">
-<h2><a class="toc-backref" href="#id2" name="include-only-option-in-the-publisher"><tt class="docutils literal docutils literal"><span class="pre">include-only</span></tt> option in the publisher</a></h2>
+<div class="section">
+<h1><a class="toc-backref" href="#id1" id="some-ideas" name="some-ideas">Some Ideas</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id2" id="include-only-option-in-the-publisher" name="include-only-option-in-the-publisher"><tt class="docutils literal docutils literal"><span class="pre">include-only</span></tt> option in the publisher</a></h2>
 <blockquote>
 <ul class="simple">
 <li>restrict finder to certain extensions (default is all files)
@@ -51,8 +51,8 @@ usage.  And you can customize the marker.  Also, since we're just reading the
 header of the files, it is still really fast even when there are a lot of
 large binary files.</p>
 </div>
-<div class="section" id="asynchronous-processing">
-<h2><a class="toc-backref" href="#id3" name="asynchronous-processing">Asynchronous Processing</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id3" id="asynchronous-processing" name="asynchronous-processing">Asynchronous Processing</a></h2>
 <p>We need to find out if it is possible from a CGI script to let the client
 know that we're done, and to keep running on the server, while letting the
 client exit?  note that there might be some options in the client for that
@@ -65,34 +65,34 @@ Connection: close
 </pre>
 </li>
 </ul>
-<div class="section" id="pending-queue-for-asynchronous-processing">
-<h3><a class="toc-backref" href="#id4" name="pending-queue-for-asynchronous-processing">Pending Queue for Asynchronous Processing</a></h3>
+<div class="section">
+<h3><a class="toc-backref" href="#id4" id="pending-queue-for-asynchronous-processing" name="pending-queue-for-asynchronous-processing">Pending Queue for Asynchronous Processing</a></h3>
 <p>Print processing/pending queue (server must provide that information)</p>
 <p>We need an interface for servers that implement deferred processing.  We
 should be able to query this processing queue to find out if our documents
 have been processed so we can query for errors.</p>
 </div>
 </div>
-<div class="section" id="requirement-for-user-and-password">
-<h2><a class="toc-backref" href="#id5" name="requirement-for-user-and-password">Requirement for User and Password</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id5" id="requirement-for-user-and-password" name="requirement-for-user-and-password">Requirement for User and Password</a></h2>
 <p>Do we require a user/password?</p>
 <p>For now, yes.</p>
 </div>
-<div class="section" id="collisions-between-documents">
-<h2><a class="toc-backref" href="#id6" name="collisions-between-documents">Collisions between Documents</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id6" id="collisions-between-documents" name="collisions-between-documents">Collisions between Documents</a></h2>
 <p>When pushing new documents to the server, spit a warning if there is a clash
 of documents between users?</p>
 <p>This should be in the server config and perhaps belongs to the domain of
 policy.</p>
 </div>
-<div class="section" id="size-of-uploaded-data">
-<h2><a class="toc-backref" href="#id7" name="size-of-uploaded-data">Size of Uploaded Data</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id7" id="size-of-uploaded-data" name="size-of-uploaded-data">Size of Uploaded Data</a></h2>
 <p>Store length or number of nodes in the sources document, to be able to
 evaluate the size or time to perform a specific task on the data.</p>
 <p>Do this later.</p>
 </div>
-<div class="section" id="loose-data-models">
-<h2><a class="toc-backref" href="#id8" name="loose-data-models">Loose Data Models</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id8" id="loose-data-models" name="loose-data-models">Loose Data Models</a></h2>
 <p>Loose data models: automatically adding columns for entry &quot;fields&quot; that are
 not currently in the database, makes the data model looser</p>
 <ul class="simple">
@@ -107,8 +107,8 @@ contents in the documents, i.e. unspecified type field lists.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="doctrees-before-and-after-extractors">
-<h2><a class="toc-backref" href="#id9" name="doctrees-before-and-after-extractors">Doctrees Before and After Extractors</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id9" id="doctrees-before-and-after-extractors" name="doctrees-before-and-after-extractors">Doctrees Before and After Extractors</a></h2>
 <p>On the server, we could keep the doctrees before and after the nabu
 transforms, to be able to reprocess the entire documents after reconfiguring
 the server, without having to reparse nor upload, but we do not expect
@@ -119,8 +119,8 @@ only the processed doctrees for now.</p>
 be that big a deal.</p>
 </div>
 </div>
-<div class="section" id="notes">
-<h1><a class="toc-backref" href="#id10" name="notes">Notes</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id10" id="notes" name="notes">Notes</a></h1>
 <ul class="simple">
 <li>SQLObject does not support non integer indexes, but the site says &quot;yet&quot;, so it
 might in the future.  If we could make our <tt class="docutils literal"><span class="pre">unid</span></tt> the real database id

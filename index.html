@@ -14,6 +14,8 @@
   
 </div>
 
+<div id="download-link"><a href="/downloads/nabu">Download</a></div>
+
 <div class="document" id="nabu-a-publishing-system-using-text-files">
 <h1 class="title">nabu: a Publishing System using Text Files</h1>
 <blockquote>
@@ -22,8 +24,8 @@ Babylonians as the son of Marduk and his consort, Sarpanitum, and as
 the grandson of Ea.&quot;</p>
 <p class="attribution">&mdash;(From <a class="reference" href="http://en.wikipedia.org/wiki/Nabu">Wikipedia</a>)</p>
 </blockquote>
-<div class="contents topic" id="contents">
-<p class="topic-title first"><a name="contents">Contents</a></p>
+<div class="contents topic">
+<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
 <li><a class="reference" href="#description" id="id5" name="id5">Description</a><ul>
 <li><a class="reference" href="#example-extracting-contact-info" id="id6" name="id6">Example: Extracting Contact Info</a></li>
@@ -54,8 +56,8 @@ the grandson of Ea.&quot;</p>
 <li><a class="reference" href="#author" id="id25" name="id25">Author</a></li>
 </ul>
 </div>
-<div class="section" id="description">
-<h1><a class="toc-backref" href="#id5" name="description">Description</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id5" id="description" name="description">Description</a></h1>
 <p>Assuming that a user can easily create text documents --this is the case for
 most programmers and techies, we do this all day, and we all have our favourite
 text editors-- this system allows you to store various kinds of data <em>across</em>
@@ -76,8 +78,8 @@ present the extracted data in the way that you prefer.</p>
 <p class="caption">Dataflow diagram of Nabu framework.</p>
 </div>
 <p>It is probably best illustrated by some examples...</p>
-<div class="section" id="example-extracting-contact-info">
-<h2><a class="toc-backref" href="#id6" name="example-extracting-contact-info">Example: Extracting Contact Info</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id6" id="example-extracting-contact-info" name="example-extracting-contact-info">Example: Extracting Contact Info</a></h2>
 <p>For example, imagine that you write several files about your travels, say, one
 for each destination.  Most likely they contain various contact information.
 You could insert them like this in any of your text files and they would
@@ -91,8 +93,8 @@ automatically be extracted to a global list of contact info:</p>
 <p>You could use this to feed into an online address book system, or create a
 birthday notification system for yourself by adding your birth date.</p>
 </div>
-<div class="section" id="example-blogging-system">
-<h2><a class="toc-backref" href="#id7" name="example-blogging-system">Example: Blogging System</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id7" id="example-blogging-system" name="example-blogging-system">Example: Blogging System</a></h2>
 <p>Another example: you could easily build a blogging system by detecting documents
 with certain bibliographic fields and a date at the top of document, for
 example:</p>
@@ -115,16 +117,16 @@ can be used to feed data into databases for presentations similar as the ones
 mentioned above.</p>
 </div>
 </div>
-<div class="section" id="example-automatic-bookmarks-list">
-<h2><a class="toc-backref" href="#id8" name="example-automatic-bookmarks-list">Example: Automatic Bookmarks List</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id8" id="example-automatic-bookmarks-list" name="example-automatic-bookmarks-list">Example: Automatic Bookmarks List</a></h2>
 <p>Another idea: you could automatically extract all the URLs from the documents
 pushed to the server (across <em>all</em> the files) and automatically build an online
 RSS bookmarks feeder, where your bookmarks would be organized by keywords, maybe
 even fetching the keywords in the respective documents from which they were
 extracted.</p>
 </div>
-<div class="section" id="example-shared-events-calendar">
-<h2><a class="toc-backref" href="#id9" name="example-shared-events-calendar">Example: Shared Events Calendar</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id9" id="example-shared-events-calendar" name="example-shared-events-calendar">Example: Shared Events Calendar</a></h2>
 <p>How about this one: I maintain a todo file in a text file, simply.  With a
 simple convention, like:</p>
 <pre class="literal-block">
@@ -150,8 +152,8 @@ build a system on top of Nabu.  See <a class="reference" href="/home/consulting.
 organize information online.</p>
 </div>
 </div>
-<div class="section" id="customizability-writing-extractors">
-<h2><a class="toc-backref" href="#id10" name="customizability-writing-extractors">Customizability: Writing Extractors</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id10" id="customizability-writing-extractors" name="customizability-writing-extractors">Customizability: Writing Extractors</a></h2>
 <p>Various simple extractors will come with the Nabu package itself, but we suspect
 you will very soon want to write your own.  Writing extractors is very easy.</p>
 <p>All of this is built using the very powerful <a class="reference" href="http://docutils.sourceforge.net">docutils</a> tools, which includes the
@@ -172,8 +174,8 @@ contributions of extractor codes in the distribution if anyone cares to
 provide them.</p>
 </div>
 </div>
-<div class="section" id="target-audience">
-<h2><a class="toc-backref" href="#id11" name="target-audience">Target Audience</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id11" id="target-audience" name="target-audience">Target Audience</a></h2>
 <p>This system is made to be a simple as possible to use.  However, it is not
 designed for your mother.  In order to be able to use this efficiently, you must</p>
 <ol class="arabic simple">
@@ -186,8 +188,8 @@ computers.</p>
 <tt class="docutils literal"><span class="pre">doc</span></tt> subdirectory.</p>
 </div>
 </div>
-<div class="section" id="features">
-<h1><a class="toc-backref" href="#id12" name="features">Features</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id12" id="features" name="features">Features</a></h1>
 <p>Nabu is cool, because:</p>
 <ul>
 <li><p class="first">it is flexible: you can use</p>
@@ -236,8 +238,8 @@ the potential that you will be able to use Nabu anywhere, on any platform.
 The client only requires Python to work;</p>
 </li>
 </ul>
-<div class="section" id="nabu-is-not">
-<h2><a class="toc-backref" href="#id13" name="nabu-is-not">Nabu is not ...</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id13" id="nabu-is-not" name="nabu-is-not">Nabu is not ...</a></h2>
 <dl class="docutils">
 <dt>Not a Wiki</dt>
 <dd>Although we upload documents (like Wiki pages) to a server, it may
@@ -280,16 +282,16 @@ be grouped in files.</p>
 call it &quot;Nabu&quot;.</p>
 </div>
 </div>
-<div class="section" id="documentation">
-<h1><a class="toc-backref" href="#id14" name="documentation">Documentation</a></h1>
-<div class="section" id="for-content-writers">
-<h2><a class="toc-backref" href="#id15" name="for-content-writers">For Content Writers</a></h2>
+<div class="section">
+<h1><a class="toc-backref" href="#id14" id="documentation" name="documentation">Documentation</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id15" id="for-content-writers" name="for-content-writers">For Content Writers</a></h2>
 <ul class="simple">
 <li><a class="reference" href="doc/nabu-usage.html">Usage</a>: usage instructions for content pushers;</li>
 </ul>
 </div>
-<div class="section" id="technical">
-<h2><a class="toc-backref" href="#id16" name="technical">Technical</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id16" id="technical" name="technical">Technical</a></h2>
 <ul class="simple">
 <li><a class="reference" href="doc/nabu-server.html">Server Setup</a>: instructions for installing and
 configuring a Nabu server;</li>
@@ -303,8 +305,8 @@ provide;</li>
 <li><a class="reference" href="CHANGES">Change Log</a>: recent changes, history;</li>
 </ul>
 </div>
-<div class="section" id="design">
-<h2><a class="toc-backref" href="#id17" name="design">Design</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id17" id="design" name="design">Design</a></h2>
 <ul class="simple">
 <li><a class="reference" href="doc/nabu-goals.html">Goals</a>: motivation behind this project, history of
 what led me to implement this;</li>
@@ -313,15 +315,15 @@ what led me to implement this;</li>
 that I would like to do that is not on the immediate list;</li>
 </ul>
 </div>
-<div class="section" id="test-drive-nabu">
-<h2><a class="toc-backref" href="#id18" name="test-drive-nabu">Test Drive Nabu</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id18" id="test-drive-nabu" name="test-drive-nabu">Test Drive Nabu</a></h2>
 <ul class="simple">
 <li><a class="reference" href="doc/nabu-beta.html">Test Drive</a>: test drive Nabu on our server;</li>
 </ul>
 </div>
 </div>
-<div class="section" id="download">
-<h1><a class="toc-backref" href="#id19" name="download">Download</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id19" id="download" name="download">Download</a></h1>
 <p>You can download the <a class="reference" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name
 <tt class="docutils literal"><span class="pre">nabu</span></tt>.  Usage instructions can be found <a class="reference" href="doc/nabu-usage.html">here</a>.</p>
 <p>Snapshots of the latest Nabu source code can be found in the <a class="reference" href="/downloads/nabu">Download Area</a>.  It consists mostly of server code, but it also contains
@@ -338,20 +340,20 @@ correspond to a beta stability for a 1.0 release.  I'm already using the system
 on personal projects (works for me), and I'm committed to fix bugs reported by
 others.  When I get some feedback I will select version number (probably 1.0).</p>
 </div>
-<div class="section" id="reporting-bugs">
-<h1><a class="toc-backref" href="#id20" name="reporting-bugs">Reporting Bugs</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id20" id="reporting-bugs" name="reporting-bugs">Reporting Bugs</a></h1>
 <p>Send email to the author: Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.</p>
 </div>
-<div class="section" id="links">
-<h1><a class="toc-backref" href="#id21" name="links">Links</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id21" id="links" name="links">Links</a></h1>
 <p>Some links to projects with similar goals, or that have some kind of conceptual
 relation:</p>
 <ul class="simple">
 <li><a class="reference" href="http://www.devon-technologies.com/products/devonthink/">DEVONthink</a></li>
 </ul>
 </div>
-<div class="section" id="installation-and-dependencies">
-<h1><a class="toc-backref" href="#id22" name="installation-and-dependencies">Installation and Dependencies</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id22" id="installation-and-dependencies" name="installation-and-dependencies">Installation and Dependencies</a></h1>
 <dl class="docutils">
 <dt>Nabu Publisher Client</dt>
 <dd><p class="first">A single file written in Python.</p>
@@ -393,13 +395,13 @@ database.</p>
 </dd>
 </dl>
 </div>
-<div class="section" id="copyright-and-license">
-<h1><a class="toc-backref" href="#id23" name="copyright-and-license">Copyright and License</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id23" id="copyright-and-license" name="copyright-and-license">Copyright and License</a></h1>
 <p>Copyright (C) 2005  Martin Blais.
 This code is distributed under the <a class="reference" href="COPYING">GNU General Public License</a>.</p>
 </div>
-<div class="section" id="acknowledgements">
-<h1><a class="toc-backref" href="#id24" name="acknowledgements">Acknowledgements</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id24" id="acknowledgements" name="acknowledgements">Acknowledgements</a></h1>
 <p>This project uses two important libraries to do its thing:</p>
 <ul class="simple">
 <li>the <a class="reference" href="http://docutils.sourceforge.net">Docutils</a> project (written mostly by
@@ -412,8 +414,8 @@ which provides easier access to SQL storage.</li>
 </ul>
 <p>It is also built in the Python language.</p>
 </div>
-<div class="section" id="author">
-<h1><a class="toc-backref" href="#id25" name="author">Author</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id25" id="author" name="author">Author</a></h1>
 <p>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</p>
 <!-- "Text files are forever" -->
 <!-- - -Martin -->
