@@ -1,0 +1,11 @@
+Description: A Publishing System using Text Files
+Official-Homepage: http://furius.ca/nabu
+Author: Martin Blais
+Author-Email: blais@furius.ca
+ChangeLog: http://furius.ca/nabu/CHANGES
+Announcement: http://freshmeat.net/projects/nabu/
+Announcement: http://www.python.org/pypi?%3Aaction=search&name=nabu
+Download-Releases: http://furius.ca/downloads/nabu/releases
+Download-Snapshots: http://furius.ca/downloads/nabu/snapshots
+Bugs-Reporting: mailto:blais@furius.ca
+License: GNU GPL

@@ -9,6 +9,8 @@
     - emacs config must keep plain text at the top of the file when decrypting
       in a variable and add it back in when reencrypting
 
+- shares some of the advantages of XML, structured hirarchical tree of nodes
+
 
 :server setup:
 - implement asynchronous document processing on the server
