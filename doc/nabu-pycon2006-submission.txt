@@ -173,5 +173,5 @@ could be leveraged to simplify some information input tasks.
 
 
 .. docutils_:: http://docutils.sourceforge.net
-.. ReStructuredText_:: http://docutils.sourceforge.net/spec/rst/reStructuredText.html
+.. ReStructuredText_:: http://docutils.sourceforge.net/rst.html
 

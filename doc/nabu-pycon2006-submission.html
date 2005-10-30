@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<title>PyCon 2006 Presentation Submission: &quot;What is Nabu?&quot;</title>
+<meta name="author" content="Martin Blais &lt;blais&#64;furius.ca&gt;" />
+<meta name="date" content="2005-10-22" />
+<link rel="stylesheet" href="../style.css" type="text/css" />
+</head>
+<body>
+
+<div id="project-header">
+  <a href="/"><img src="/home/furius-logo-w.png" id="logo"></a>
+  <div id="project-home"><a href="..">Project Home</a></div>
+</div>
+
+<div class="document" id="pycon-2006-presentation-submission-what-is-nabu">
+<h1 class="title">PyCon 2006 Presentation Submission: &quot;What is Nabu?&quot;</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2005-10-22</td></tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>Submission overview for a presentation about the Nabu text-file publishing
+system at Pycon 2006.</p>
+</div>
+<div class="section">
+<h1><a id="author-and-contact-information" name="author-and-contact-information">Author and Contact Information</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Presenter Name:</th><td class="field-body"><p class="first">Martin Blais</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Contact:</th><td class="field-body"><p class="first">I can be reached via email at &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.  I do not use the
+phone, please use email or chat.</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Website:</th><td class="field-body"><p class="first"><a class="reference" href="http://furius.ca">http://furius.ca</a></p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Short Bio:</th><td class="field-body"><p class="first">Background and experience in high-end computer graphics.  I've been
+programming Python for around 5 years, with insatiable obsession.  I
+offer a professional Python training course since July.</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Project Home:</th><td class="field-body"><p class="first">More information about the project that I wish to present in this
+talk can be found at <a class="reference" href="http://furius.ca/nabu">http://furius.ca/nabu</a> .</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Categories:</th><td class="field-body"><ul class="first last simple">
+<li>Documentation</li>
+<li>Web Programming</li>
+<li>Open Source Project</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h1><a id="requested-timeslot" name="requested-timeslot">Requested Timeslot</a></h1>
+<p>I would prefer a 45 min talk, with around 10 mins for questions, as this would
+allow me time to present a complete simple example, which I feel would be
+necessary to really convey what this project is about and its potential, as well
+as some important subtleties.  Otherwise, this talk <em>could</em> be made to fit 30
+min.</p>
+</div>
+<div class="section">
+<h1><a id="summary-of-proposed-presentation" name="summary-of-proposed-presentation">Summary of proposed presentation</a></h1>
+<p>Nabu is a simple framework for general extraction of data from documents which
+exploits the power of expression of simple text files as a medium to fill a
+database with entries of various typed informations.  It leverages
+<a href="#id1" name="id2"><span class="problematic" id="id2">restructuredtext_</span></a> and the <a href="#id3" name="id4"><span class="problematic" id="id4">docutils_</span></a> document tree as a channel to provide
+structure for the formatting of the generic input information.</p>
+<p>Some of the most important ideas surrounding Nabu are presented:</p>
+<ul class="simple">
+<li>Data can be entered <strong>across</strong> files:  There are many types of data that would
+be best stored <em>across</em> a collection of documents, for example, personal data
+such as contact info, bookmarks, book references, etc.  Common patterns of
+usage dictate the use of dedicated files and specialized formats to store this
+kind of information (e.g. an address book file that contains just addresses, a
+bookmarks list just URLs).  We argue that this is due to the absence of a
+system that can extract this data out of context.  With Nabu I propose to
+avoid such integration and leverage on the simplicity of text files as a more
+appropriate context to maintain many kinds of information;</li>
+<li><strong>Loose data formats</strong>: by embedding specialized information within a casual
+generic document structure and relying on specialized parsers for each type of
+extracted data, Nabu provides a kind of &quot;loose&quot; data entry model that could be
+well-suited for other applications;</li>
+<li><strong>Local editing for shared information</strong>:  editing files requires powerful
+tools.  A problem with Wikis is that there is a trade-off between ubiquity and
+the editing power:  browser clients offer a very limited form of editing with
+their simple widgets, and we all have had bad experiences at one point or
+other editing long documents within a browser client.  Nabu allows you to edit
+all source documents locally but to easily publish the extracted information
+remotely;</li>
+</ul>
+<p>It is difficult to quickly explain what Nabu is all about and why I think it has
+great potential of use by the developer community, because it lies between the
+boundaries of multiple already well-known applications:  Wikis, file formats,
+Blogs, mind-mapping applications.  However, for people who already have
+developed the ability to edit text files easily i.e. all programmers, Nabu can
+become a powerful platform for easily entering many kinds of organized data.</p>
+<p>During this talk I intend to show an example of building a simple publishing
+application, probably a blog-like program using a very simple setup (CGI
+scripts), a little bit of Python code and text files.</p>
+</div>
+<div class="section">
+<h1><a id="presentation-outline" name="presentation-outline">Presentation Outline</a></h1>
+<ul>
+<li><p class="first">Introduction  [2 min]</p>
+</li>
+<li><p class="first">Overview [3 min]</p>
+<ul class="simple">
+<li>This is about the topic of &quot;taking notes&quot;</li>
+</ul>
+</li>
+<li><p class="first"><a href="#id5" name="id6"><span class="problematic" id="id6">ReStructuredText_</span></a> and <a href="#id7" name="id8"><span class="problematic" id="id8">docutils_</span></a>  [5 min]</p>
+<ul class="simple">
+<li>Short presentation of <a href="#id9" name="id10"><span class="problematic" id="id10">restructuredtext_</span></a> (2 slides)</li>
+<li>rest Provides Structure<ul>
+<li>recursive nature of rest (graphic w/ overlay)</li>
+</ul>
+</li>
+<li>PseudoXML visualization of docutils structure</li>
+</ul>
+</li>
+<li><p class="first">Motivation: A Digression--My Love Affair with Text files  [7 min]</p>
+<ul class="simple">
+<li>Text files are forever</li>
+<li>Evolving &quot;down&quot; to ascii<ul>
+<li>Address books</li>
+<li>Bookmarks</li>
+<li>Books</li>
+<li>BibTeX and References</li>
+<li>Spreadsheets in text files</li>
+<li>The greatness and the lameness of Wiki systems</li>
+<li>Blogs</li>
+</ul>
+</li>
+<li>Entering mixed data <em>across</em> files<ul>
+<li>The &quot;Travel Notes&quot; example</li>
+<li>Mind-mapping applications</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p class="first">What is Nabu? [18 min]</p>
+<div class="line-block">
+<div class="line">From here on, we will present the various components Nabu while building a</div>
+<div class="line">real example, probably a simple blog system with categories.</div>
+</div>
+<ul class="simple">
+<li>System Overview</li>
+<li>Editing<ul>
+<li>Mapping files to documents<ul>
+<li>Marking files with simple unique ids</li>
+</ul>
+</li>
+<li>The nabu publisher client</li>
+<li>Inspecting the uploaded contents</li>
+</ul>
+</li>
+<li>Writing a simple content extractor<ul>
+<li>Finding stuff in the doctree tree: the extractor</li>
+<li>Storing to a database: the extractor storage</li>
+</ul>
+</li>
+<li>Setting up a handler on the server<ul>
+<li>Example of server-side handler for receiving documents
+(using a simple CGI script)</li>
+</ul>
+</li>
+<li>Publishing content<ul>
+<li>Final application example using [probably] an SQLObject-based web app</li>
+</ul>
+</li>
+<li>Shared vs. Merged collaborative document pools</li>
+<li>Cross-referencing extracted information (if time allows)</li>
+</ul>
+</li>
+<li><p class="first">Discussion  [2 min]</p>
+</li>
+<li><p class="first">Q&amp;A  [8 min]</p>
+</li>
+</ul>
+</div>
+<div class="section">
+<h1><a id="intended-audience" name="intended-audience">Intended Audience</a></h1>
+<p>All people who use and love <strong>simple text files</strong> as a way to maintain
+information.  ReST, Wiki and Blog addicts are the prime interested parties for
+this talk, but programmers in general--in particular web developers--will find
+something interesting in this project, because it presents an original tool that
+could be leveraged to simplify some information input tasks.</p>
+<!-- docutils_:: http://docutils.sourceforge.net -->
+<!-- ReStructuredText_:: http://docutils.sourceforge.net/ref/rst/ -->
+<!-- restructuredtext_:: http://docutils.sourceforge.net/ref/rst/ -->
+<!-- ReST_:: http://docutils.sourceforge.net/ref/rst/ -->
+</div>
+<div class="system-messages section">
+<h1><a>Docutils System Messages</a></h1>
+<div class="system-message" id="id1">
+<p class="system-message-title">System Message: <a name="id1">ERROR/3</a> (<tt class="docutils">/home/blais/p/nabu/doc/nabu-pycon2006-submission.txt</tt>, line 47); <em><a href="#id2">backlink</a></em></p>
+Unknown target name: &quot;restructuredtext&quot;.</div>
+<div class="system-message" id="id3">
+<p class="system-message-title">System Message: <a name="id3">ERROR/3</a> (<tt class="docutils">/home/blais/p/nabu/doc/nabu-pycon2006-submission.txt</tt>, line 47); <em><a href="#id4">backlink</a></em></p>
+Unknown target name: &quot;docutils&quot;.</div>
+<div class="system-message" id="id5">
+<p class="system-message-title">System Message: <a name="id5">ERROR/3</a> (<tt class="docutils">/home/blais/p/nabu/doc/nabu-pycon2006-submission.txt</tt>, line 99); <em><a href="#id6">backlink</a></em></p>
+Unknown target name: &quot;restructuredtext&quot;.</div>
+<div class="system-message" id="id7">
+<p class="system-message-title">System Message: <a name="id7">ERROR/3</a> (<tt class="docutils">/home/blais/p/nabu/doc/nabu-pycon2006-submission.txt</tt>, line 99); <em><a href="#id8">backlink</a></em></p>
+Unknown target name: &quot;docutils&quot;.</div>
+<div class="system-message" id="id9">
+<p class="system-message-title">System Message: <a name="id9">ERROR/3</a> (<tt class="docutils">/home/blais/p/nabu/doc/nabu-pycon2006-submission.txt</tt>, line 101); <em><a href="#id10">backlink</a></em></p>
+Unknown target name: &quot;restructuredtext&quot;.</div>
+</div>
+</div>
+</body>
+</html>
