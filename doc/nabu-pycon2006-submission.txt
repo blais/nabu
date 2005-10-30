@@ -13,167 +13,165 @@
 Author and Contact Information
 ==============================
 
-:Name: Martin Blais
-
-:Short Bio: Background in computer graphics and I've been programming Python for
-       around 5 years.  I offer a Python training course since July.
+:Presenter Name: Martin Blais
 
 :Contact: I can be reached via email at <blais@furius.ca>.  I do not use the
-          phone anymore, please use email.
+          phone, please use email or chat.
 
 :Website: http://furius.ca
+
+:Short Bio: Background and experience in high-end computer graphics.  I've been
+            programming Python for around 5 years, with insatiable obsession.  I
+            offer a professional Python training course since July.
 
 :Project Home: More information about the project that I wish to present in this
                talk can be found at http://furius.ca/nabu .
 
 :Categories: - Documentation
              - Web Programming
-             - Open Source Python Project
-
+             - Open Source Project
 
 Requested Timeslot
 ==================
 
 I would prefer a 45 min talk, with around 10 mins for questions, as this would
-allow me time to present a simple example, which I feel would be necessary to
-really understand what this project is about and its potential, as well as some
-important subtleties of the ReST_ input format.  
-
-Otherwise, this talk *could* be made either 30 min.
+allow me time to present a complete simple example, which I feel would be
+necessary to really convey what this project is about and its potential, as well
+as some important subtleties.  Otherwise, this talk *could* be made to fit 30
+min.
 
 
 Summary of proposed presentation
 ================================
 
-Nabu is a simple framework for data extraction from documents which exploits the
-power of expression of simple text files as a medium to fill a database with
-entries of various information types.  It leverages the docutils_ document tree
-structure to provides a way to extract various kinds of data from a set of
-documents and fill a database with them.
+Nabu is a simple framework for general extraction of data from documents which
+exploits the power of expression of simple text files as a medium to fill a
+database with entries of various typed informations.  It leverages
+ReStructuredText_ and the docutils_ document tree as a channel to provide
+structure for the formatting of the generic input information.
 
-Some of the most important ideas surrounding Nabu follow:
+Some of the most important ideas surrounding Nabu are presented:
 
-* Data is stored **across** files:  There are many types of data that would be
-  best stored *across* a collection of documents, such as contact info,
-  bookmarks, book references, etc.  Instead, common patterns of usage dictate
-  dedicated files and formats to store this kind of information (e.g. an address
-  *book*, a bookmarks list), which is due to the absence of an integrated
-  system.  With Nabu I propose a solution for this, by actually avoid
-  integration and leveraging on the simplicity of text files;
+* Data can be entered **across** files:  There are many types of data that would
+  be best stored *across* a collection of documents, for example, personal data
+  such as contact info, bookmarks, book references, etc.  Common patterns of
+  usage dictate the use of dedicated files and specialized formats to store this
+  kind of information (e.g. an address book file that contains just addresses, a
+  bookmarks list just URLs).  We argue that this is due to the absence of a
+  system that can extract this data out of context.  With Nabu I propose to
+  avoid such integration and leverage on the simplicity of text files as a more
+  appropriate context to maintain many kinds of information;
 
-* **Loose data format**: by embedding specialized information within a casual
+* **Loose data formats**: by embedding specialized information within a casual
   generic document structure and relying on specialized parsers for each type of
   extracted data, Nabu provides a kind of "loose" data entry model that could be
-  well-suited for many applications;
+  well-suited for other applications;
 
-* **Local editing**:  editing files requires powerful tools.  A problem with
-  Wikis is that there is a trade-off between ubiquity and the editing power:
-  browser clients offer a very limited form of editing with their simple
-  widgets.  This can be quite a pain to use when writing long documents.  Nabu
-  offers the possibility to publish content in a generic form that is edited
-  locally, but served remotely.
+* **Local editing for shared information**:  editing files requires powerful
+  tools.  A problem with Wikis is that there is a trade-off between ubiquity and
+  the editing power:  browser clients offer a very limited form of editing with
+  their simple widgets, and we all have had bad experiences at one point or
+  other editing long documents within a browser client.  Nabu allows you to edit
+  all source documents locally but to easily publish the extracted information
+  remotely;
 
+It is difficult to quickly explain what Nabu is all about and why I think it has
+great potential of use by the developer community, because it lies between the
+boundaries of multiple already well-known applications:  Wikis, file formats,
+Blogs, mind-mapping applications.  However, for people who already have
+developed the ability to edit text files easily i.e. all programmers, Nabu can
+become a powerful platform for easily entering many kinds of organized data.
 
-FIXME continue here
-
-It is difficult to quickly explain what Nabu is all about and why it is
-interesting, because it lies at the boundaries of multiple known applications:
-Wikis, file formats, Blogs, mind-mapping applications.  However, for people with
-the ability to edit text files easily, Nabu can become a powerful platform for
-organizing certain kinds of data.  This is why I want to do a talk on this
-project.
+During this talk I intend to show an example of building a simple publishing
+application, probably a blog-like program using a very simple setup (CGI
+scripts), a little bit of Python code and text files.
 
 
 Presentation Outline
 ====================
 
-FIXME continue this
+- Introduction  [2 min]
 
-- My Love Affair with Text files
+- Overview [3 min]
+
+  - This is about the topic of "taking notes"
+
+- ReStructuredText_ and docutils_  [5 min]
+
+  - Short presentation of ReStructuredText_ (2 slides)
+  - ReStructuredText_ Provides Structure
+
+    - recursive nature of ReStructuredText_ (graphic w/ overlay)
+
+  - PseudoXML visualization of docutils structure
+
+- Motivation: A Digression--My Love Affair with Text files  [7 min]
+
   - Text files are forever
-  - Address book
-  - Bookmarks
-  - Books / References
-  - Travel Notes
+  - Evolving "down" to ascii
 
-- ReStructuredText
+    - Address books
+    - Bookmarks
+    - Books
+    - BibTeX and References
+    - Spreadsheets in text files
+    - The greatness and the lameness of Wiki systems
+    - Blogs
 
-- Publishing Files
-  - The nabu publisher client
-  - Mapping files to documents
+  - Entering mixed data *across* files
 
+    - The "Travel Notes" example
+    - Mind-mapping applications
 
-- Subtlety: Visualizing docutils structure
+- What is Nabu? [18 min]
+  
+  | From here on, we will present the various components Nabu while building a
+  | real example, probably a simple blog system with categories.
 
-- How to build a Blog system in 10 min.
+  - System Overview
 
+  - Editing
 
+    - Mapping files to documents
+
+      - Marking files with simple unique ids
+
+    - The nabu publisher client
+    - Inspecting the uploaded contents
+
+  - Writing a simple content extractor
+
+    - Finding stuff in the doctree tree: the extractor
+    - Storing to a database: the extractor storage
+
+  - Setting up a handler on the server
+
+    - Example of server-side handler for receiving documents
+      (using a simple CGI script)
+
+  - Publishing content
+
+    - Final application example using [probably] an SQLObject-based web app
+
+  - Shared vs. Merged collaborative document pools
+
+  - Cross-referencing extracted information (if time allows)
+
+- Discussion  [2 min]
+
+- Q&A  [8 min]
 
 
 Intended Audience
 =================
 
 All people who use and love **simple text files** as a way to maintain
-information.  ReST, Wiki and Blog addicts are the prime interested parties for
+information.  ReStructuredText_, Wiki and Blog addicts are the prime interested parties for
 this talk, but programmers in general--in particular web developers--will find
-something interesting in this project.
+something interesting in this project, because it presents an original tool that
+could be leveraged to simplify some information input tasks.
 
 
-.. _docutils:: http://docutils.sourceforge.net
-.. _ReStructuredText:: http://docutils.sourceforge.net/rest.html FIXME check
-.. _ReST:: http://docutils.sourceforge.net/rest.html FIXME check
+.. docutils_:: http://docutils.sourceforge.net
+.. ReStructuredText_:: http://docutils.sourceforge.net/spec/rst/reStructuredText.html
 
-
-
-
-
-Submission Guidelines
-=====================
-
-FIXME: remove this section.
-
-Submission Format
------------------
-
-Proposals should be 250 to 1000 words long (i.e., one to four
-pages in manuscript format), containing the following information:
-
-        * Author name(s)
-        * Contact Information
-        * Requested timeslot (30 minutes, 45 minutes, or either)
-        * Summary of proposed presentation
-        * Presentation outline
-        * Intended audience (non-programmers, beginning
-          programmers, advanced users, CPython developers, etc.)
-
-ASCII format is preferred (plain or reST), with HTML as a
-secondary alternative. If you have any queries about submission,
-or if you would like to discuss the possibility of submitting in a
-different format or style, please send mail to the conference
-organizers at pycon at python dot org.
-
-Session lengths include time for audience questions. You should
-budget at least five minutes for questions; for example, a
-30-minute talk will be 25 minutes of presentation and 5 minutes of
-questions.
-
-The preferred length for talks is 30 minutes. You can request a
-45-minute slot, but proposals requiring 45 minutes will be
-reviewed more stringently and tutorial talks will be preferred for
-these longer slots.
-
-       * Core Python
-       * Other implementations: Jython, IronPython, PyPy, and Stackless
-       * Python libraries and extensions
-       * Databases
-       * Documentation
-       * GUI Programming
-       * Game Programming
-       * Network Programming
-       * Open Source Python projects
-       * Packaging Issues
-       * Programming Tools
-       * Project Best Practices
-       * Embedding and Extending
-       * Science and Math
-       * Web-based Systems
