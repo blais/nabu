@@ -1,17 +1,28 @@
-===========================================================
-    PyCon 2006 Presentation Submission: "What is Nabu?"
-===========================================================
+=======================
+    "What is Nabu?"
+=======================
+PyCon 2006 Presentation Submission
+==================================
 
 :Author: Martin Blais <blais@furius.ca>
-:Date: 2005-10-22
+:Date: 2005-10-30
 :Abstract:
 
    Submission overview for a presentation about the Nabu text-file publishing
    system at Pycon 2006.
 
+.. contents::
+..
+    1  PyCon 2006 Presentation Submission
+      1.1  Author and Contact Information
+      1.2  Requested Timeslot
+      1.3  Summary of proposed presentation
+      1.4  Presentation Outline
+      1.5  Intended Audience
+
 
 Author and Contact Information
-==============================
+------------------------------
 
 :Presenter Name: Martin Blais
 
@@ -32,7 +43,7 @@ Author and Contact Information
              - Open Source Project
 
 Requested Timeslot
-==================
+------------------
 
 I would prefer a 45 min talk, with around 10 mins for questions, as this would
 allow me time to present a complete simple example, which I feel would be
@@ -42,7 +53,7 @@ min.
 
 
 Summary of proposed presentation
-================================
+--------------------------------
 
 Nabu is a simple framework for general extraction of data from documents which
 exploits the power of expression of simple text files as a medium to fill a
@@ -88,7 +99,7 @@ scripts), a little bit of Python code and text files.
 
 
 Presentation Outline
-====================
+--------------------
 
 - Introduction  [2 min]
 
@@ -163,7 +174,7 @@ Presentation Outline
 
 
 Intended Audience
-=================
+-----------------
 
 All people who use and love **simple text files** as a way to maintain
 information.  ReStructuredText_, Wiki and Blog addicts are the prime interested parties for
@@ -172,6 +183,6 @@ something interesting in this project, because it presents an original tool that
 could be leveraged to simplify some information input tasks.
 
 
-.. docutils_:: http://docutils.sourceforge.net
-.. ReStructuredText_:: http://docutils.sourceforge.net/rst.html
+.. _docutils: http://docutils.sourceforge.net
+.. _ReStructuredText: http://docutils.sourceforge.net/rst.html
 
