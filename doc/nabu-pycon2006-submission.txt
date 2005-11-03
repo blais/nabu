@@ -106,6 +106,7 @@ Presentation Outline
 - Overview [3 min]
 
   - This is about the topic of "taking notes"
+  - Where is the value?  In the notes document, not in the presentation system.
 
 - ReStructuredText_ and docutils_  [5 min]
 
@@ -145,7 +146,9 @@ Presentation Outline
 
     - Mapping files to documents
 
+      - Files vs. unique documents
       - Marking files with simple unique ids
+      - Extracted data is tagged with the document's unique id
 
     - The nabu publisher client
     - Inspecting the uploaded contents
