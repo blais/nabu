@@ -10,7 +10,6 @@ slide with the problem to solve
 \end{frame}
 
 
-
 - I write lots of little text files
 
   ... example ...
@@ -56,12 +55,6 @@ Applications
 - ...
 
 
-
-
-
-
-
-
 Advantages
 ==========
 
@@ -89,4 +82,176 @@ Future Work
 Conclusion
 ==========
 
+
+- uses: imagine a static pages site, but you want to update the special events
+  yourself (the client pays for this).  You can do that with a simple text file
+  and Nabu.
+
+
+
+
+
+========================================================
+  Strike Two -- Ideas for the talk from Rachel's place
+========================================================
+
+1992 - Bookmarks
+================
+
+I enter university
+
+- using Xmosaic
+- bookmarking sites left and right
+
+...bmmgr was born
+
+Outputs to Xmosaic, Netscape, Mozilla, IE, Firefox, ... and what next?
+
+- I would like to share some of these bookmarks
+- Searching
+
+del.ici.us
+
+
+1997 - Address Book
+===================
+
+- in M.Sc., using Netscape to store my contacts
+- my director, a nroff/refer shows me his simple ascii system for his address
+  book
+
+... been living happily with a text file since them.
+
+- Using pargrep.pl
+
+
+1999 - Blog
+===========
+
+- friend Patrick from Synaptic does one of the early travelogues on the internet
+- a blog
+
+... adventures script is born.  One of my first Python programs.
+
+- much content served
+- input in XML format
+- need to regenerate the static pages everytime
+
+
+200?
+====
+
+- I discover restructured text
+
+2004 - Technical Text Files
+===========================
+
+- I'm getting a little bit old, I'm losing memory
+- Now I know that I'm stupid and that I will forget
+
+... everytime I start a new task, I start a new text file to take notes
+
+- I can grep the files
+- I often want to share many of these short technical documents
+
+
+
+2005 - Travel Files - the Appearance of Mixed Data
+==================================================
+
+.. <diagram with files and information stored across them>
+
+What if I could identify and extract the meaningful parts of information from
+those files and store it appropriately?
+
+What could I build with this?
+
+- You may have heard this idea before: the Semantic Web
+
+  It would allow Google to search the "address book" of the entire internet!
+
+- Many years in the making, will probably never happen in its ideal form
+
+
+The Goal
+========
+
+  Build a system that can extract these informations in my own selfish set of
+  personal files and store them in a "semantic" way, so I can use this
+  information and serve in more interesting ways later (in database tables).
+
+
+Target Audience
+===============
+
+Not for your mom!
+
+- Programmers have developed this great ability: to edit text files.
+
+  - we understand indentation
+  - we know about spacing
+  - lines of separation, justification, filling, etc.
+
+  Leverage it!
+
+
+I live in Emacs
+===============
+
+When I first log in on my machine, I invariably do
+
+1. start a shell
+2. start emacs
+3. start a web browser
+
+Most of you are probably doing the same.
+
+Emacs or vi are always kept running.
+
+
+Wikis Suck
+==========
+
+Why?
+
+- Anything but the most trivial document title is a nightmare
+
+  BrazilTravelNotes
+
+- The editor facilities in most of the browsers is lame beyond boundaries.
+
+... Cool idea: link an emacs instance within Firefox.
+
+- Does not identify the meanings within the files either.
+
+
+The Dependency Problem
+======================
+
+More dependencies means
+
+- it's harder to install
+- it's usable on less platforms
+- the lifetime of the project is linked with the lifetime of the shorter
+  dependency 
+
+On the **client**, we depend only on:
+
+- Python
+- Text files (i.e. files with one of the predefined encodings)
+
+
+
+ReStructuredText
+================
+
+.. ask Goodger to get up
+
+   "If you see this guy in the corridor, show him some love, give him a hug."
+
+- The best text-to-structure conversion tool.
+- Finds the best compromises (all decisions are documented thoroughly)
+
+
+.. <show some text with recursive boxes in it> 
 
