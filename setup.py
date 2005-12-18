@@ -55,6 +55,6 @@ present the extracted data in the way that you prefer.
 
       ## scripts = ['bin/nabu'],
       # FIXME: distutils follows the symlink and installs both bin/nabu and
-      # lib/python/nabu/publish.py in /usr/bin.  I want to it install just
+      # lib/python/nabu/client.py in /usr/bin.  I want to it install just
       # 'bin/nabu'. How do I do that?
 

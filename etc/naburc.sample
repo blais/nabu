@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Configuration file for the nabu publisher.
-# Run publish.py --help for full details.
+# Run nabu --help for full details.
 
 server_url = 'http://furius.local.biz/nabu/cgi-bin/nabu-publish-handler.cgi'
 verbose = True
