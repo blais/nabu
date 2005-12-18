@@ -332,8 +332,8 @@ def opts_others( parser ):
 
     group.add_option('-X', '--clear-all', action='count', default=0,
                      help="Clear the entire database for this user.  If "
-                     "the server is configured in debug mode and allows it, "
-                     "this resets the schema by dropping all tables.")
+                     "you invoke this twice, it resets the schema as well "
+                     "(this only works if the server allows that option.)")
 
     group.add_option('--help-transforms', action='store_true',
                      help="Don't publish, fetch the help for the transforms "

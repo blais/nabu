@@ -11,8 +11,6 @@
 Extract book entries.
 """
 
-# other imports
-from sqlobject import *
 
 # nabu imports
 from nabu import extract
@@ -77,33 +75,39 @@ class BookExtractor(extract.Extractor):
 
         self.storage.store(self.unid, emap)
 
-            
-class Book(SQLObject):
-    """
-    Storage for book information.
-    """
-    unid = StringCol(notNull=1)
 
-    title = UnicodeCol()
-    author = UnicodeCol()
-    year = UnicodeCol()
-    url = UnicodeCol()
-    review = UnicodeCol()
-
-
-class BookStorage(extract.SQLObjectExtractorStorage):
+class BookStorage(extract.SQLExtractorStorage):
     """
     Book storage.
     """
 
-    sqlobject_classes = [Book]
+    sql_tables = { 'book': '''
+
+        CREATE TABLE book
+        (
+           unid TEXT NOT NULL,
+           title TEXT,
+           author TEXT,
+           year TEXT,
+           url TEXT,
+           review TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, *args ):
         data, = args
-        Book( unid=unid,
-              title=data.get('title', ''),
-              author=data.get('author'),
-              year=data.get('year', ''),
-              url=data.get('url', ''),
-              review=data.get('review', '') )
- 
+        
+        cols = ('unid', 'title', 'author', 'year', 'url', 'review')
+        values = [unid]
+        for n in cols[1:]:
+            values.append( data.get(n, '') )
+            
+        cursor = self.connection.cursor()
+        cursor.execute("""
+          INSERT INTO book (%s) VALUES (%%s, %%s, %%s, %%s, %%s, %%s)
+          """ % ', '.join(cols), values)
+
+        self.connection.commit()
+        

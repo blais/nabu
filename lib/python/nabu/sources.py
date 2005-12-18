@@ -190,7 +190,7 @@ class DBSourceStorage(SourceStorage):
 
 CREATE TABLE %s
 (
-    unid TEXT NOT NULL UNIQUE PRIMARY KEY,
+    unid TEXT PRIMARY KEY,
     filename TEXT,
     digest VARCHAR(32) NOT NULL,
     username VARCHAR(32),

@@ -294,13 +294,13 @@ def render_extracted( unid, stored_unid, uri, username, conn, tables ):
     print '<h1>Extracted Information</h1>'
 
     for tablename in tables:
-        dump_table(conn, tablename, stored_unid)
+        dump_table(conn, tablename, uri, unid, stored_unid)
 
     print pages_footer
 
 #-------------------------------------------------------------------------------
 #
-def dump_table( conn, tablename, unid=None ):
+def dump_table( conn, tablename, uri, unid=None, stored_unid=None ):
     """
     Print extracted information (again, for fun, this is not necessary).
     Try to print the extracted info in a generic way.
@@ -309,20 +309,19 @@ def dump_table( conn, tablename, unid=None ):
     
     curs = conn.cursor()
     query = "SELECT * FROM %s" % tablename
-    if unid:
-        query += " WHERE unid = '%s'" % unid
+    if unid is not None:
+        query += " WHERE unid = '%s'" % stored_unid
     curs.execute(query)
-
-    print >> sys.stderr, query
 
     if curs.rowcount > 0:
         print '<table class="nabu">'
         print '<thead><tr>'
         unidcol = None
         for i, colname in enumerate(curs.description):
-            if unid is not None and colname[0] == 'unid':
+            if colname[0] == 'unid':
                 unidcol = i
-                continue
+                if unid is not None:
+                    continue
             print '<th>%s</th>' % colname[0]
         print '</tr></thead>'
         print '<tbody>'
@@ -331,8 +330,12 @@ def dump_table( conn, tablename, unid=None ):
             print '<tr>'
             for i, value in enumerate(row):
                 if i == unidcol:
-                    continue
-                if isinstance(value, str) and len(value) > 100:
+                    if unid is not None:
+                        continue
+                    else:
+                        value = '<a href="%s?id=%s">%s</a>' % (uri, value, value)
+                        
+                elif isinstance(value, str) and len(value) > 100:
                     value = value[:30]
                 print '<td>%s</td>' % value
             print '</tr>'

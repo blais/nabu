@@ -57,7 +57,7 @@ def main():
         (event.EventExtractor, event.EventStorage(sconnection)),
         (contact.ContactExtractor, contact.ContactStorage(sconnection)),
         (reference.ReferenceExtractor, reference.ReferenceStorage(sconnection)),
-        (book.BookExtractor, book.BookStorage(sconnection)),
+        (book.BookExtractor, book.BookStorage(module, conn)),
         )
 
     server.xmlrpc_handler(src, transforms, username, allow_reset=1)

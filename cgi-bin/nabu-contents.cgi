@@ -51,7 +51,7 @@ def main():
     if user not in admins:
         src = sources.PerUserSourceStorageProxy(src)
 
-    tablenames = ('document', 'link',)
+    tablenames = ('document', 'link', 'event', 'contact', 'reference', 'book')
 
     form = cgi.FieldStorage()
     view = form.getvalue("view")
@@ -59,7 +59,7 @@ def main():
 
     if not unid:
         if view == 'extracted':
-            contents.render_extracted(None, uri, user, conn, tablenames)
+            contents.render_extracted(None, None, uri, user, conn, tablenames)
         else:
             contents.render_index(uri, user, src)
         return
@@ -71,6 +71,9 @@ def main():
         return contents.render_notfound()
         
     # Render an appropriate view.
+    if not view:
+        view = 'source'
+
     if view == 'source':
         contents.render_source(unid, uri, user, src)
 

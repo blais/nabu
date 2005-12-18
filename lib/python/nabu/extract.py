@@ -76,13 +76,15 @@ class SQLExtractorStorage(ExtractorStorage):
 
     # Override this in the derived class.
     # This should be a map from the table name to the table schema.
-    sql_tables = {} 
-    
+    sql_tables = {}
+
     def __init__( self, module, connection ):
+        self.module, self.connection = module, connection
+
         cursor = self.connection.cursor()
-        
+
         # Check that the database tables exist and if they don't, create them.
-        for tname, tschema in self.sql_tables:
+        for tname, tschema in self.sql_tables.iteritems():
             cursor.execute("""
                SELECT table_name FROM information_schema.tables WHERE table_name = %s
                """, (tname,))
@@ -97,7 +99,7 @@ class SQLExtractorStorage(ExtractorStorage):
         """
         cursor = self.connection.cursor()
 
-        for tname, tschema in self.sql_tables:
+        for tname, tschema in self.sql_tables.iteritems():
             query = "DELETE FROM %s" % tname
             if unid is not None:
                 query += " WHERE unid = '%s'" % unid
@@ -110,7 +112,7 @@ class SQLExtractorStorage(ExtractorStorage):
         """
         cursor = self.connection.cursor()
 
-        for tname, tschema in self.sql_tables:
+        for tname, tschema in self.sql_tables.iteritems():
             cursor.execute("DROP TABLE %s" % tname)
             cursor.execute(tschema)
 
@@ -126,10 +128,10 @@ class SQLObjectExtractorStorage(ExtractorStorage):
     """
 
     sqlobject_classes = [] # override this in the derived class.
-    
+
     def __init__( self, connection ):
         assert self.sqlobject_classes
-        
+
         # Initialize the connections for all the wrappers.
         for cls in self.sqlobject_classes:
             cls._connection = connection
@@ -148,7 +150,7 @@ class SQLObjectExtractorStorage(ExtractorStorage):
             else:
                 for s in cls.select(cls.q.unid == unid):
                     s.destroySelf()
-        
+
     def reset_schema( self ):
         """
         Default implementation that drops the tables.
@@ -182,13 +184,13 @@ def get_generic_table_values( connection, tablename, unid=None ):
         sr = ExtractedObject.select()
     else:
         sr = ExtractedObject.select(ExtractedObject.q.unid == unid)
-        
+
     values = []
     for s in sr:
         dic = {}
         values.append(dic)
         for name in colnames:
             dic[name] = getattr(s, name)
-        
+
     return values, colnames
 
