@@ -4,8 +4,6 @@
 # This file is distributed under the terms of the GNU GPL license.
 # For more information: http://furius.ca/nabu.
 #
-# $Id$
-#
 
 """
 Nabu Server CGI handler.
@@ -24,25 +22,20 @@ from os.path import dirname, join
 root = dirname(dirname(sys.argv[0]))
 sys.path.append(join(root, 'lib', 'python'))
 
-# sql imports
-from sqlobject.postgres.pgconnection import PostgresConnection
-
 # nabu imports
 from nabu import server, sources
 from nabu.extractors import document, link, contact, event, reference, book
+
+# local cgi directory imports.
+import connect
+
 
 def main():
     """
     CGI handler for XML-RPC server.
     """
-    # connect to the PostgreSQL database
-    params = {
-        'db': 'nabu',
-        'user': 'nabu',
-        'passwd': 'pwnabu',
-        'host': 'localhost',
-    }
-    connection = PostgresConnection(**params)
+    # Connect to the database.
+    module, conn = connect.connect_dbapi()
 
     # make sure we're authenticated
     username = os.environ.get('REMOTE_USER', None)
@@ -52,18 +45,19 @@ def main():
         print
         return
     
-    # create a storage space for the uploaded source data
-    src_pp = sources.DBSourceStorage(connection, restrict_user=1)
+    # Get access to source storage.
+    src_pp = sources.DBSourceStorage(module, conn, restrict_user=1)
     src = sources.PerUserSourceStorageProxy(src_pp)
 
+    sconnection = connect.connect_sqlobject()
     transforms = (
-        (document.DocumentExtractor, document.DocumentStorage(connection)),
-        (document.DoctreeExtractor, document.DoctreeStorage(connection)),
-        (link.LinkExtractor, link.LinkStorage(connection)),
-        (event.EventExtractor, event.EventStorage(connection)),
-        (contact.ContactExtractor, contact.ContactStorage(connection)),
-        (reference.ReferenceExtractor, reference.ReferenceStorage(connection)),
-        (book.BookExtractor, book.BookStorage(connection)),
+        (document.DocumentExtractor, document.DocumentStorage(sconnection)),
+        (document.DoctreeExtractor, document.DoctreeStorage(sconnection)),
+        (link.LinkExtractor, link.LinkStorage(sconnection)),
+        (event.EventExtractor, event.EventStorage(sconnection)),
+        (contact.ContactExtractor, contact.ContactStorage(sconnection)),
+        (reference.ReferenceExtractor, reference.ReferenceStorage(sconnection)),
+        (book.BookExtractor, book.BookStorage(sconnection)),
         )
 
     server.xmlrpc_handler(src, transforms, username, allow_reset=1)

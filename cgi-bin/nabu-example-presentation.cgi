@@ -4,8 +4,6 @@
 # This file is distributed under the terms of the GNU GPL license.
 # For more information: http://furius.ca/nabu.
 #
-# $Id$
-#
 
 """
 Nabu test/prototype presentation application.
@@ -27,16 +25,15 @@ import cPickle as pickle
 root = dirname(dirname(sys.argv[0]))
 sys.path.append(join(root, 'lib', 'python'))
 
-# sqlobject imports
-from sqlobject.postgres.pgconnection import PostgresConnection
-from sqlobject import SQLObjectNotFound
-
 # docutils imports
 import docutils.core, docutils.io
 
 # nabu imports
-from nabu import sources, contents, extract
+from nabu import contents
 from nabu.extractors import document, reference
+
+# local cgi directory imports.
+import connect
 
 
 def main():
@@ -46,23 +43,13 @@ def main():
     user = os.environ.get('REMOTE_USER', None)
 
     global uri; uri = os.environ['SCRIPT_URI']
-    print >> sys.stderr, uri
     scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
 
-    # connect to the database
-    params = {
-        'db': 'nabu',
-        'user': 'nabu',
-        'passwd': 'pwnabu',
-        'host': 'localhost',
-    }
-    connection = PostgresConnection(**params)
-    src_pp = sources.DBSourceStorage(connection, restrict_user=1)
-    src = sources.PerUserSourceStorageProxy(src_pp)
-
-    document.Doctree._connection = connection
-    document.Document._connection = connection
-    reference.Reference._connection = connection
+    # Setup access to the database.
+    sconnection = connect.connect_sqlobject()
+    document.Doctree._connection = sconnection
+    document.Document._connection = sconnection
+    reference.Reference._connection = sconnection
 
     form = cgi.FieldStorage()
     method = form.getvalue("method")

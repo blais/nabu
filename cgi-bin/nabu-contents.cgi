@@ -4,8 +4,6 @@
 # This file is distributed under the terms of the GNU GPL license.
 # For more information: http://furius.ca/nabu.
 #
-# $Id$
-#
 
 """
 Nabu content dumper.
@@ -24,11 +22,12 @@ import cgi, cgitb; cgitb.enable()
 root = dirname(dirname(sys.argv[0]))
 sys.path.append(join(root, 'lib', 'python'))
 
-# sqlobject imports
-from sqlobject.postgres.pgconnection import PostgresConnection
-
 # nabu imports
 from nabu import sources, contents, extract
+
+# local cgi directory imports.
+import connect
+
 
 admins = ['blais']
 
@@ -41,15 +40,11 @@ def main():
     uri = os.environ['SCRIPT_URI']
     scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
 
-    # connect to the database
-    params = {
-        'db': 'nabu',
-        'user': 'nabu',
-        'passwd': 'pwnabu',
-        'host': 'localhost',
-    }
-    connection = PostgresConnection(**params)
-    src_pp = sources.DBSourceStorage(connection, restrict_user=1)
+    # Connect to the database.
+    module, conn = connect.connect_dbapi()
+
+    # Get access to source storage.
+    src_pp = sources.DBSourceStorage(module, conn, restrict_user=1)
     src = sources.PerUserSourceStorageProxy(src_pp)
 
     form = cgi.FieldStorage()
@@ -58,11 +53,14 @@ def main():
         unid = None
     ashtml = form.getvalue("ashtml")
     if not form.getvalue("extracted"):
-        # do not restrict when it's the administrator
+        # Do not restrict by user when it's the administrator
         if user in admins:
-	    src = sources.DBSourceStorage(connection)
+	    src = sources.DBSourceStorage(module, conn)
         contents.contents_handler(src, uri, user, unid, ashtml)
+
     else:
+        sconnection = connect.connect_sqlobject()
+
         print 'Content-Type:', 'text/html'
         print 
         print '<html><body>'
@@ -70,10 +68,10 @@ def main():
 
         tables = ('document', 'link',)
         for tablename in tables:
-            print_extracted(connection, tablename, unid)
+            print_extracted(sconnection, tablename, unid)
 
 
-def print_extracted( connection, tablename, unid=None ):
+def print_extracted( sconnection, tablename, unid=None ):
     """
     Print extracted information (again, for fun, this is not necessary).
     Try to print the extracted info in a generic way.
@@ -81,7 +79,7 @@ def print_extracted( connection, tablename, unid=None ):
 
     print '<h2>Table: %s</h2>' % tablename
     values, colnames = extract.get_generic_table_values(
-        connection, tablename, unid)
+        sconnection, tablename, unid)
     colnames.remove('unid')
     for s in values:
         print '<h3>%s</h3>'% s['unid']

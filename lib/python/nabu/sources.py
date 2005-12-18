@@ -12,34 +12,9 @@ Source storage.
 """
 
 # stdlib imports
-import re, datetime
+import sys, re, datetime
 import cPickle as pickle
-
-# other imports
-from sqlobject import *
-
-
-class Source(SQLObject):
-    """
-    Source and history of uploads.
-    This is used to figure out what needs to be refreshed.
-
-    We also keep a copy of the original document tree, before our extraction was
-    run, so that we can reprocess the extraction on the server without having to
-    reparse nor upload the documents.
-    """
-
-    class sqlmeta:
-        table = '__sources__'
-
-    unid = StringCol(alternateID=1, notNull=1)
-    filename = UnicodeCol(length=256)
-    digest = StringCol(length=32, notNull=1)
-    username = StringCol(length=32)
-    time = DateTimeCol()
-    source = UnicodeCol()
-    doctree = BLOBCol() # pickled doctree, before custom transforms.
-    errors = UnicodeCol()
+from pprint import pprint, pformat ## FIXME remove
 
 
 class SourceStorage:
@@ -190,71 +165,108 @@ class PerUserSourceStorageProxy(SourceStorage):
 
 class DBSourceStorage(SourceStorage):
     """
-    Concrete source storage using an SQLObject connection.
-    This one shares the uploaded sources, there is no per-user document store.
-    For example, one user could completely remove everyone else's documents.
+    Concrete source storage using a DBAPI-2.0 connection.  This one shares the
+    uploaded sources, there is no per-user document store.  For example, one
+    user could completely remove everyone else's documents.
 
     Note that the uploaded sources table may not contain the document tree nor
     the source document.  This is a matter of policy and if you desire to store
     the document tree, you should use the extractor appropriate for that
     purpose.
     """
-    def __init__( self, connection, restrict_user=False,
-                  store_source=True, store_doctree=True ):
-        "Initialize with an open SQLObject connection."
-        self.connection = connection
-        Source._connection = connection
 
-        # Checks that the database tables exist and if they don't, creates them.
-        Source.createTable(ifNotExists=True)
+    # Definition of table storage for uploaded source documents.
+    __table_name = '__sources__'
+
+    # Note: this code is specific to PostgreSQL.  Adjust to your preference.
+    __table_schema = '''
+
+CREATE TABLE %s
+(
+    unid TEXT NOT NULL UNIQUE PRIMARY KEY,
+    filename TEXT,
+    digest VARCHAR(32) NOT NULL,
+    username VARCHAR(32),
+    "time" TIMESTAMP,
+    source TEXT,
+    doctree BYTEA,
+    errors TEXT
+);
+
+''' % __table_name
+
+## FIXME: remove
+## ALTER TABLE %s OWNER TO nabu;
+
+    def __init__( self, module, connection, restrict_user=False,
+                  store_source=True, store_doctree=True ):
+        "Initialize with an open DBAPI-2.0 connection."
+        self.module, self.connection = module, connection
+
+        assert module.paramstyle in ['format', 'pyformat']
 
         self.restrict_user = restrict_user
         self.store_source = store_source
         self.store_doctree = store_doctree
 
-    def __select( self, user, op=None ):
-        if self.restrict_user:
-            if op:
-                sr = Source.select(AND(Source.q.username == user, op))
-            else:
-                sr = Source.select(Source.q.username == user)
-        else:
-            if op:
-                sr = Source.select(op)
-            else:
-                sr = Source.select()
-        return sr
-    
+        # Checks that the database tables exist and if they don't, creates them.
+        cursor = self.connection.cursor()
+        cursor.execute("""
+           SELECT * FROM information_schema.tables WHERE table_name = %s
+           """, (DBSourceStorage.__table_name,))
+        if cursor.rowcount == 0:
+            self.reset_schema(False)
+
+    def __select( self, user ):
+        query = "SELECT %%s FROM %s" % DBSourceStorage.__table_name
+        if user:
+            query += " WHERE username = '%s'" % user
+        return query
+
     def getallids( self, user ):
-        return [r.unid for r in self.__select(user)]
+        cursor = self.connection.cursor()
+
+        query = self.__select(user) % 'unid'
+        cursor.execute(query)
+        return [x[0] for x in cursor.fetchall()]
 
     def getdigests( self, user, idlist=None ):
-        ret = {}
+        cursor = self.connection.cursor()
 
+        query = self.__select(user) % 'unid, digest'
+
+        ret = {}
         if idlist is None:
-            for r in self.__select(user):
-                ret[r.unid] = r.digest
+            cursor.execute(query)
+            for unid, digest in cursor.fetchone():
+                ret[unid] = digest
         else:
             for unid in idlist:
-                try:
-                    rr = Source.byUnid(unid)
-                    ret[rr.unid] = rr.digest
-                except SQLObjectNotFound:
-                    pass
+                cursor.execute(query + " AND unid = %s", (unid,))
+                if cursor.rowcount > 0:
+                    unid, digest = cursor.fetchone()
+                    ret[unid] = digest
 
         return ret
 
     def clear( self, user, idlist=None ):
-        if idlist is None:
-            Source.clearTable()
-        else:
-            for unid in idlist:
-                for s in self.__select(user, Source.q.unid == unid):
-                    s.destroySelf()
+        cursor = self.connection.cursor()
+        try:
+            query = "DELETE FROM %s" % DBSourceStorage.__table_name
+            if user:
+                query += " WHERE username = '%s'" % user
+
+            if idlist is None:
+                cursor.execute(query)
+            else:
+                for unid in idlist:
+                    cursor.execute(query + " AND unid = %s", (unid,))
+        finally:
+            self.connection.commit()
 
     def add( self, user, unid, filename, digest, time,
              source, doctree, errors, docpickled=None ):
-        
+
         if not self.store_source:
             source = u''
 
@@ -264,51 +276,71 @@ class DBSourceStorage(SourceStorage):
             # remove reporter before pickling.
             doctree.reporter = None
             docpickled = pickle.dumps(doctree)
-            
-        Source(unid=unid,
-               filename=filename,
-               digest=digest,
-               username=user,
-               time=time,
-               source=source,
-               doctree=docpickled,
-               errors=errors)
+
+        bindoc = self.module.Binary(docpickled)
+
+        cursor = self.connection.cursor()
+        cursor.execute("""
+           INSERT INTO %s
+             (unid, filename, digest, username, time, source, errors, doctree)
+           VALUES
+             (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)
+             """ % DBSourceStorage.__table_name,
+           (unid, filename, digest, user, time, source, errors, bindoc))
+        self.connection.commit()
+
 
     def get( self, user, idlist=None, attributes=[] ):
-        if idlist is None:
-            sr = self.__select(user)
+        cursor = self.connection.cursor()
+
+        attribstr = ', '.join(attributes)
+        query = self.__select(user) % attribstr
+        if idlist is not None:
+            query += user and ' AND ' or ' WHERE '
+            query += 'unid IN (%s)' % ', '.join(['%s'] * len(idlist))
+            cursor.execute(query, idlist)
         else:
-            sr = self.__select(user, IN(Source.q.unid, idlist))
-        return self.__get(user, sr, attributes)
+            cursor.execute(query)
+
+        return self.__get(cursor, attributes)
 
     def get_errors( self, user, attributes=[] ):
-        sr = self.__select(user, Source.q.errors != '')
+        attribstr = ', '.join(attributes)
+        query = self.__select(user) % attribstr
+        query += ' WHERE errors IS NOT NULL'
+
+        cursor = self.connection.cursor()
+        cursor.execute(query)
         return self.__get(user, sr, attributes)
 
-    def __get( self, user, sr, attributes ):
-        "Converts search results to expected values."
-
-        for s in sr:
-            s.sdict = {}
-
-        for a in attributes:
-            if a == 'doctree':
-                for x in sr:
-                    if s.doctree:
-                        x.sdict['doctree'] = pickle.loads(s.doctree)
+    def __get( self, cursor, attributes ):
+        """
+        Converts search results to expected values.
+        """
+        results = []
+        for i in xrange(cursor.rowcount):
+            row = cursor.fetchone()
+            m = {}
+            for value, attr in zip(row, attributes):
+                if attr == 'doctree':
+                    if value:
+                        value = pickle.loads(str(value))
                     else:
-                        x.sdict['doctree'] = None
-            elif a == 'errors-p':
-                for x in sr:
-                    x.sdict[a] = bool(x.errors)
-            else:
-                for x in sr:
-                    x.sdict[a] = getattr(x, a)
+                        value = None
 
-        return [x.sdict for x in sr]
+                elif attr in ['filename', 'source', 'errors']:
+                    # Note: we're assuming that the database is in UTF-8
+                    # encoding.
+                    value = value.decode('utf-8')
 
-    def reset_schema( self ):
-        Source.dropTable()
-        Source.createTable()
+                m[attr] = value
+            results.append(m)
+        return results
 
-    
+    def reset_schema( self, drop=True ):
+        cursor = self.connection.cursor()
+        if drop:
+            cursor.execute("DROP TABLE %s" % DBSourceStorage.__table_name)
+        cursor.execute(DBSourceStorage.__table_schema)
+        self.connection.commit()
+        

@@ -22,6 +22,7 @@ import sys, os, urlparse
 from os.path import dirname, join
 import cPickle as pickle
 from xml.sax.saxutils import escape
+from pprint import pprint, pformat ## FIXME remove
 
 # add the nabu libraries to load path
 root = dirname(dirname(sys.argv[0]))
@@ -68,13 +69,13 @@ def render_index( srcstore, uri, username ):
     print '<body>'
     print '<h1>Nabu Database Contents</h1>'
     print ('<p id="desc">'
-           'This is meant to be used for debugging only. You should'
+           'This is meant to be used for debugging only. You should '
            'build a suitable presentation interface from the extracted data.'
            '</p>')
 
     print '<table width="100%" class="dump">'
     sr = srcstore.get(username, None,
-                      ('unid', 'filename', 'username', 'time', 'errors-p',))
+                      ('unid', 'filename', 'username', 'time', 'errors',))
     for s in sr:
         print '<tr>'
         print '<td><a href="%s">%s</a></td>' % (linkfmt % s['unid'],
@@ -83,7 +84,7 @@ def render_index( srcstore, uri, username ):
         print '<td>%s</td>' % s['filename']
         print '<td>%s</td>' % s['username']
         print '<td>%s</td>' % s['time']
-        print '<td>%s</td>' % (s['errors-p'] and 'ERRORS' or '     ')
+        print '<td>%s</td>' % (s['errors'] and 'ERRORS' or '     ')
         print '</tr>'
     print '</table>'
     print '</body></html>'
@@ -147,8 +148,8 @@ def render_html( doctree, uri ):
     """    
     scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
 
-    settings = {'stylesheet': '%s://%s/docutils-style.css' % (scheme, netloc),
-    		'embed_stylesheet': False,
+    stylesheet = '%s://%s/docutils-style.css' % (scheme, netloc)
+    settings = {'embed_stylesheet': False,
                 'output_encoding': 'UTF-8'}
 
     parts = docutils.core.publish_parts(
@@ -160,9 +161,7 @@ def render_html( doctree, uri ):
     print
     sys.stdout.write(parts['html_prolog'].encode('UTF-8'))
     sys.stdout.write(parts['html_head'].encode('UTF-8'))
-    print '<link rel="stylesheet" '
-    print 'href="http://furius.local.biz/docutils-style.css" '
-    print 'type="text/css" />'
+    print '<link rel="stylesheet" href="%s" type="text/css" />' % stylesheet
     print '<div id="header"><a href="%s">Back to Nabu Index</a></div>' % uri
     sys.stdout.write(parts['html_body'].encode('UTF-8'))
     print '</body></html>'
@@ -182,6 +181,7 @@ def contents_handler( srcstore, uri, username, unid, ashtml ):
         username, idlist=[unid],
         attributes=('unid', 'filename', 'username', 'time', 'digest',
                     'errors', 'doctree', 'source'))
+    
     if not srclist:
         return render_notfound()
 
