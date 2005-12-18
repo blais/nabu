@@ -14,8 +14,6 @@ Interfaces that should be implemented by extractors.
 # docutils imports
 import docutils.transforms
 
-# sqlobject imports
-from sqlobject import *
 
 class Extractor(docutils.transforms.Transform):
     """
@@ -69,6 +67,54 @@ class ExtractorStorage:
         The server makes sure that this does not get called there is valuable
         data stored in the database.
         """
+
+
+class SQLExtractorStorage(ExtractorStorage):
+    """
+    Extractor storage base class for storage that uses a DBAPI-2.0 connection.
+    """
+
+    # Override this in the derived class.
+    # This should be a map from the table name to the table schema.
+    sql_tables = {} 
+    
+    def __init__( self, module, connection ):
+        cursor = self.connection.cursor()
+        
+        # Check that the database tables exist and if they don't, create them.
+        for tname, tschema in self.sql_tables:
+            cursor.execute("""
+               SELECT table_name FROM information_schema.tables WHERE table_name = %s
+               """, (tname,))
+            if cursor.rowcount == 0:
+                cursor.execute(tschema)
+
+        self.connection.commit()
+
+    def clear( self, unid=None ):
+        """
+        Default implementation that clears the entries/tables.
+        """
+        cursor = self.connection.cursor()
+
+        for tname, tschema in self.sql_tables:
+            query = "DELETE FROM %s" % tname
+            if unid is not None:
+                query += " WHERE unid = '%s'" % unid
+
+        self.connection.commit()
+
+    def reset_schema( self ):
+        """
+        Default implementation that drops the tables.
+        """
+        cursor = self.connection.cursor()
+
+        for tname, tschema in self.sql_tables:
+            cursor.execute("DROP TABLE %s" % tname)
+            cursor.execute(tschema)
+
+        self.connection.commit()
 
 
 class SQLObjectExtractorStorage(ExtractorStorage):

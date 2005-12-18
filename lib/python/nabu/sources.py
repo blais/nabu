@@ -212,7 +212,7 @@ CREATE TABLE %s
         # Checks that the database tables exist and if they don't, creates them.
         cursor = self.connection.cursor()
         cursor.execute("""
-           SELECT * FROM information_schema.tables WHERE table_name = %s
+           SELECT table_name FROM information_schema.tables WHERE table_name = %s
            """, (DBSourceStorage.__table_name,))
         if cursor.rowcount == 0:
             self.reset_schema(False)
