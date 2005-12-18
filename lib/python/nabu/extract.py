@@ -148,7 +148,7 @@ class SQLObjectExtractorStorage(ExtractorStorage):
             else:
                 for s in cls.select(cls.q.unid == unid):
                     s.destroySelf()
-
+        
     def reset_schema( self ):
         """
         Default implementation that drops the tables.

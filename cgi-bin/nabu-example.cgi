@@ -112,7 +112,7 @@ def render_header():
 <body>
 
 <div id="project-header">
-  <a href="/nabu/cgi-bin/nabu-example-presentation.cgi">
+  <a href="/nabu/cgi-bin/nabu-example.cgi">
   <img src="/nabu/etc/logo-test-nabu.gif" id="logo"></a>
 </div>
 

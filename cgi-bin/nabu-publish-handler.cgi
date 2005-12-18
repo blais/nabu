@@ -46,7 +46,7 @@ def main():
         return
     
     # Get access to source storage.
-    src_pp = sources.DBSourceStorage(module, conn, restrict_user=1)
+    src_pp = sources.DBSourceStorage(module, conn)
     src = sources.PerUserSourceStorageProxy(src_pp)
 
     sconnection = connect.connect_sqlobject()

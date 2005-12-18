@@ -2,6 +2,9 @@
     TODO: nabu
 ==================
 
+- remove SQLObject craporola
+
+
 - support encrypted files from the publisher
 
   - problem: how do we identify documents to be published without decrypting?

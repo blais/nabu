@@ -58,6 +58,10 @@ class LinkExtractor(extract.Extractor):
     class Visitor(nodes.SparseNodeVisitor):
 
         def visit_line_block( self, node ):
+            import sys
+            from pprint import pprint, pformat ## FIXME remove
+            print >> sys.stderr, pformat(node)
+
             # check the number of lines
             if len(node.children) not in (1, 2, 3):
                 return

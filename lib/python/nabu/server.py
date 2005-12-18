@@ -78,12 +78,12 @@ class PublishServerHandler:
         Clear the entire database.
         This is requested from the client interface.
         """
-        # clear the extracted chunks of data that are associated with all
+        # Clear the extracted chunks of data that are associated with all
         # documents.
         for extractor, extractstore in self.transforms:
             extractstore.clear()
 
-        # clear the source documents
+        # Clear the source documents.
         self.sources.clear(self.username)
         return 0
 
@@ -93,11 +93,15 @@ class PublishServerHandler:
         """
         assert len(idlist) > 0
 
+
         # clear the extracted chunks of data that are associated with these
         # documents.
         for unid in idlist:
+            # Find the transformed unid, if necessary.
+            store_unid = self.sources.map_unid(unid, self.username)
+
             for extractor, extractstore in self.transforms:
-                extractstore.clear(unid)
+                extractstore.clear(store_unid)
 
         # clear the source documents
         self.sources.clear(self.username, idlist)
@@ -172,14 +176,14 @@ class PublishServerHandler:
         Process a single file.
         We assume that the file comes wrapped in a Binary, encoded in UTF-8.
         """
-        # convert XML-RPC Binary into string
+        # Convert XML-RPC Binary into string.
         contents_utf8 = contents_bin.data
 
-        # compute digest of contents
+        # Compute digest of contents.
         m = md5.new(contents_utf8)
         digest = m.hexdigest()
 
-        # add directives from extractors
+        # Add directives from extractors.
         #
         # Note: if you upload the tree from your local parser, it will not
         # support special directives.  You should therefore pretty much always
@@ -239,8 +243,8 @@ class PublishServerHandler:
         """
         assert isinstance(errortext, unicode)
 
-        # remove all previous objects that were previously extracted from this
-        # document, including this document, if it exists
+        # Remove all previous objects that were previously extracted from this
+        # document, including this document, if it exists.
         self.clearids([unid])
 
         # Create a pickle receiver, an object whose tasks is to receive and
@@ -258,10 +262,13 @@ class PublishServerHandler:
         if docpickled:
             pickle_receiver.append(docpickled)
 
-        # transform the document tree
+        # Find the transformed unid, if necessary.
+        store_unid = self.sources.map_unid(unid, self.username)
+
+        # Transform the document tree.
         # Note: we apply the transforms before storing the document tree.
-        messages = process.transform_doctree(unid, doctree, self.transforms,
-                                             pickle_receiver)
+        messages = process.transform_doctree(
+            store_unid, doctree, self.transforms, pickle_receiver)
         
         # get the last of the received pickled documents (the most transformed).
         # We reuse that to store the doucment in the database.

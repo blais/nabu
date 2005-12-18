@@ -67,7 +67,7 @@ create a test account and upload some content to give it a try.
      the contents that I'm fiddling with.
 
 __ /nabu/cgi-bin/nabu-contents.cgi
-__ /nabu/cgi-bin/nabu-example-presentation.cgi
+__ /nabu/cgi-bin/nabu-example.cgi
 
 For more information on client usage, see the `Nabu usage document
 </nabu/doc/nabu-usage.html>`_.

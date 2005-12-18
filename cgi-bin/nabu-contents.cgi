@@ -17,6 +17,7 @@ layer, this is really just for debugging stuff.
 import sys, os, urlparse
 from os.path import dirname, join
 import cgi, cgitb; cgitb.enable()
+from pprint import pformat
 
 # add the nabu libraries to load path
 root = dirname(dirname(sys.argv[0]))
@@ -44,53 +45,44 @@ def main():
     module, conn = connect.connect_dbapi()
 
     # Get access to source storage.
-    src_pp = sources.DBSourceStorage(module, conn, restrict_user=1)
-    src = sources.PerUserSourceStorageProxy(src_pp)
+    src = sources.DBSourceStorage(module, conn)
+
+    # Restrict by user, unless we're the administrator.
+    if user not in admins:
+        src = sources.PerUserSourceStorageProxy(src)
+
+    tablenames = ('document', 'link',)
 
     form = cgi.FieldStorage()
+    view = form.getvalue("view")
     unid = form.getvalue("id")
+
     if not unid:
-        unid = None
-    ashtml = form.getvalue("ashtml")
-    if not form.getvalue("extracted"):
-        # Do not restrict by user when it's the administrator
-        if user in admins:
-	    src = sources.DBSourceStorage(module, conn)
-        contents.contents_handler(src, uri, user, unid, ashtml)
+        if view == 'extracted':
+            contents.render_extracted(None, uri, user, conn, tablenames)
+        else:
+            contents.render_index(uri, user, src)
+        return
+
+    # Check if the source exists.
+    ulist = src.get(user, [unid], ('unid',))
+    if len(ulist) != 1:
+        # Return error message if not.
+        return contents.render_notfound()
+        
+    # Render an appropriate view.
+    if view == 'source':
+        contents.render_source(unid, uri, user, src)
+
+    if view == 'html':
+        contents.render_html(unid, uri, user, src)
+
+    elif view == 'extracted':
+        stored_unid = src.map_unid(unid, user)
+        contents.render_extracted(unid, stored_unid, uri, user, conn, tablenames)
 
     else:
-        sconnection = connect.connect_sqlobject()
-
-        print 'Content-Type:', 'text/html'
-        print 
-        print '<html><body>'
-        print '<h1>Extracted Information</h1>'
-
-        tables = ('document', 'link',)
-        for tablename in tables:
-            print_extracted(sconnection, tablename, unid)
-
-
-def print_extracted( sconnection, tablename, unid=None ):
-    """
-    Print extracted information (again, for fun, this is not necessary).
-    Try to print the extracted info in a generic way.
-    """
-
-    print '<h2>Table: %s</h2>' % tablename
-    values, colnames = extract.get_generic_table_values(
-        sconnection, tablename, unid)
-    colnames.remove('unid')
-    for s in values:
-        print '<h3>%s</h3>'% s['unid']
-        print '<table>'
-        for name in colnames:
-            print '<tr><td style="color: #AAA">%s</td><td>' % name
-            print s.get(name, '')
-            print '</td></tr>'
-        print '</table>'
-    
-    print '</body></html>'
+        return contents.render_notfound()
 
 if __name__ == '__main__':
     main()

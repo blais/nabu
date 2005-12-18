@@ -82,6 +82,14 @@ class SourceStorage:
         This only happens if the server allows it.
         """
 
+    def map_unid( self, unid, user ):
+        """
+        Map the unique id to the final storage id, if a transformation on the id
+        needs to happen.  This final unique-id is used during the extraction
+        process, by the transforms.
+        """
+        return unid # Default needs to do no transform.
+
 
 class PerUserSourceStorageProxy(SourceStorage):
     """
@@ -91,12 +99,8 @@ class PerUserSourceStorageProxy(SourceStorage):
     Note that it does not make sense to configure the server with this if you're
     going to share the same body of source documents between users.
 
-
-    Make sure that the proxied storage restricts users for this to work.
-    For example, this could be done like this using the DBSourceStorage::
-
       connection = PostgresConnection(**params)
-      src_pp = sources.DBSourceStorage(connection, restrict_user=1)
+      src_pp = sources.DBSourceStorage(connection)
       src = sources.PerUserSourceStorageProxy(src_pp)
 
 
@@ -117,6 +121,9 @@ class PerUserSourceStorageProxy(SourceStorage):
         assert mo
         assert mo.group(1) == user # double dooper sanity check
         return mo.group(2)
+
+    def map_unid( self, unid, user ):
+        return self.__add_user(unid, user)
 
     def getallids( self, user ):
         return [self.__remove_user(x, user) for x in self.prox.getallids(user)]
@@ -198,14 +205,13 @@ CREATE TABLE %s
 ## FIXME: remove
 ## ALTER TABLE %s OWNER TO nabu;
 
-    def __init__( self, module, connection, restrict_user=False,
+    def __init__( self, module, connection, 
                   store_source=True, store_doctree=True ):
         "Initialize with an open DBAPI-2.0 connection."
         self.module, self.connection = module, connection
 
         assert module.paramstyle in ['format', 'pyformat']
 
-        self.restrict_user = restrict_user
         self.store_source = store_source
         self.store_doctree = store_doctree
 

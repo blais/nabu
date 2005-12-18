@@ -8,13 +8,11 @@
 #
 
 """
-Render the contents as a CGI handler, for debugging purposes.
+Renderers for contents of CGI handler, for debugging purposes.
 
 This module contains code that is used to render basic pages for debug purposes,
-to see what sources have been uploaded, etc.
-
-Note that this is all very basic on purpose, I did not want to introduce
-dependencies.
+to see what sources have been uploaded, what information has been extracted from
+them, etc.
 """
 
 # stdlib imports
@@ -35,12 +33,105 @@ from nabu import sources
 # docutils imports
 import docutils.core
 
+#-------------------------------------------------------------------------------
+# Stylesheet.
+css = '''
 
-transitional = ('<!DOCTYPE html PUBLIC '
-                '"-//W3C//DTD XHTML 1.0 Transitional//EN" '
-                '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
+table.nabu {
+  font-size: x-small;
+  border: thin solid black;
+  }
+
+table.nabu td {
+  border: thin solid #CCC;
+  }
+
+p#desc {
+  font-size: small;
+  font-style: italic;
+  }
+
+#navigation-parent {
+  text-align: center;
+  }
+
+#navigation {
+  font-size: x-small;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 3px;
+  border-bottom: thin dashed #CCC;
+  }
+
+#navigation-unid {
+  color: #666;
+  font-weight: bold;
+  margin-left: 2em;
+  margin-right: 2em;
+  }
+
+'''
+
+stylesheet = ('http://docutils.sourceforge.net'
+              '/docutils/writers/html4css1/html4css1.css')
+
+pages_header = '''<!DOCTYPE html PUBLIC 
+   "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="%s" type="text/css" />
+<style>
+%s
+</style>
+</head>
+<body>
+
+''' % (stylesheet, css)
+
+pages_footer = '''
+</body>
+</html>
+'''
+
+#-------------------------------------------------------------------------------
+#
+def navig_index( uri ):
+    """
+    Render a simple navigation header div in the document pages.
+    """
+    return '''
+    <div id="navigation-parent">
+    <div id="navigation">
+       <a href="%s">[index]</a>
+    </div>
+    </div>
+    '''% uri
+
+def navig( uri, unid ):
+    """
+    Render a simple navigation header div in the document pages.
+    """
+    return '''
+    <div id="navigation-parent">
+    <div id="navigation">
+       <a href="%s">[index]</a>
+       <span id="navigation-unid">%s</span>
+       <a href="%s">[source]</a> |
+       <a href="%s">[extracted]</a> |
+       <a href="%s">[html]</a>
+    </div>
+    </div>
+    '''% (uri, unid,
+          '%s?id=%s&view=source' % (uri, unid),
+          '%s?id=%s&view=extracted' % (uri, unid),
+          '%s?id=%s&view=html' % (uri, unid))
 
 
+#-------------------------------------------------------------------------------
+#
 def render_notfound():
     """
     Return a resource-not-found error to the client.
@@ -50,50 +141,58 @@ def render_notfound():
     print
     print 'Document Not Found.'
 
-def render_index( srcstore, uri, username ):
+#-------------------------------------------------------------------------------
+#
+def render_index( uri, username, srcstore ):
     """
     Generate an index of documents.
     """
-    ashtml = '%s?%s' % (uri, 'ashtml=1&id=%s')
-
-    linkfmt = '%s?id=%%s' % uri
+    linkfmt = '%s?id=%%s&view=%%s' % uri
     print 'Content-type:', 'text/html'
     print
-    print transitional
-    print '<html>'
-    print '<head><style>'
-    print 'table { font-size: x-small; }'
-    print 'p#desc { font-size: x-small; font-style: italic; }'
-    print '</style></head>'
-
-    print '<body>'
-    print '<h1>Nabu Database Contents</h1>'
-    print ('<p id="desc">'
-           'This is meant to be used for debugging only. You should '
-           'build a suitable presentation interface from the extracted data.'
-           '</p>')
-
-    print '<table width="100%" class="dump">'
+    print pages_header
+    print '''
+    <h1>Nabu Database Contents</h1>
+    <a href="%s?view=extracted">[view all extracted]</a>
+    <p id="desc">
+    This is meant to be used for debugging only. You should 
+    build a suitable presentation interface from the extracted data.
+    </p>
+    ''' % uri
+    
+    print '<table width="100%" class="dump nabu">'
     sr = srcstore.get(username, None,
                       ('unid', 'filename', 'username', 'time', 'errors',))
     for s in sr:
         print '<tr>'
-        print '<td><a href="%s">%s</a></td>' % (linkfmt % s['unid'],
+        print '<td><a href="%s">%s</a></td>' % (linkfmt % (s['unid'], 'source'),
                                                 s['unid'])
-        print '<td> <a href="%s">[html]</a></td>' % (ashtml % s['unid'])
+        print '<td>'
+        print '  <a href="%s">S</a>' % linkfmt % (s['unid'], 'source')
+        print '  <a href="%s">E</a>' % linkfmt % (s['unid'], 'extracted')
+        print '  <a href="%s">H</a>' % linkfmt % (s['unid'], 'html')
+        print '</td>'
         print '<td>%s</td>' % s['filename']
         print '<td>%s</td>' % s['username']
         print '<td>%s</td>' % s['time']
         print '<td>%s</td>' % (s['errors'] and 'ERRORS' or '     ')
         print '</tr>'
     print '</table>'
-    print '</body></html>'
+    print pages_footer
 
-def render_source_info( src, uri ):
+#-------------------------------------------------------------------------------
+#
+def render_source( unid, uri, username, srcstore ):
     """
     Render a basic page that dumps all the information available for a source
     upload.
     """
+    sr = srcstore.get(username, [unid],
+                      ('unid', 'filename', 'username', 'time', 'digest',
+                       'errors', 'doctree', 'source'))
+    assert len(sr) == 1
+    src = sr[0]
+    
     doctree = src['doctree']
     if doctree is not None:
         # Render the full debug page that displays the contents of an uploaded
@@ -106,10 +205,9 @@ def render_source_info( src, uri ):
 
     print 'Content-Type:', 'text/html; charset=UTF-8'
     print
-    print transitional
-    print '<html><head></head><body>'
-    print '<div id="header"><a href="%s">Back to Nabu Index</a></div>' % uri
-    print '<h1>Source: %s</h1>' % escape(src['unid'])
+    print pages_header
+    print navig(uri, unid)
+    print '<h1>Source</h1>'
     print '<dl>'
     print '<dt>Source Filename</dt><dd>%s</dd>' % escape(src['filename'])
     print '<dt>User</dt><dd>%s</dd>' % escape(src['username'])
@@ -136,19 +234,30 @@ def render_source_info( src, uri ):
     print escape(src['source'].encode('utf-8'))
     print '</pre>'
     print '<hr width="5"/>'
-    print '</body></html>'
+    print pages_footer
 
-
-def render_html( doctree, uri ):
+#-------------------------------------------------------------------------------
+#
+def render_html( unid, uri, username, srcstore ):
     """
     Render the document tree naively, as HTML.
 
     Note: this is just for fun.  You should develop your own rendering
     interface, possibly modifying the document tree before rendering it.
     """    
+    sr = srcstore.get(username, [unid], ('doctree',))
+    assert len(sr) == 1
+    src = sr[0]
+    doctree = src['doctree']
+
+    if doctree is None:
+        print 'Content-type:', 'text/plain'
+        print
+        print '(No document tree in sources upload.)'
+        return
+
     scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
 
-    stylesheet = '%s://%s/docutils-style.css' % (scheme, netloc)
     settings = {'embed_stylesheet': False,
                 'output_encoding': 'UTF-8'}
 
@@ -159,45 +268,75 @@ def render_html( doctree, uri ):
 
     print 'Content-type:', 'text/html'
     print
-    sys.stdout.write(parts['html_prolog'].encode('UTF-8'))
-    sys.stdout.write(parts['html_head'].encode('UTF-8'))
-    print '<link rel="stylesheet" href="%s" type="text/css" />' % stylesheet
-    print '<div id="header"><a href="%s">Back to Nabu Index</a></div>' % uri
+    print pages_header
+    print navig(uri, unid)
     sys.stdout.write(parts['html_body'].encode('UTF-8'))
-    print '</body></html>'
+    print pages_footer
     return
 
-def contents_handler( srcstore, uri, username, unid, ashtml ):
+#-------------------------------------------------------------------------------
+#
+def render_extracted( unid, stored_unid, uri, username, conn, tables ):
     """
-    Basic handler for the dump/debug contents page.
-    Call this from the CGI script after configuration to handle the debug pages.
-    """
+    Render information that was extracted from this document.
 
+    Note: this is just for fun.  You should develop your own rendering
+    interface, possibly modifying the document tree before rendering it.
+    """    
+
+    print 'Content-Type:', 'text/html'
+    print 
+    print pages_header
     if unid is None:
-        return render_index(srcstore, uri, username)
+        print navig_index(uri)
+    else:
+        print navig(uri, unid)
+    print '<h1>Extracted Information</h1>'
 
-    # select the document from the database
-    srclist = srcstore.get(
-        username, idlist=[unid],
-        attributes=('unid', 'filename', 'username', 'time', 'digest',
-                    'errors', 'doctree', 'source'))
+    for tablename in tables:
+        dump_table(conn, tablename, stored_unid)
+
+    print pages_footer
+
+#-------------------------------------------------------------------------------
+#
+def dump_table( conn, tablename, unid=None ):
+    """
+    Print extracted information (again, for fun, this is not necessary).
+    Try to print the extracted info in a generic way.
+    """
+    print '<h2>Table: %s</h2>' % tablename
     
-    if not srclist:
-        return render_notfound()
+    curs = conn.cursor()
+    query = "SELECT * FROM %s" % tablename
+    if unid:
+        query += " WHERE unid = '%s'" % unid
+    curs.execute(query)
 
-    assert len(srclist) == 1
-    src = srclist[0]
+    print >> sys.stderr, query
 
-    # render document in HTML and leave
-    if ashtml:
-        doctree = src['doctree']
-        if doctree is None:
-            print 'Content-type:', 'text/plain'
-            print
-            print '(No document tree in sources upload.)'
-            return
-        else:
-            return render_html(doctree, uri)
+    if curs.rowcount > 0:
+        print '<table class="nabu">'
+        print '<thead><tr>'
+        unidcol = None
+        for i, colname in enumerate(curs.description):
+            if unid is not None and colname[0] == 'unid':
+                unidcol = i
+                continue
+            print '<th>%s</th>' % colname[0]
+        print '</tr></thead>'
+        print '<tbody>'
 
-    return render_source_info(src, uri)
+        for row in curs.fetchall():
+            print '<tr>'
+            for i, value in enumerate(row):
+                if i == unidcol:
+                    continue
+                if isinstance(value, str) and len(value) > 100:
+                    value = value[:30]
+                print '<td>%s</td>' % value
+            print '</tr>'
+
+        print '</tbody>'
+        print '</table>'
 
