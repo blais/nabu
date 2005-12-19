@@ -20,7 +20,6 @@ import sys, os, urlparse
 from os.path import dirname, join
 import cPickle as pickle
 from xml.sax.saxutils import escape
-from pprint import pprint, pformat ## FIXME remove
 
 # add the nabu libraries to load path
 root = dirname(dirname(sys.argv[0]))
@@ -162,6 +161,7 @@ def render_index( uri, username, srcstore ):
     print '<table width="100%" class="dump nabu">'
     sr = srcstore.get(username, None,
                       ('unid', 'filename', 'username', 'time', 'errors',))
+
     for s in sr:
         print '<tr>'
         print '<td><a href="%s">%s</a></td>' % (linkfmt % (s['unid'], 'source'),

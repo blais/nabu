@@ -184,11 +184,6 @@ class DocumentStorage(extract.SQLExtractorStorage):
                 'abstract', 'category', 'serie', 'location']
         for cname in cols:
             data.setdefault(cname, None)
-
-
-        ## FIXME: remove
-        import sys
-        from pprint import pprint, pformat
         
         a = ', '.join(['%%(%s)s' % x for x in cols])
         query = """

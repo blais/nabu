@@ -14,7 +14,6 @@ Source storage.
 # stdlib imports
 import sys, re, datetime
 import cPickle as pickle
-from pprint import pprint, pformat ## FIXME remove
 
 
 class SourceStorage:
@@ -201,9 +200,6 @@ class DBSourceStorage(SourceStorage):
         );
 
         ''' % __table_name
-
-## FIXME: remove
-## ALTER TABLE %s OWNER TO nabu;
 
     def __init__( self, module, connection, 
                   store_source=True, store_doctree=True ):

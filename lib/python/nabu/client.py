@@ -249,7 +249,6 @@ def publish( candidates, opts, args ):
                     "Error: you must have installed docutils in order to "
                     "process files locally.")
 
-            # FIXME: merge my branch in docutils trunk.
             except AttributeError:
                 raise SystemExit(
                     "Error: for local processing "
