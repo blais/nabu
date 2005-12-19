@@ -106,6 +106,7 @@ class SQLExtractorStorage(ExtractorStorage):
             query = "DELETE FROM %s" % tname
             if unid is not None:
                 query += " WHERE unid = '%s'" % unid
+            cursor.execute(query)
 
         self.connection.commit()
 

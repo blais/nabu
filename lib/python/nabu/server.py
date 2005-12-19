@@ -93,7 +93,6 @@ class PublishServerHandler:
         """
         assert len(idlist) > 0
 
-
         # clear the extracted chunks of data that are associated with these
         # documents.
         for unid in idlist:
@@ -105,6 +104,7 @@ class PublishServerHandler:
 
         # clear the source documents
         self.sources.clear(self.username, idlist)
+
         return 0
 
     def reset_schema( self ):
@@ -242,6 +242,7 @@ class PublishServerHandler:
             pickled version of the tree.  If left to None we create our own.
         """
         assert isinstance(errortext, unicode)
+
 
         # Remove all previous objects that were previously extracted from this
         # document, including this document, if it exists.
