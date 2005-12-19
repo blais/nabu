@@ -100,7 +100,7 @@ class LinkExtractor(extract.Extractor):
             node.attributes['classes'].append('bookmark')
 
             # store the bookmark
-            self.x.storage.store(self.x.unid, ldesc, lurl, lkeys)
+            self.x.storage.store(self.x.unid, lurl, ldesc, lkeys)
 
 
 class LinkStorage(extract.SQLExtractorStorage):
