@@ -14,9 +14,6 @@ Extract external references, simply.
 # docutils imports
 from docutils import nodes
 
-# other imports
-from sqlobject import *
-
 # nabu imports
 from nabu import extract
 
@@ -42,21 +39,25 @@ class ReferenceExtractor(extract.Extractor):
                 self.x.storage.store(self.x.unid, node.attributes['refuri'])
                 
 
-class Reference(SQLObject):
-    """
-    Storage for document information.
-    """
-    unid = StringCol(notNull=1)
-
-    url = StringCol()
-
-
-class ReferenceStorage(extract.SQLObjectExtractorStorage):
+class ReferenceStorage(extract.SQLExtractorStorage):
     """
     Reference storage.
     """
+    sql_tables = { 'reference': '''
 
-    sqlobject_classes = [Reference]
+        CREATE TABLE reference
+        (
+           unid TEXT NOT NULL,
+           url TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, url ):
-        Reference(unid=unid, url=url)
+        cursor = self.connection.cursor()
+        cursor.execute("""
+          INSERT INTO reference (unid, url) VALUES (%s, %s)
+          """, (unid, url))
+        self.connection.commit()
+

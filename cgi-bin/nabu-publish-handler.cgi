@@ -49,14 +49,13 @@ def main():
     src_pp = sources.DBSourceStorage(module, conn)
     src = sources.PerUserSourceStorageProxy(src_pp)
 
-    sconnection = connect.connect_sqlobject()
     transforms = (
-        (document.DocumentExtractor, document.DocumentStorage(sconnection)),
-        (document.DoctreeExtractor, document.DoctreeStorage(sconnection)),
-        (link.LinkExtractor, link.LinkStorage(sconnection)),
-        (event.EventExtractor, event.EventStorage(sconnection)),
-        (contact.ContactExtractor, contact.ContactStorage(sconnection)),
-        (reference.ReferenceExtractor, reference.ReferenceStorage(sconnection)),
+        (document.DocumentExtractor, document.DocumentStorage(module, conn)),
+        (document.DoctreeExtractor, document.DoctreeStorage(module, conn)),
+        (event.EventExtractor, event.EventStorage(module, conn)),
+        (contact.ContactExtractor, contact.ContactStorage(module, conn)),
+        (reference.ReferenceExtractor, reference.ReferenceStorage(module, conn)),
+        (link.LinkExtractor, link.LinkStorage(module, conn)),
         (book.BookExtractor, book.BookStorage(module, conn)),
         )
 

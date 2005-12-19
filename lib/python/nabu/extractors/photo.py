@@ -20,9 +20,6 @@ import re, datetime
 from docutils import nodes
 from docutils.parsers.rst import directives
 
-# other imports
-from sqlobject import *
-
 # nabu imports
 from nabu import extract
 
@@ -189,27 +186,27 @@ class PhotoExtractor(extract.Extractor):
 ##             self.x.storage.store(self.x.unid, ldesc, lurl, lkeys)
                 
 
-class Photo(SQLObject):
-    """
-    Storage for document information.
-    """
-    unid = StringCol(notNull=1)
+## class Photo(SQLObject):
+##     """
+##     Storage for document information.
+##     """
+##     unid = StringCol(notNull=1)
 
 ##     url = StringCol()
 ##     description = UnicodeCol()
 ##     keywords = UnicodeCol()
 
 
-class PhotoStorage(extract.SQLObjectExtractorStorage):
-    """
-    Photo storage.
-    """
+## class PhotoStorage(extract.SQLObjectExtractorStorage):
+##     """
+##     Photo storage.
+##     """
 
-    sqlobject_classes = [Photo]
+##     sqlobject_classes = [Photo]
 
-    def store( self, unid, url, description, keywords ):
-        Photo(unid=unid)
-##              url=url,
-##              description=description,
-##              keywords=keywords)
+##     def store( self, unid, url, description, keywords ):
+##         Photo(unid=unid)
+## ##              url=url,
+## ##              description=description,
+## ##              keywords=keywords)
 

@@ -17,9 +17,6 @@ import re, types
 # docutils imports
 from docutils import nodes
 
-# other imports
-from sqlobject import *
-
 # nabu imports
 from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
@@ -81,29 +78,36 @@ class ContactExtractor(extract.Extractor):
                 self.store(flist)
 
 
-class Contact(SQLObject):
-    """
-    Storage for contact information.
-    """
-    unid = StringCol(notNull=1)
-
-    name = UnicodeCol()
-    email = UnicodeCol()
-    address = UnicodeCol()
-    bday = UnicodeCol()
-
-class ContactStorage(extract.SQLObjectExtractorStorage):
+class ContactStorage(extract.SQLExtractorStorage):
     """
     Contact storage.
     """
+    sql_tables = { 'contact': '''
 
-    sqlobject_classes = [Contact]
+        CREATE TABLE contact
+        (
+           unid TEXT NOT NULL,
+           name TEXT,
+           email TEXT,
+           address TEXT,
+           bday TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, *args ):
         data, = args
-        Contact(unid=unid,
-                name=data.get('name', ''),
-                email=data.get('email'),
-                address=data.get('address', ''),
-                bday=data.get('bday', ''))
+        
+        cols = ('unid', 'name', 'email', 'address', 'bday')
+        values = [unid]
+        for n in cols[1:]:
+            values.append( data.get(n, '') )
+            
+        cursor = self.connection.cursor()
+        cursor.execute("""
+          INSERT INTO contact (%s) VALUES (%%s, %%s, %%s, %%s, %%s)
+          """ % ', '.join(cols), values)
 
+        self.connection.commit()
+        

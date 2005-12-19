@@ -79,7 +79,7 @@ def load_extractor( fn ):
     return cls
 
 
-class GabberStorage(extract.SQLObjectExtractorStorage):
+class GabberStorage(extract.ExtractorStorage):
     """
     A storage that prints out the stuff that it receives in a human-readable way
     to a stream rather than actually store it.

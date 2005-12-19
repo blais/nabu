@@ -1,0 +1,81 @@
+.. :Id: dca9ce97-380e-4333-878a-995b128053dc
+
+===========================
+     Test Address Book
+===========================
+:Author: Martin Blais <blais@furius.ca>
+
+
+General
+=======
+
+* :n: Info-Santé
+  :p: (514) 933-7541
+  :c: Pour Leif, CENTRE LOCAL DE SERVICES COMMUNAUTAIRES SAINT-HENRI
+  	
+* :n: Info-Santé
+  :p: (514) 485-1670
+  :c: Pour Rachel, CLSC NOTRE-DAME-DE-GRACE / MONTREAL-OUEST
+
+* :n: Laurent Carrier
+  :e: lcarrier@toboggandesign.com
+  :c: founder of Toboggan Design in the Belgo building, friends of mhenson
+
+* :n: Ken Schachter
+  :e: kschachter@gameloft.com
+  :c: ex-discreeter now project manager at gameloft
+
+* :n: Chantal Tardif
+  :w: organimax.com
+  :p: 514.808.9991
+
+* :n: Neville "Pichi: Ainslie
+  :c: precussioniste montrealais (venezuela)
+  :p: 498.3614
+  :p: 796.1761
+  :e: ecolequitiplas@hotmail.com
+
+* :n: Oscar fuentes, chanteur professional
+  :e: flabrada@msn.com
+  :p: 514.253.8617
+  :p cell: 514.892.3364
+  :c: chanteur cubain qui donne des cours
+  :w: www.oscarfuentesmusic.com
+  
+* :n: Copains Coiffure
+  :a: 5313 ave du Parc, Montreal
+  :p: 514.274.3331
+
+* :e: gashford@nortel.com
+  :c: Address picked up from Leif's party?
+
+* :n: Imprimerie Atwater Inc.
+  :n: Mario (Technicien)
+  :a: 3009, rue Notre-Dame Ouest, Montréal QC, H4C 1N9
+  :p: (514) 932-4343
+  :f: (514) 932-2306
+  :e: imprimerie@impatwater.qc.ca
+
+* :n: Jordan Wynnychuk
+  :e: wynnychuk@jimmyproximity.com
+  :p: 514.448.9388
+  :c: Jimmy Proximity, President
+
+* :n: Radioactif
+  :w: http://www.rawdioactif.com
+  :c: Little store that sells Apple computers on the plateau
+  :a: 772 Rachel E
+  :p: 514.528.9222
+
+* :n: Normand Croteau
+  :e ?: milmot@sympatico.ca
+  :e ?: milmot1000@hotmail.com
+  :p home: +1.514.334.4611
+  :a: 1337 Fleury Est, Montreal, Quebec, H2C 1R4
+
+* :n: Salon de Beauté Entre Chien & Chat
+  :a: 6992 Sherbrooke Rue East, Montréal, QC H1N1E5
+  :p: (514) 255-9999
+  :c: toilette pour vaudou...
+
+

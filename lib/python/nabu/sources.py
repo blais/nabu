@@ -188,19 +188,19 @@ class DBSourceStorage(SourceStorage):
     # Note: this code is specific to PostgreSQL.  Adjust to your preference.
     __table_schema = '''
 
-CREATE TABLE %s
-(
-    unid TEXT PRIMARY KEY,
-    filename TEXT,
-    digest VARCHAR(32) NOT NULL,
-    username VARCHAR(32),
-    "time" TIMESTAMP,
-    source TEXT,
-    doctree BYTEA,
-    errors TEXT
-);
+        CREATE TABLE %s
+        (
+            unid TEXT PRIMARY KEY,
+            filename TEXT,
+            digest VARCHAR(32) NOT NULL,
+            username VARCHAR(32),
+            "time" TIMESTAMP,
+            source TEXT,
+            doctree BYTEA,
+            errors TEXT
+        );
 
-''' % __table_name
+        ''' % __table_name
 
 ## FIXME: remove
 ## ALTER TABLE %s OWNER TO nabu;

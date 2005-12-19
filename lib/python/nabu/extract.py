@@ -72,6 +72,9 @@ class ExtractorStorage:
 class SQLExtractorStorage(ExtractorStorage):
     """
     Extractor storage base class for storage that uses a DBAPI-2.0 connection.
+
+    Note: all of the declared tables should have a non-null unid column, to
+    enable clearing obsolete data when reloading a source document.
     """
 
     # Override this in the derived class.
@@ -158,39 +161,3 @@ class SQLObjectExtractorStorage(ExtractorStorage):
         for cls in self.sqlobject_classes:
             cls.dropTable()
             cls.createTable()
-
-
-def get_generic_table_values( connection, tablename, unid=None ):
-    """
-    Convenience method that generically gets the values from a table.  You need
-    to supply a valid connection object and a tablename, and optionally, a unid
-    to filter by.  This returns a list of dictionaries, one for each table row,
-    and a list of column names.
-    """
-
-    from sqlobject import SQLObject
-##    cls = type(tablename, (SQLObject,), {})
-## this will work only once, because of the SQLObject class registry, I need to
-## declare the ORM wrapper generically.
-
-    class ExtractedObject(SQLObject):
-        class sqlmeta:
-            table = tablename
-        _fromDatabase = True
-        _connection = connection
-
-    colnames = [col.name for col in ExtractedObject._columns]
-    if unid is None:
-        sr = ExtractedObject.select()
-    else:
-        sr = ExtractedObject.select(ExtractedObject.q.unid == unid)
-
-    values = []
-    for s in sr:
-        dic = {}
-        values.append(dic)
-        for name in colnames:
-            dic[name] = getattr(s, name)
-
-    return values, colnames
-

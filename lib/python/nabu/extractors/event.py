@@ -17,9 +17,6 @@ import re, datetime
 # docutils imports
 from docutils import nodes
 
-# other imports
-from sqlobject import *
-
 # nabu imports
 from nabu import extract
 
@@ -77,22 +74,27 @@ class EventExtractor(extract.Extractor):
             
             self.storage.store(self.unid, dt, desc)
 
-class Event(SQLObject):
-    """
-    Storage for event information.
-    """
-    unid = StringCol(notNull=1)
 
-    date = DateCol()
-    description = UnicodeCol(notNull=0)
-
-class EventStorage(extract.SQLObjectExtractorStorage):
+class EventStorage(extract.SQLExtractorStorage):
     """
     Event storage.
     """
-    sqlobject_classes = [Event]
+    sql_tables = { 'event': '''
+
+        CREATE TABLE event
+        (
+           unid TEXT NOT NULL,
+           date DATE,
+           description TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, dt, description ):
-        Event(unid=unid,
-              date=dt,
-              description=description)
+        cursor = self.connection.cursor()
+        cursor.execute("""
+          INSERT INTO reference (unid, date, description) VALUES (%s, %s, %s)
+          """, (unid, dt, description))
+        self.connection.commit()
+

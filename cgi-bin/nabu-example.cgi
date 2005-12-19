@@ -47,9 +47,6 @@ def main():
 
     # Setup access to the database.
     sconnection = connect.connect_sqlobject()
-    document.Doctree._connection = sconnection
-    document.Document._connection = sconnection
-    reference.Reference._connection = sconnection
 
     form = cgi.FieldStorage()
     method = form.getvalue("method")
@@ -150,6 +147,9 @@ testing Nabu and we're not responsible for the contents.
 </b></p>
 </div>
 """
+
+FIXME remove the SQLObject stuff from here...
+
 
 def render_front_page():
     """

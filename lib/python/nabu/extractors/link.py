@@ -17,9 +17,6 @@ import re
 # docutils imports
 from docutils import nodes
 
-# other imports
-from sqlobject import *
-
 # nabu imports
 from nabu import extract
 
@@ -104,28 +101,34 @@ class LinkExtractor(extract.Extractor):
 
             # store the bookmark
             self.x.storage.store(self.x.unid, ldesc, lurl, lkeys)
-                
-
-class Link(SQLObject):
-    """
-    Storage for document information.
-    """
-    unid = StringCol(notNull=1)
-
-    url = StringCol()
-    description = UnicodeCol()
-    keywords = UnicodeCol()
 
 
-class LinkStorage(extract.SQLObjectExtractorStorage):
+class LinkStorage(extract.SQLExtractorStorage):
     """
     Link storage.
     """
+    sql_tables = { 'link': '''
 
-    sqlobject_classes = [Link]
+        CREATE TABLE link
+        (
+           unid TEXT NOT NULL,
+           url TEXT,
+           description TEXT,
+           keywords TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, url, description, keywords ):
-        Link(unid=unid,
-             url=url,
-             description=description,
-             keywords=keywords)
+
+        cols = ('unid', 'url', 'description', 'keywords')
+            
+        cursor = self.connection.cursor()
+        cursor.execute("""
+          INSERT INTO link (unid, url, description, keywords)
+            VALUES (%s, %s, %s, %s)
+          """, (unid, url, description, keywords))
+
+        self.connection.commit()
+        

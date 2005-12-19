@@ -80,7 +80,6 @@ class BookStorage(extract.SQLExtractorStorage):
     """
     Book storage.
     """
-
     sql_tables = { 'book': '''
 
         CREATE TABLE book

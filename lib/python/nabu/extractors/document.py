@@ -19,9 +19,6 @@ import pickle
 # docutils imports
 from docutils import nodes
 
-# other imports
-from sqlobject import *
-
 # nabu imports
 from nabu import extract
 
@@ -50,19 +47,20 @@ class DoctreeExtractor(extract.Extractor):
             pickle_receiver.append(pickled)
 
 
-class Doctree(SQLObject):
-    """
-    Schema for document tree.
-    """
-    unid = StringCol(alternateID=1, notNull=1)
-
-    doctree = BLOBCol() # pickled doctree.
-
-class DoctreeStorage(extract.SQLObjectExtractorStorage):
+class DoctreeStorage(extract.SQLExtractorStorage):
     """
     Document tree storage.
     """
-    sqlobject_classes = [Doctree]
+    sql_tables = { 'doctree': '''
+
+        CREATE TABLE doctree
+        (
+           unid TEXT NOT NULL,
+           doctree BYTEA
+        )
+
+        '''
+        }
 
     def store( self, unid, doctree ):
 
@@ -77,7 +75,13 @@ class DoctreeStorage(extract.SQLObjectExtractorStorage):
             doctree.reporter = saved_reporter
             doctree.transformer = saved_transformer
 
-        Doctree(unid=unid, doctree=doctree_pickled)
+        bindoc = self.module.Binary(doctree_pickled)
+        
+        cursor = self.connection.cursor()
+        cursor.execute("""
+          INSERT INTO doctree (unid, doctree) VALUES (%s, %s)
+          """, (unid, bindoc))
+        self.connection.commit()
 
         return doctree_pickled
 
@@ -147,21 +151,7 @@ class DocumentExtractor(extract.Extractor):
                 self.extracted['date'] = datetime.date(*map(int,mo.groups()))
 
 
-class Document(SQLObject):
-    """
-    Storage for document information.
-    """
-    unid = StringCol(alternateID=1, notNull=1)
-
-    title = UnicodeCol()
-    author = UnicodeCol()
-    date = DateCol()
-    abstract = UnicodeCol(notNull=0)
-    category = UnicodeCol(notNull=0)
-    serie = UnicodeCol(notNull=0)
-    location = UnicodeCol(notNull=0)
-
-class DocumentStorage(extract.SQLObjectExtractorStorage):
+class DocumentStorage(extract.SQLExtractorStorage):
     """
     Document storage.
 
@@ -170,13 +160,42 @@ class DocumentStorage(extract.SQLObjectExtractorStorage):
     uploaded sources storage to render the entire document as HTML, this is ok.
     """
 
-    sqlobject_classes = [Document]
+    sql_tables = { 'document': '''
+
+        CREATE TABLE document
+        (
+           unid TEXT NOT NULL,
+           title TEXT,
+           author TEXT,
+           date DATE,
+           abstract TEXT,
+           category TEXT,
+           serie TEXT,
+           location TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, data ):
         data['unid'] = unid
-        for n in ['title', 'author', 'date', 'abstract',
-                  'category', 'serie', 'location']:
-            data.setdefault(n, '')
-        if not data['date']:
-            data['date'] = datetime.date.today()
-        Document(**data)
+        
+        cols = ['unid', 'title', 'author', 'date',
+                'abstract', 'category', 'serie', 'location']
+        for cname in cols:
+            data.setdefault(cname, None)
+
+
+        ## FIXME: remove
+        import sys
+        from pprint import pprint, pformat
+        
+        a = ', '.join(['%%(%s)s' % x for x in cols])
+        query = """
+          INSERT INTO document (%s) VALUES (%s)
+          """ % (', '.join(cols), a)
+
+        cursor = self.connection.cursor()
+        cursor.execute(query, data)
+        self.connection.commit()
+

@@ -2,7 +2,17 @@
     TODO: nabu
 ==================
 
-- remove SQLObject craporola
+- finish removing all the SQLObject craporola!!!!
+
+  * Move the sqlobject extractor?  Nah, it should be the last trace of sqlobject.
+  * Remove references to SQLObject in docs and web
+  * Release new version.
+
+- Add comparison to Desktop Search on web page and presentation
+
+
+
+
 
 
 - support encrypted files from the publisher

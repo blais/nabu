@@ -1,0 +1,31 @@
+=================================================
+  Some test of extracting more structured links
+=================================================
+
+:Id: 9ef381a9-da4a-4ccd-9360-e0eac87d1396
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2005-12-18
+:Abstract:
+
+    Bli.
+
+
+| Why Ajax Sucks (Most of the Time) -- excellent article on AJAX an usability
+| http://www.usabilityviews.com/ajaxsucks.html
+| ajax, javascript, web design
+
+| SQLrelay -- Flexible inter-process inter-host connection pooling and query caching
+| http://sqlrelay.sourceforge.net/
+| sql, database, network, access, caching, connection, pooling
+
+| VC Term Sheet
+| http://www.feld.com/blog/archives/2005/08/term_sheet_seri.html
+| terminology, investment, vc, venture capital
+
+| Boogalu Blogón
+| http://blog.boogalu.com/?p=3
+| cuban, salsa, casino, blog, dance
+
+| Axel's Blog -- X's blog
+| http://xspasm.com/x
+| axel, friends, blog, travel
