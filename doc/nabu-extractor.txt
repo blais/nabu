@@ -20,10 +20,10 @@ will write their own extractors.
 This document provides an example of that.  It aims at demonstrating the
 simplicity of the task.
 
-Note that we are reusing the SQLObject wrapper library which we already use for
-storing Nabu's uploaded sources.  SQLObject is a very flexible library that
-provides a pythonic object mapping to SQL database tables, with support for most
-popular open source databases.
+Note that we will be storing data with an SQL DBAPI-2.0 interface. You may want
+to read `PEP 249`__ if you're not familiar with Python DBAPI-2.0.
+
+__ http://www.python.org/peps/pep-0249.html
 
 Example Application: Extracting Books from Field Lists
 ======================================================
@@ -228,17 +228,13 @@ We start our Python script with a brief description and some imports::
   Extract book entries.
   """
 
-  # other imports
-  from sqlobject import *
-
   # nabu imports
   from nabu import extract
   from nabu.extractors.flvis import FieldListVisitor
 
-We import symbols from SQLObject since we will use that to access a database
-table to store our references into.  In addition, we import the ``nabu.extract``
-module which contains the base class that we need.  We also import a utility
-class that knows how to visit docutils field lists [#]_.
+We import the ``nabu.extract`` module which contains the base class that we
+need.  We also import a utility class that knows how to visit docutils field
+lists [#]_.
 
 The Extractor Class
 -------------------
@@ -342,60 +338,60 @@ That's it for the extractor class!
 The ExtractorStorage Class
 --------------------------
 
-Before we write the extractor storage class, we will introduce a third class,
-which is used to define a database table into which to store the book
-references. This is due to our use of SQLObject to access the database, it uses
-classes to define the schema of the tables we access.  This class will be used
-by the extractor storage object. ::
-
-  class Book(SQLObject):
-      """
-      Storage for book information.
-      """
-      unid = StringCol(notNull=1)
-
-      title = UnicodeCol()
-      author = UnicodeCol()
-      year = UnicodeCol()
-      url = UnicodeCol()
-      review = UnicodeCol()
-
-The fields are self-explanatory.  We store all this information in as unicode
-strings to be able to support exotic character sets.
+This class is in charge of storing the information identified by the extractor
+and is called by it when it finds a new instance to store.  Different storage
+classes can be created for different backends.
 
 Note that we declared a ``unid`` field that is required not to be null.  This is
-used to be able to clear the objects from the database before a source document
-is reprocessed.  All information extracted from a document is required to be
-associated with the source document using this unique id so that when documents
-change we can correctly remove the old information extracted from it before
-filling it up again with the new.
+necessary to make it possible to remove the objects from a source document that
+is being reprocessed.  We first remove all the old objects (this is done
+automatically) and then the reprocessing adds the new set back into the
+database.  All information extracted from a document is required to be
+associated with the source document using this unique id field ``unid``.
 
 Next, we write the extractor storage class::
 
-  class BookStorage(extract.SQLObjectExtractorStorage):
+  class BookStorage(extract.SQLExtractorStorage):
       """
       Book storage.
       """
+      sql_tables = { 'book': '''
 
-      sqlobject_classes = [Book]
+          CREATE TABLE book
+          (
+             unid TEXT NOT NULL,
+             title TEXT,
+             author TEXT,
+             year TEXT,
+             url TEXT,
+             review TEXT
+          )
+
+          '''
+          }
 
       def store( self, unid, *args ):
           data, = args
-          Book( unid=unid,
-                title=data.get('title', ''),
-                author=data.get('author'),
-                year=data.get('year', ''),
-                url=data.get('url', ''),
-                review=data.get('review', '') )
 
-Here we derive it from the special ``SQLObjectExtractorStorage`` that Nabu
-provides for storing stuff in databases using SQLObject.  Knowing which schemas
-the storage class uses, this base class simply implements the protocol to
-initialize the database connection for the wrapper objects, implements the
-protocol for clearing objects extracted from a specific document, and to reset
-the tables (see the source code if desired, it is very very simple).  The
-expected schema classes are specified in the class attribute
-``sqlobject_classes``.
+          cols = ('unid', 'title', 'author', 'year', 'url', 'review')
+          values = [unid]
+          for n in cols[1:]:
+              values.append( data.get(n, '') )
+
+          cursor = self.connection.cursor()
+          cursor.execute("""
+            INSERT INTO book (%s) VALUES (%%s, %%s, %%s, %%s, %%s, %%s)
+            """ % ', '.join(cols), values)
+
+          self.connection.commit()
+
+Here we derive it from the special ``SQLExtractorStorage`` that Nabu provides
+for storing stuff in databases using SQL.  Knowing which schemas the
+storage class uses, this base class simply implements the protocol to initialize
+the database connection for the wrapper objects, implements the protocol for
+clearing objects extracted from a specific document, and to reset the tables
+(see the source code if desired, it is very very simple).  The expected schema
+classes are specified in the class attribute ``sql_tables``.
 
 The class basically just creates a new book reference entry by instantiating the
 ``Book`` schema class.  It fills in default empty values for the entries that
@@ -440,12 +436,8 @@ configured with::
 
     transforms = (
         ...
-        (book.BookExtractor, book.BookStorage(connection)),
+        (book.BookExtractor, book.BookStorage(dbmodule, dbconn)),
         )
-
-(The connection object here is the SQLObject connection that has been created
-previously in the script.  It is used by the ``SQLObjectExtractorStorage`` to
-initialize the schema objects connections.)
 
 
 Complete Source Code
@@ -459,9 +451,6 @@ convenience::
   """
   Extract book entries.
   """
-
-  # other imports
-  from sqlobject import *
 
   # nabu imports
   from nabu import extract
@@ -525,34 +514,41 @@ convenience::
           self.storage.store(self.unid, emap)
 
 
-  class Book(SQLObject):
-      """
-      Storage for book information.
-      """
-      unid = StringCol(notNull=1)
-
-      title = UnicodeCol()
-      author = UnicodeCol()
-      year = UnicodeCol()
-      url = UnicodeCol()
-      review = UnicodeCol()
-
-
-  class BookStorage(extract.SQLObjectExtractorStorage):
+  class BookStorage(extract.SQLExtractorStorage):
       """
       Book storage.
       """
+      sql_tables = { 'book': '''
 
-      sqlobject_classes = [Book]
+          CREATE TABLE book
+          (
+             unid TEXT NOT NULL,
+             title TEXT,
+             author TEXT,
+             year TEXT,
+             url TEXT,
+             review TEXT
+          )
+
+          '''
+          }
 
       def store( self, unid, *args ):
           data, = args
-          Book( unid=unid,
-                title=data.get('title', ''),
-                author=data.get('author'),
-                year=data.get('year', ''),
-                url=data.get('url', ''),
-                review=data.get('review', '') )
+
+          cols = ('unid', 'title', 'author', 'year', 'url', 'review')
+          values = [unid]
+          for n in cols[1:]:
+              values.append( data.get(n, '') )
+
+          cursor = self.connection.cursor()
+          cursor.execute("""
+            INSERT INTO book (%s) VALUES (%%s, %%s, %%s, %%s, %%s, %%s)
+            """ % ', '.join(cols), values)
+
+          self.connection.commit()
+
+
 
 
 Final Notes

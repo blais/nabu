@@ -140,8 +140,8 @@ source documents.  Extractors are simply docutils transforms that visit the
 document structure (which is provided and saved by the Nabu system).  To add a
 new type of entry, all you need to do is write code that visits the tree, finds
 what you want, and write a simple object to store it in the way you prefer.  You
-can use SQLObject or another library to store the data in a database or in text
-files.
+can use any system you like to store the data in a database or in text files
+(SQL DBAPI, an ORM, files, ...).
 
 .. note:: 
 
@@ -383,8 +383,10 @@ Nabu Server / Publisher Handler
 
   - `Python-2.4 <http://python.org>`_ or greater;
   - docutils_;
-  - if you use a database backend: `SQLObject <http://sqlobject.org>`_ and a
-    supported wrapper for your database;
+
+  - if you use a database backend, whatever SQL DBAPI connector.
+    Right now the application works using pyscopg2, but it could be ported very
+    easily to another DBAPI-2.0 connector object, or to write to files.
 
 
 Presentation Layer
@@ -416,9 +418,6 @@ This project uses two important libraries to do its thing:
   document structure, and the HTML writer (and more).  Docutils is a major
   facilitator for this system--without it this idea probably would not have seen
   the light of day;
-
-- the `SQLObject <http://sqlobject.org>`_ library (written by Ian Bicking),
-  which provides easier access to SQL storage.
 
 It is also built in the Python language.
 

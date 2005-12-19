@@ -15,7 +15,7 @@ specifically which of the extractors are running.
 """
 
 # stdlib imports
-import sys, os, urlparse, random
+import sys, os, urlparse, random, datetime
 from os.path import dirname, join
 import cgi, cgitb; cgitb.enable()
 from xml.sax.saxutils import escape
@@ -28,14 +28,15 @@ sys.path.append(join(root, 'lib', 'python'))
 # docutils imports
 import docutils.core, docutils.io
 
-# nabu imports
-from nabu import contents
-from nabu.extractors import document, reference
-
 # local cgi directory imports.
 import connect
 
+# (Note: observe that we do not need to import any nabu modules for
+# presentation.)
 
+
+#-------------------------------------------------------------------------------
+#
 def main():
     """
     CGI handler for debugging/dumping the contents of the source upload.
@@ -46,7 +47,7 @@ def main():
     scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
 
     # Setup access to the database.
-    sconnection = connect.connect_sqlobject()
+    module, conn = connect.connect_dbapi()
 
     form = cgi.FieldStorage()
     method = form.getvalue("method")
@@ -54,9 +55,9 @@ def main():
     render_header()
     
     if not method:
-        render_front_page()
+        render_front_page(conn)
     elif method == 'document':
-        render_document( form.getvalue("unid") )
+        render_document(conn, form.getvalue("unid"))
 
     render_footer()
 
@@ -148,41 +149,53 @@ testing Nabu and we're not responsible for the contents.
 </div>
 """
 
-FIXME remove the SQLObject stuff from here...
 
-
-def render_front_page():
+#-------------------------------------------------------------------------------
+#
+def render_front_page( conn ):
     """
     Prints list of documents uploaded.
     """
     print __blurb__
     print '<h1>Recent Documents</h1>'
-    render_categories()
+    render_categories(conn)
     print '<table id="docslist">'
-    documents = list(document.Document.select())
-    # reverse sort
-    documents.sort(lambda x, y: cmp(y.date, x.date))
-    for doc in documents:
-        print ('<tr><td><span class="date">%s</span></td>'
-               '<td><a href="%s">%s</a></td></tr>') % \
-              (escape(str(doc.date)),
-               uri + '?method=document&unid=%s' % doc.unid, escape(doc.title))
-        print '<tr><td></td><td class="author">%s</td></tr>' % escape(doc.author)
-    print '</table>'
 
-    render_random_links()
+    curs = conn.cursor()
+    curs.execute("SELECT unid, date, title, author FROM document")
+    if curs.rowcount > 0:
+        rows = curs.fetchall()
+
+        # reverse sort
+        rows.sort(lambda x, y: cmp(y[1] or datetime.date.min,
+                                   x[1] or datetime.date.min))
+
+        for unid, date, title, author in rows:
+            print ('<tr><td><span class="date">%s</span></td>'
+                   '<td><a href="%s">%s</a></td></tr>') % \
+                  (escape(str(date)),
+                   uri + '?method=document&unid=%s' % unid,
+                   escape(title or ''))
+            print ('<tr><td></td><td class="author">%s</td></tr>' %
+                   escape(author or ''))
+        print '</table>'
+
+    render_random_links(conn)
     
 #-------------------------------------------------------------------------------
 #
-def render_categories():
+def render_categories( conn ):
     """
     Prints a div with a list of categories.
     """
 
-    # get the list of unique categories
+    # Get the list of unique categories
+    curs = conn.cursor()
+    curs.execute("SELECT DISTINCT category FROM document")
+
     categories = set()
-    for c in document.Document.select():
-        categories.add(c.category)
+    if curs.rowcount > 0:
+        categories.update(filter(None, [x[0] for x in curs.fetchall()]))
 
     print '<div id="categories">'
     print '<h3>Categories</h3>'
@@ -192,31 +205,37 @@ def render_categories():
         print '<li><a href="%s">%s</a></li>' % (curl % escape(c), escape(c))
     print '</ul>'
     print '</div>'
-    
 
 
 #-------------------------------------------------------------------------------
 #
-def render_random_links():
+def render_random_links( conn ):
     """
     Prints a div with random links.
     """
     print '<div id="random-links">'
     print '<h3>Random 3 Links</h3>'
 
-    refs = reference.Reference.select()
-    for i in xrange(3):
-        ref = refs[ random.randint(0, refs.count()-1) ]
-        print '<a href="%s">%s</a><br/>' % (ref.url, escape(ref.url))
+    curs = conn.cursor()
+    curs.execute("SELECT url FROM reference")
+    if curs.rowcount > 0:
+        refs = [x[0] for x in curs.fetchall()]
+        for i in xrange(3):
+            url = random.choice(refs)
+            print '<a href="%s">%s</a><br/>' % (url, escape(url))
     print '</div>'
 
 
 #-------------------------------------------------------------------------------
 #
-def render_document( unid ):
-    tree = document.Doctree.byUnid(unid)
-    if tree.doctree is not None:
-        doctree = pickle.loads(tree.doctree)
+def render_document( conn, unid ):
+    assert unid is not None
+    
+    curs = conn.cursor()
+    curs.execute("SELECT doctree FROM doctree WHERE unid = %s", (unid,))
+    if curs.rowcount > 0:
+        dbdoctree = str(curs.fetchone()[0])
+        doctree = pickle.loads(dbdoctree)
         parts = docutils.core.publish_parts(
            reader_name='doctree',
            source_class=docutils.io.DocTreeInput, source=doctree,

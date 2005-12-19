@@ -62,9 +62,9 @@ Here is an example CGI script that
   root = dirname(dirname(sys.argv[0]))
   sys.path.append(join(root, 'lib', 'python'))
   
-  # sql imports
-  from sqlobject.postgres.pgconnection import PostgresConnection
-  
+  # dbapi import.
+  import psycopg2
+
   # nabu imports
   from nabu import server, sources
   from nabu.extractors import document, link, contact
@@ -72,13 +72,13 @@ Here is an example CGI script that
   def main():
       # connect to the PostgreSQL database
       params = {
-          'db': 'nabu',
+          'database': 'nabu',
           'user': 'admin',
           'passwd': 'admpassw',
           'host': 'localhost',
       }
-      connection = PostgresConnection(**params)
-  
+      module, conn = psycopg2, psycopg2.connect(**params)
+
       # make sure we're authenticated
       username = os.environ.get('REMOTE_USER', None)
       if username is None:
@@ -88,14 +88,14 @@ Here is an example CGI script that
           return
       
       # create a storage space for the uploaded source data
-      src_pp = sources.DBSourceStorage(connection)
+      src_pp = sources.DBSourceStorage(module, conn)
       src = sources.PerUserSourceStorageProxy(src_pp)
   
       # configure this server with whatever transforms we want to apply
       transforms = (
-          (document.DocumentExtractor, document.DocumentStorage(connection)),
-          (link.LinkExtractor, link.LinkStorage(connection)),
-          (contact.ContactExtractor, contact.ContactStorage(connection)),
+          (document.DocumentExtractor, document.DocumentStorage(module, conn)),
+          (link.LinkExtractor, link.LinkStorage(module, conn)),
+          (contact.ContactExtractor, contact.ContactStorage(module, conn)),
           )
   
       server.xmlrpc_handler(src, transforms, username, allow_reset=1)

@@ -16,9 +16,6 @@ layer, this is really just for debugging stuff.
 # psycopg2 imports
 import psycopg2
 
-# sqlobject imports
-from sqlobject.postgres.pgconnection import PostgresConnection
-
 
 def connect_dbapi():
     """
@@ -34,19 +31,4 @@ def connect_dbapi():
     }
     conn = psycopg2.connect(**params)
     return psycopg2, conn
-
-
-def connect_sqlobject():
-    """
-    Connects to the database using SQLObject.
-    """
-    # connect to the database
-    params = {
-        'db': 'nabu',
-        'user': 'nabu',
-        'password': 'pwnabu',
-        'host': 'localhost',
-    }
-    sconnection = PostgresConnection(**params)
-    return sconnection
 

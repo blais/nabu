@@ -186,23 +186,14 @@ class PhotoExtractor(extract.Extractor):
 ##             self.x.storage.store(self.x.unid, ldesc, lurl, lkeys)
                 
 
-## class Photo(SQLObject):
-##     """
-##     Storage for document information.
-##     """
-##     unid = StringCol(notNull=1)
-
-##     url = StringCol()
-##     description = UnicodeCol()
-##     keywords = UnicodeCol()
 
 
-## class PhotoStorage(extract.SQLObjectExtractorStorage):
+
+## class PhotoStorage....):
 ##     """
 ##     Photo storage.
 ##     """
 
-##     sqlobject_classes = [Photo]
 
 ##     def store( self, unid, url, description, keywords ):
 ##         Photo(unid=unid)

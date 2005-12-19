@@ -105,10 +105,3 @@ Worse case, you could always clear all the data and reload it, it should not
 be that big a deal.
 
 
-Notes
-=====
-
-- SQLObject does not support non integer indexes, but the site says "yet", so it
-  might in the future.  If we could make our ``unid`` the real database id
-  rather than an alternate id we could save database columns.
-

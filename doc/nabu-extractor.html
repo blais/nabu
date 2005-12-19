@@ -24,37 +24,35 @@ saving parts of documents from within a Nabu server.</p>
 <div class="contents topic">
 <p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference" href="#introduction" id="id5" name="id5">Introduction</a></li>
-<li><a class="reference" href="#example-application-extracting-books-from-field-lists" id="id6" name="id6">Example Application: Extracting Books from Field Lists</a></li>
-<li><a class="reference" href="#looking-at-the-document-structure" id="id7" name="id7">Looking at the Document Structure</a></li>
-<li><a class="reference" href="#the-extractor-and-the-extractorstorage" id="id8" name="id8">The Extractor and the ExtractorStorage</a></li>
-<li><a class="reference" href="#example-code" id="id9" name="id9">Example code</a><ul>
-<li><a class="reference" href="#imports" id="id10" name="id10">Imports</a></li>
-<li><a class="reference" href="#the-extractor-class" id="id11" name="id11">The Extractor Class</a></li>
-<li><a class="reference" href="#the-extractorstorage-class" id="id12" name="id12">The ExtractorStorage Class</a></li>
+<li><a class="reference" href="#introduction" id="id6" name="id6">Introduction</a></li>
+<li><a class="reference" href="#example-application-extracting-books-from-field-lists" id="id7" name="id7">Example Application: Extracting Books from Field Lists</a></li>
+<li><a class="reference" href="#looking-at-the-document-structure" id="id8" name="id8">Looking at the Document Structure</a></li>
+<li><a class="reference" href="#the-extractor-and-the-extractorstorage" id="id9" name="id9">The Extractor and the ExtractorStorage</a></li>
+<li><a class="reference" href="#example-code" id="id10" name="id10">Example code</a><ul>
+<li><a class="reference" href="#imports" id="id11" name="id11">Imports</a></li>
+<li><a class="reference" href="#the-extractor-class" id="id12" name="id12">The Extractor Class</a></li>
+<li><a class="reference" href="#the-extractorstorage-class" id="id13" name="id13">The ExtractorStorage Class</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#testing-your-extractor" id="id13" name="id13">Testing Your Extractor</a></li>
-<li><a class="reference" href="#publisher-handler-configuration-code" id="id14" name="id14">Publisher Handler Configuration Code</a></li>
-<li><a class="reference" href="#complete-source-code" id="id15" name="id15">Complete Source Code</a></li>
-<li><a class="reference" href="#final-notes" id="id16" name="id16">Final Notes</a></li>
+<li><a class="reference" href="#testing-your-extractor" id="id14" name="id14">Testing Your Extractor</a></li>
+<li><a class="reference" href="#publisher-handler-configuration-code" id="id15" name="id15">Publisher Handler Configuration Code</a></li>
+<li><a class="reference" href="#complete-source-code" id="id16" name="id16">Complete Source Code</a></li>
+<li><a class="reference" href="#final-notes" id="id17" name="id17">Final Notes</a></li>
 </ul>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id5" id="introduction" name="introduction">Introduction</a></h1>
+<h1><a class="toc-backref" href="#id6" id="introduction" name="introduction">Introduction</a></h1>
 <p>Nabu offers a framework for the extraction of meaningful portions of documents
 into structured storage (e.g. database tables).  This extraction will generally
 be customized for each end application and therefore we anticipate that people
 will write their own extractors.</p>
 <p>This document provides an example of that.  It aims at demonstrating the
 simplicity of the task.</p>
-<p>Note that we are reusing the SQLObject wrapper library which we already use for
-storing Nabu's uploaded sources.  SQLObject is a very flexible library that
-provides a pythonic object mapping to SQL database tables, with support for most
-popular open source databases.</p>
+<p>Note that we will be storing data with an SQL DBAPI-2.0 interface. You may want
+to read <a class="reference" href="http://www.python.org/peps/pep-0249.html">PEP 249</a> if you're not familiar with Python DBAPI-2.0.</p>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id6" id="example-application-extracting-books-from-field-lists" name="example-application-extracting-books-from-field-lists">Example Application: Extracting Books from Field Lists</a></h1>
+<h1><a class="toc-backref" href="#id7" id="example-application-extracting-books-from-field-lists" name="example-application-extracting-books-from-field-lists">Example Application: Extracting Books from Field Lists</a></h1>
 <p>For our example, we will examine the task of extracting information for book
 references.  Imagine that we want to be able to put field lists that are book
 references, scattered all over our documents, something that looks more or less
@@ -76,7 +74,7 @@ like BibTeX entries, for example:</p>
   the best general book about photography that I've read.
 </pre>
 <p>Since the docutils parser works recursively, those field lists can be located
-anywhere within the document <a class="footnote-reference" href="#id3" id="id1" name="id1">[1]</a>, for example, in an item list, e.g.:</p>
+anywhere within the document <a class="footnote-reference" href="#id4" id="id2" name="id2">[1]</a>, for example, in an item list, e.g.:</p>
 <pre class="literal-block">
 Recent books read:
 
@@ -134,7 +132,7 @@ not work because it gets parsed as a single field list:</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id7" id="looking-at-the-document-structure" name="looking-at-the-document-structure">Looking at the Document Structure</a></h1>
+<h1><a class="toc-backref" href="#id8" id="looking-at-the-document-structure" name="looking-at-the-document-structure">Looking at the Document Structure</a></h1>
 <p>Here is a pseudo-xml rendering of how the above example gets parsed by docutils
 into a tree of nodes.  This is the tree that we will have to visit to extract
 the references from.  You can use docutils' <tt class="docutils literal"><span class="pre">rst2pseudoxml.py</span></tt> tool to
@@ -216,7 +214,7 @@ design and write your extractor/visitor:</p>
 </pre>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id8" id="the-extractor-and-the-extractorstorage" name="the-extractor-and-the-extractorstorage">The Extractor and the ExtractorStorage</a></h1>
+<h1><a class="toc-backref" href="#id9" id="the-extractor-and-the-extractorstorage" name="the-extractor-and-the-extractorstorage">The Extractor and the ExtractorStorage</a></h1>
 <p>In order to extract some stuff from our documents, we need to provide at least
 two classes:</p>
 <ol class="arabic">
@@ -237,11 +235,11 @@ BibTeX format and store them sequentially in a file for later use.</p>
 </ol>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id9" id="example-code" name="example-code">Example code</a></h1>
+<h1><a class="toc-backref" href="#id10" id="example-code" name="example-code">Example code</a></h1>
 <p>All the code for implementing the book algorithm above fits neatly in a short
 file.  Let's name it <tt class="docutils literal"><span class="pre">book.py</span></tt>.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id10" id="imports" name="imports">Imports</a></h2>
+<h2><a class="toc-backref" href="#id11" id="imports" name="imports">Imports</a></h2>
 <p>We start our Python script with a brief description and some imports:</p>
 <pre class="literal-block">
 #!/usr/bin/env python
@@ -249,20 +247,16 @@ file.  Let's name it <tt class="docutils literal"><span class="pre">book.py</spa
 Extract book entries.
 &quot;&quot;&quot;
 
-# other imports
-from sqlobject import *
-
 # nabu imports
 from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
 </pre>
-<p>We import symbols from SQLObject since we will use that to access a database
-table to store our references into.  In addition, we import the <tt class="docutils literal"><span class="pre">nabu.extract</span></tt>
-module which contains the base class that we need.  We also import a utility
-class that knows how to visit docutils field lists <a class="footnote-reference" href="#id4" id="id2" name="id2">[2]</a>.</p>
+<p>We import the <tt class="docutils literal"><span class="pre">nabu.extract</span></tt> module which contains the base class that we
+need.  We also import a utility class that knows how to visit docutils field
+lists <a class="footnote-reference" href="#id5" id="id3" name="id3">[2]</a>.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id11" id="the-extractor-class" name="the-extractor-class">The Extractor Class</a></h2>
+<h2><a class="toc-backref" href="#id12" id="the-extractor-class" name="the-extractor-class">The Extractor Class</a></h2>
 <p>We then define the extractor class, which is a docutils <tt class="docutils literal"><span class="pre">Transform</span></tt>:</p>
 <pre class="literal-block">
 class BookExtractor(extract.Extractor):
@@ -356,59 +350,59 @@ object to actually put the data somewhere:</p>
 <p>That's it for the extractor class!</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id12" id="the-extractorstorage-class" name="the-extractorstorage-class">The ExtractorStorage Class</a></h2>
-<p>Before we write the extractor storage class, we will introduce a third class,
-which is used to define a database table into which to store the book
-references. This is due to our use of SQLObject to access the database, it uses
-classes to define the schema of the tables we access.  This class will be used
-by the extractor storage object.</p>
-<pre class="literal-block">
-class Book(SQLObject):
-    &quot;&quot;&quot;
-    Storage for book information.
-    &quot;&quot;&quot;
-    unid = StringCol(notNull=1)
-
-    title = UnicodeCol()
-    author = UnicodeCol()
-    year = UnicodeCol()
-    url = UnicodeCol()
-    review = UnicodeCol()
-</pre>
-<p>The fields are self-explanatory.  We store all this information in as unicode
-strings to be able to support exotic character sets.</p>
+<h2><a class="toc-backref" href="#id13" id="the-extractorstorage-class" name="the-extractorstorage-class">The ExtractorStorage Class</a></h2>
+<p>This class is in charge of storing the information identified by the extractor
+and is called by it when it finds a new instance to store.  Different storage
+classes can be created for different backends.</p>
 <p>Note that we declared a <tt class="docutils literal"><span class="pre">unid</span></tt> field that is required not to be null.  This is
-used to be able to clear the objects from the database before a source document
-is reprocessed.  All information extracted from a document is required to be
-associated with the source document using this unique id so that when documents
-change we can correctly remove the old information extracted from it before
-filling it up again with the new.</p>
+necessary to make it possible to remove the objects from a source document that
+is being reprocessed.  We first remove all the old objects (this is done
+automatically) and then the reprocessing adds the new set back into the
+database.  All information extracted from a document is required to be
+associated with the source document using this unique id field <tt class="docutils literal"><span class="pre">unid</span></tt>.</p>
 <p>Next, we write the extractor storage class:</p>
 <pre class="literal-block">
-class BookStorage(extract.SQLObjectExtractorStorage):
+class BookStorage(extract.SQLExtractorStorage):
     &quot;&quot;&quot;
     Book storage.
     &quot;&quot;&quot;
+    sql_tables = { 'book': '''
 
-    sqlobject_classes = [Book]
+        CREATE TABLE book
+        (
+           unid TEXT NOT NULL,
+           title TEXT,
+           author TEXT,
+           year TEXT,
+           url TEXT,
+           review TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, *args ):
         data, = args
-        Book( unid=unid,
-              title=data.get('title', ''),
-              author=data.get('author'),
-              year=data.get('year', ''),
-              url=data.get('url', ''),
-              review=data.get('review', '') )
+
+        cols = ('unid', 'title', 'author', 'year', 'url', 'review')
+        values = [unid]
+        for n in cols[1:]:
+            values.append( data.get(n, '') )
+
+        cursor = self.connection.cursor()
+        cursor.execute(&quot;&quot;&quot;
+          INSERT INTO book (%s) VALUES (%%s, %%s, %%s, %%s, %%s, %%s)
+          &quot;&quot;&quot; % ', '.join(cols), values)
+
+        self.connection.commit()
 </pre>
-<p>Here we derive it from the special <tt class="docutils literal"><span class="pre">SQLObjectExtractorStorage</span></tt> that Nabu
-provides for storing stuff in databases using SQLObject.  Knowing which schemas
-the storage class uses, this base class simply implements the protocol to
-initialize the database connection for the wrapper objects, implements the
-protocol for clearing objects extracted from a specific document, and to reset
-the tables (see the source code if desired, it is very very simple).  The
-expected schema classes are specified in the class attribute
-<tt class="docutils literal"><span class="pre">sqlobject_classes</span></tt>.</p>
+<p>Here we derive it from the special <tt class="docutils literal"><span class="pre">SQLExtractorStorage</span></tt> that Nabu provides
+for storing stuff in databases using SQL.  Knowing which schemas the
+storage class uses, this base class simply implements the protocol to initialize
+the database connection for the wrapper objects, implements the protocol for
+clearing objects extracted from a specific document, and to reset the tables
+(see the source code if desired, it is very very simple).  The expected schema
+classes are specified in the class attribute <tt class="docutils literal"><span class="pre">sql_tables</span></tt>.</p>
 <p>The class basically just creates a new book reference entry by instantiating the
 <tt class="docutils literal"><span class="pre">Book</span></tt> schema class.  It fills in default empty values for the entries that
 have not been found by the extractor (we could have implemented this in the
@@ -418,7 +412,7 @@ storage object).</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id13" id="testing-your-extractor" name="testing-your-extractor">Testing Your Extractor</a></h1>
+<h1><a class="toc-backref" href="#id14" id="testing-your-extractor" name="testing-your-extractor">Testing Your Extractor</a></h1>
 <p>Before setting up your Nabu publisher handler with the new extractor, you can
 test it using the <tt class="docutils literal"><span class="pre">nabu-test-extractor</span></tt> code provided with Nabu (installed
 under <tt class="docutils literal"><span class="pre">nabu/lib/python/nabu/testextr.py</span></tt>).</p>
@@ -430,7 +424,7 @@ $ ./testextr.py book.py ~/reading.txt
 </pre>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id14" id="publisher-handler-configuration-code" name="publisher-handler-configuration-code">Publisher Handler Configuration Code</a></h1>
+<h1><a class="toc-backref" href="#id15" id="publisher-handler-configuration-code" name="publisher-handler-configuration-code">Publisher Handler Configuration Code</a></h1>
 <p>The only part that remains to be done in order to feed a database with book
 references is to configure your Nabu publisher handler with the new extractor.
 The Nabu publisher handler is the script that you should install on your web
@@ -448,15 +442,12 @@ configured with:</p>
 <pre class="literal-block">
 transforms = (
     ...
-    (book.BookExtractor, book.BookStorage(connection)),
+    (book.BookExtractor, book.BookStorage(dbmodule, dbconn)),
     )
 </pre>
-<p>(The connection object here is the SQLObject connection that has been created
-previously in the script.  It is used by the <tt class="docutils literal"><span class="pre">SQLObjectExtractorStorage</span></tt> to
-initialize the schema objects connections.)</p>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id15" id="complete-source-code" name="complete-source-code">Complete Source Code</a></h1>
+<h1><a class="toc-backref" href="#id16" id="complete-source-code" name="complete-source-code">Complete Source Code</a></h1>
 <p>The complete source code for the book example is reproduced here for
 convenience:</p>
 <pre class="literal-block">
@@ -464,9 +455,6 @@ convenience:</p>
 &quot;&quot;&quot;
 Extract book entries.
 &quot;&quot;&quot;
-
-# other imports
-from sqlobject import *
 
 # nabu imports
 from nabu import extract
@@ -530,38 +518,43 @@ class BookExtractor(extract.Extractor):
         self.storage.store(self.unid, emap)
 
 
-class Book(SQLObject):
-    &quot;&quot;&quot;
-    Storage for book information.
-    &quot;&quot;&quot;
-    unid = StringCol(notNull=1)
-
-    title = UnicodeCol()
-    author = UnicodeCol()
-    year = UnicodeCol()
-    url = UnicodeCol()
-    review = UnicodeCol()
-
-
-class BookStorage(extract.SQLObjectExtractorStorage):
+class BookStorage(extract.SQLExtractorStorage):
     &quot;&quot;&quot;
     Book storage.
     &quot;&quot;&quot;
+    sql_tables = { 'book': '''
 
-    sqlobject_classes = [Book]
+        CREATE TABLE book
+        (
+           unid TEXT NOT NULL,
+           title TEXT,
+           author TEXT,
+           year TEXT,
+           url TEXT,
+           review TEXT
+        )
+
+        '''
+        }
 
     def store( self, unid, *args ):
         data, = args
-        Book( unid=unid,
-              title=data.get('title', ''),
-              author=data.get('author'),
-              year=data.get('year', ''),
-              url=data.get('url', ''),
-              review=data.get('review', '') )
+
+        cols = ('unid', 'title', 'author', 'year', 'url', 'review')
+        values = [unid]
+        for n in cols[1:]:
+            values.append( data.get(n, '') )
+
+        cursor = self.connection.cursor()
+        cursor.execute(&quot;&quot;&quot;
+          INSERT INTO book (%s) VALUES (%%s, %%s, %%s, %%s, %%s, %%s)
+          &quot;&quot;&quot; % ', '.join(cols), values)
+
+        self.connection.commit()
 </pre>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id16" id="final-notes" name="final-notes">Final Notes</a></h1>
+<h1><a class="toc-backref" href="#id17" id="final-notes" name="final-notes">Final Notes</a></h1>
 <p>Certainly, some improvements could be applied to the example we provide.  The
 extractor could use a more sophisticated heuristic to determine if the field
 list represents a book, parse various formats for the ISBN value so that it is
@@ -579,10 +572,10 @@ distribution under <tt class="docutils literal"><span class="pre">nabu/lib/pytho
 <p>If you have found any part of this document unclear and you still do not
 understand the nature of Nabu after reading this example, please feel free to
 contact the author with questions.</p>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
+<table class="docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1" name="id3">[1]</a></td><td>If the field list appears at the top of the document, it will have been
+<tr><td class="label"><a class="fn-backref" href="#id2" name="id4">[1]</a></td><td>If the field list appears at the top of the document, it will have been
 parsed by the bibliographic fields parser and thus the <tt class="docutils literal"><span class="pre">:author:</span></tt> field
 will have been converted into an author node, and a tiny little bit more
 work would have to be done to look into those fields if we want a book
@@ -590,10 +583,10 @@ reference to be specifiable at the top of the document as the
 bibliographic field.</td></tr>
 </tbody>
 </table>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
+<table class="docutils footnote" frame="void" id="id5" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2" name="id4">[2]</a></td><td>The code for this class is very simple and you could write similar
+<tr><td class="label"><a class="fn-backref" href="#id3" name="id5">[2]</a></td><td>The code for this class is very simple and you could write similar
 utilities to enhance code reuse for detecting different generic patterns
 of document structure.  See the <a class="reference" href="http://docutils.sourceforge.net/docs/ref/doctree.html">docutils document tree</a> document for
 information about what kinds of nodes the document tree is made of.</td></tr>

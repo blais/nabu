@@ -165,7 +165,7 @@ Presentation Outline
 
   - Publishing content
 
-    - Final application example using [probably] an SQLObject-based web app
+    - Final application example using [probably] a web app
 
   - Shared vs. Merged collaborative document pools
 

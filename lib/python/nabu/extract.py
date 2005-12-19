@@ -122,6 +122,9 @@ class SQLExtractorStorage(ExtractorStorage):
         self.connection.commit()
 
 
+# Note: the next class is provided as a convenience for people who want to use
+# SQLObject, but Nabu itself does not depend on SQLObject in any way.
+#
 class SQLObjectExtractorStorage(ExtractorStorage):
     """
     Extractor storage base class for storage that uses the SQLObject wrappers.
@@ -161,3 +164,4 @@ class SQLObjectExtractorStorage(ExtractorStorage):
         for cls in self.sqlobject_classes:
             cls.dropTable()
             cls.createTable()
+
