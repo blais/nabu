@@ -26,26 +26,39 @@ def crypt_pass( plpass ):
     return cpass
 
 instructions = """
-<p>
-1. Download the <a href="%s">Nabu Publisher</a> and save
+<ol>
+<li>Download the <a href="%s">Nabu Publisher</a> and save
 it as \"nabu\" somewhere in your path.
+</li>
 
-<p>
-2.  Configure your client by adding the following to your ~/.naburc file:
+<li>
+Configure your client by adding the following to your ~/.naburc file:
         
 <pre>
 user = 'USERNAME'
 password = 'PASSWORD'
 server_url = 'http://furius.ca/nabu/cgi-bin/nabu-publish-handler.cgi'
 </pre>
+</li>
 
-<p>
-3. run Nabu on a set of files (see instructions in documentation).
+<li>
+Run Nabu on a set of local files (see instructions in documentation).
+</li>
 
-<p>
-4. You can debug your results by going to the
+<li>
+You can debug your results by going to the
 <a href=\"http://furius.ca/nabu/cgi-bin/nabu-contents.cgi\">
-contents debug page</a>.
+http://furius.ca/nabu/cgi-bin/nabu-contents.cgi</a>
+(contents debug page).
+</li>
+
+<li>
+You can view an example presentation page at
+<a href=\"http://furius.ca/nabu/cgi-bin/nabu-example.cgi\">
+http://furius.ca/nabu/cgi-bin/nabu-example.cgi</a>.
+</li>
+</ol>
+
 """ % '/nabu/bin/nabu'
 
 

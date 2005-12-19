@@ -94,7 +94,7 @@ class EventStorage(extract.SQLExtractorStorage):
     def store( self, unid, dt, description ):
         cursor = self.connection.cursor()
         cursor.execute("""
-          INSERT INTO reference (unid, date, description) VALUES (%s, %s, %s)
+          INSERT INTO event (unid, date, description) VALUES (%s, %s, %s)
           """, (unid, dt, description))
         self.connection.commit()
 
