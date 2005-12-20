@@ -102,7 +102,6 @@ class PerUserSourceStorageProxy(SourceStorage):
       src_pp = sources.DBSourceStorage(connection)
       src = sources.PerUserSourceStorageProxy(src_pp)
 
-
     """
     # Note: to be completely on the side of angels, we should make sure that the
     # usernames do not contain ':'.
@@ -111,6 +110,7 @@ class PerUserSourceStorageProxy(SourceStorage):
 
     def __init__( self, proxied ):
         self.prox = proxied
+        self.prox.set_restrict_user(True)
 
     def __add_user( self, unid, user ):
         return '%s:%s' % (user, unid)
@@ -169,6 +169,12 @@ class PerUserSourceStorageProxy(SourceStorage):
         return self.prox.reset_schema()
 
 
+def _combine( query, conditions ):
+    "Combine a query string with a sequence of and'ed conditions, if any."
+    if conditions:
+        query += ' WHERE ' + ' AND '.join(conditions)
+    return query
+
 class DBSourceStorage(SourceStorage):
     """
     Concrete source storage using a DBAPI-2.0 connection.  This one shares the
@@ -208,6 +214,7 @@ class DBSourceStorage(SourceStorage):
 
         assert module.paramstyle in ['format', 'pyformat']
 
+        self.restrict_user = False
         self.store_source = store_source
         self.store_doctree = store_doctree
 
@@ -219,32 +226,40 @@ class DBSourceStorage(SourceStorage):
         if cursor.rowcount == 0:
             self.reset_schema(False)
 
-    def __select( self, user ):
-        query = "SELECT %%s FROM %s" % DBSourceStorage.__table_name
-        if user:
-            query += " WHERE username = '%s'" % user
-        return query
+    def set_restrict_user( self, restrict ):
+        """
+        Sets the restrict_user flag, which filters on the user, if necessary.
+        """
+        self.restrict_user = restrict
+
+    def __select( self, user, attribs ):
+        query = "SELECT %s FROM %s" % (attribs, DBSourceStorage.__table_name)
+        conditions = []
+        if user and self.restrict_user:
+            conditions.append("username = '%s'" % user)
+        return query, conditions
 
     def getallids( self, user ):
         cursor = self.connection.cursor()
 
-        query = self.__select(user) % 'unid'
-        cursor.execute(query)
+        query, conds = self.__select(user, 'unid')
+        cursor.execute(_combine(query, conds))
         return [x[0] for x in cursor.fetchall()]
 
     def getdigests( self, user, idlist=None ):
         cursor = self.connection.cursor()
 
-        query = self.__select(user) % 'unid, digest'
+        query, conds = self.__select(user, 'unid, digest')
 
         ret = {}
         if idlist is None:
-            cursor.execute(query)
+            cursor.execute(_combine(query, conds))
             for unid, digest in cursor.fetchone():
                 ret[unid] = digest
         else:
+            conds.append('unid = %s')
             for unid in idlist:
-                cursor.execute(query + " AND unid = %s", (unid,))
+                cursor.execute(_combine(query, conds), (unid,))
                 if cursor.rowcount > 0:
                     unid, digest = cursor.fetchone()
                     ret[unid] = digest
@@ -255,14 +270,16 @@ class DBSourceStorage(SourceStorage):
         cursor = self.connection.cursor()
         try:
             query = "DELETE FROM %s" % DBSourceStorage.__table_name
-            if user:
-                query += " WHERE username = '%s'" % user
+            conds = []
+            if user and self.restrict_user:
+                conds.append(" username = '%s'" % user)
 
             if idlist is None:
-                cursor.execute(query)
+                cursor.execute(_combine(query, conds))
             else:
                 for unid in idlist:
-                    cursor.execute(query + " AND unid = %s", (unid,))
+                    conds.append(" unid = %s")
+                    cursor.execute(_combine(query, conds), (unid,))
         finally:
             self.connection.commit()
 
@@ -296,23 +313,22 @@ class DBSourceStorage(SourceStorage):
         cursor = self.connection.cursor()
 
         attribstr = ', '.join(attributes)
-        query = self.__select(user) % attribstr
+        query, conds = self.__select(user, attribstr)
         if idlist is not None:
-            query += user and ' AND ' or ' WHERE '
-            query += 'unid IN (%s)' % ', '.join(['%s'] * len(idlist))
-            cursor.execute(query, idlist)
+            conds.append('unid IN (%s)' % ', '.join(['%s'] * len(idlist)))
+            cursor.execute(_combine(query, conds), idlist)
         else:
-            cursor.execute(query)
+            cursor.execute(_combine(query, conds))
 
         return self.__get(cursor, attributes)
 
     def get_errors( self, user, attributes=[] ):
         attribstr = ', '.join(attributes)
-        query = self.__select(user) % attribstr
-        query += ' WHERE errors IS NOT NULL'
+        query, conds = self.__select(user, attribstr)
+        conds.append('errors IS NOT NULL')
 
         cursor = self.connection.cursor()
-        cursor.execute(query)
+        cursor.execute(_combine(query, conds))
         return self.__get(user, sr, attributes)
 
     def __get( self, cursor, attributes ):
@@ -345,4 +361,4 @@ class DBSourceStorage(SourceStorage):
             cursor.execute("DROP TABLE %s" % DBSourceStorage.__table_name)
         cursor.execute(DBSourceStorage.__table_schema)
         self.connection.commit()
-        
+

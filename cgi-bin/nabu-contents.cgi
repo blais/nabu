@@ -30,7 +30,7 @@ from nabu import sources, contents, extract
 import connect
 
 
-admins = ['blais']
+admins = ['admin'] # Administrator see all datasets.
 
 def main():
     """

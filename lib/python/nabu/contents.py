@@ -303,13 +303,17 @@ def dump_table( conn, tablename, uri, unid=None, stored_unid=None ):
     """
     Print extracted information (again, for fun, this is not necessary).
     Try to print the extracted info in a generic way.
+
+    If 'user' is specified, filter by that user.
     """
     print '<h2>Table: %s</h2>' % tablename
     
     curs = conn.cursor()
-    query = "SELECT * FROM %s" % tablename
+    query, conds = "SELECT * FROM %s" % tablename, []
     if unid is not None:
-        query += " WHERE unid = '%s'" % stored_unid
+        conds.append("unid = '%s'" % stored_unid)
+    if conds:
+        query += ' WHERE ' + ' AND '.join(conds)
     curs.execute(query)
 
     if curs.rowcount > 0:
