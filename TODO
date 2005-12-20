@@ -2,12 +2,9 @@
     TODO: nabu
 ==================
 
-- Add comparison to Desktop Search on web page and presentation
-
-- Finish extractors and use it every day!
+- Finish more extractors and use it every day!
 
 - Make the html rendering not render output errors.
-
 
 - support encrypted files from the publisher
 
@@ -43,11 +40,5 @@
 - add my own HTML writer to remove comment nodes completely, so they don't show
   up in the HTML as comments;
 
-
-
-
-
-
-
-
+- Add comparison to Desktop Search on web page and presentation
 

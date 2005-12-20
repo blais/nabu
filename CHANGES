@@ -5,6 +5,8 @@
 Version 0.91
 ============
 
+- Fixed many bugs with per-user data stores.
+
 - Completely ripped out SQLObject.  Less dependencies, less moving targets to
   fix.  The new code depends only on psycopg2 (or another DBAPI-2.0 compliant
   connection) for the database storage.
