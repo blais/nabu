@@ -4,6 +4,8 @@
 
 - Finish more extractors and use it every day!
 
+- Add a "--config=" option to client.
+
 - Make the html rendering not render output errors.
 
 - support encrypted files from the publisher
