@@ -21,10 +21,6 @@ from os.path import dirname, join
 import cPickle as pickle
 from xml.sax.saxutils import escape
 
-# add the nabu libraries to load path
-root = dirname(dirname(sys.argv[0]))
-sys.path.append(join(root, 'lib', 'python'))
-
 # nabu and other imports
 from nabu import sources
 
@@ -149,8 +145,6 @@ def render_index( uri, username, srcstore ):
     """
     os = StringIO.StringIO()
     linkfmt = '%s?id=%%s&view=%%s' % uri
-    print >> os, 'Content-type:', 'text/html'
-    print >> os
     print >> os, pages_header
     print >> os, '''
     <h1>Nabu Database Contents</h1>
@@ -207,8 +201,6 @@ def render_source( unid, uri, username, srcstore ):
         doctree_str = ''
 
     os = StringIO.StringIO()
-    print >> os, 'Content-Type:', 'text/html; charset=UTF-8'
-    print >> os
     print >> os, pages_header
     print >> os, navig(uri, unid)
     print >> os, '<h1>Source</h1>'
@@ -273,8 +265,6 @@ def render_html( unid, uri, username, srcstore ):
        source=doctree, source_path='test',
        writer_name='html', settings_overrides=settings)
 
-    print >> os, 'Content-type:', 'text/html'
-    print >> os
     print >> os, pages_header
     print >> os, navig(uri, unid)
     os.write(parts['html_body'].encode('UTF-8'))
@@ -292,8 +282,6 @@ def render_extracted( unid, stored_unid, uri, username, conn, tables ):
     """
 
     os = StringIO.StringIO()
-    print >> os, 'Content-Type:', 'text/html'
-    print >> os
     print >> os, pages_header
     if unid is None:
         print >> os, navig_index(uri)

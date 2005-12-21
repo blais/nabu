@@ -30,6 +30,7 @@ from nabu import sources, contents, extract
 import connect
 
 
+ctype = 'Content-Type:', 'text/html; charset=UTF-8\n\n'
 admins = ['admin'] # Administrator see all datasets.
 
 def main():
@@ -58,6 +59,7 @@ def main():
     unid = form.getvalue("id")
 
     if not unid:
+        print ctype
         if view == 'extracted':
             print contents.render_extracted(None, None, uri, user, conn, tablenames)
         else:
@@ -70,18 +72,22 @@ def main():
         # Return error message if not.
         return contents.render_notfound()
         
+
     # Render an appropriate view.
     if not view:
         view = 'source' # default.
 
     if view == 'source':
+        print ctype
         print contents.render_source(unid, uri, user, src)
 
     elif view == 'html':
+        print ctype
         print contents.render_html(unid, uri, user, src)
 
     elif view == 'extracted':
         stored_unid = src.map_unid(unid, user)
+        print ctype
         print contents.render_extracted(unid, stored_unid,
                                         uri, user, conn, tablenames)
 
