@@ -38,9 +38,9 @@ class Extractor(extract.Extractor):
        :Email: blais@furius.ca
        :Address: 1 rue de la Montagne, Mongueuil, France
 
-    The empty Contact field is not absolutely necessary, we perform some simple
-    heuristics to find out if a field list is a contact info.  The field names
-    are case insensitive.
+    The empty 'Contact' field is not absolutely necessary, we perform some
+    simple heuristics to find out if a field list is a contact info.  The field
+    names are case insensitive.
     """
 
     default_priority = 900

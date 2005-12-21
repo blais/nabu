@@ -59,9 +59,9 @@ def main():
 
     if not unid:
         if view == 'extracted':
-            contents.render_extracted(None, None, uri, user, conn, tablenames)
+            print contents.render_extracted(None, None, uri, user, conn, tablenames)
         else:
-            contents.render_index(uri, user, src)
+            print contents.render_index(uri, user, src)
         return
 
     # Check if the source exists.
@@ -72,20 +72,21 @@ def main():
         
     # Render an appropriate view.
     if not view:
-        view = 'source'
+        view = 'source' # default.
 
     if view == 'source':
-        contents.render_source(unid, uri, user, src)
+        print contents.render_source(unid, uri, user, src)
 
-    if view == 'html':
-        contents.render_html(unid, uri, user, src)
+    elif view == 'html':
+        print contents.render_html(unid, uri, user, src)
 
     elif view == 'extracted':
         stored_unid = src.map_unid(unid, user)
-        contents.render_extracted(unid, stored_unid, uri, user, conn, tablenames)
+        print contents.render_extracted(unid, stored_unid,
+                                        uri, user, conn, tablenames)
 
     else:
-        return contents.render_notfound()
+        print contents.render_notfound()
 
 if __name__ == '__main__':
     main()

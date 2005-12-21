@@ -89,8 +89,7 @@ class Extractor(extract.Extractor):
                         return
                     
             elif len(node.children) == 3:
-                ref = checkref(node.children[1])
-                lurl = ref.astext()
+                lurl = node.children[1].astext()
                 ldesc = node.children[0].astext()
                 lkeys = node.children[2].astext()
             else:
