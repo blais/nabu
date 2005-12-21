@@ -126,7 +126,7 @@ class PublishServerHandler:
         """
         return map(self.__xform_xmlrpc,
                    self.sources.get(self.username,
-            attributes=('unid', 'filename', 'time', 'username', 'errors-p',)))
+            attributes=('unid', 'filename', 'time', 'username', 'errors',)))
 
     def dumpone( self, unid ):
         """

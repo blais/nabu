@@ -356,9 +356,9 @@ def dump( opts, args ):
     """
     server = get_server(opts)
     if not args:
-        attrs = ['unid', 'filename', 'time', 'username', 'errors-p']
+        attrs = ['unid', 'filename', 'time', 'username', 'errors']
         headers = [dict( [(x, x.capitalize()) for x in attrs] )]
-        headers[0]['errors-p'] = 'Errors'
+        headers[0]['errors'] = 'Errors'
         sources_info = server.dumpall()
 
         countcols = dict( [(x, 0) for x in attrs] )

@@ -4,7 +4,9 @@
 
 - Finish more extractors and use it every day!
 
-- Add a "--config=" option to client.
+- Revise and fix ``client.py --dump``
+
+- Add a "--config=" option to client rather than force setting NABURC.
 
 - Make the html rendering not render output errors.
 

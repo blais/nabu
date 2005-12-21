@@ -75,6 +75,11 @@ class Extractor(extract.Extractor):
                 
             if 'name' in flist and \
                ('email' in flist or 'phone' in flist or 'address' in flist):
+
+                from pprint import pprint, pformat ## FIXME remove
+                import sys
+                print >> sys.stderr, pformat(flist['name'])
+
                 self.store(flist)
 
 
