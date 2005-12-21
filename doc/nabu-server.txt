@@ -93,9 +93,9 @@ Here is an example CGI script that
   
       # configure this server with whatever transforms we want to apply
       transforms = (
-          (document.DocumentExtractor, document.DocumentStorage(module, conn)),
-          (link.LinkExtractor, link.LinkStorage(module, conn)),
-          (contact.ContactExtractor, contact.ContactStorage(module, conn)),
+          (document.Extractor, document.Storage(module, conn)),
+          (link.Extractor, link.Storage(module, conn)),
+          (contact.Extractor, contact.Storage(module, conn)),
           )
   
       server.xmlrpc_handler(src, transforms, username, allow_reset=1)

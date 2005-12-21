@@ -18,7 +18,7 @@ from docutils import nodes
 from nabu import extract
 
 
-class ReferenceExtractor(extract.Extractor):
+class Extractor(extract.Extractor):
     """
     Stores all external references in a table.
     """
@@ -39,7 +39,7 @@ class ReferenceExtractor(extract.Extractor):
                 self.x.storage.store(self.x.unid, node.attributes['refuri'])
                 
 
-class ReferenceStorage(extract.SQLExtractorStorage):
+class Storage(extract.SQLExtractorStorage):
     """
     Reference storage.
     """

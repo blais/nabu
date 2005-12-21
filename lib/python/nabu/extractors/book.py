@@ -17,7 +17,7 @@ from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
 
 
-class BookExtractor(extract.Extractor):
+class Extractor(extract.Extractor):
     """
     Transform that looks at field lists and that heuristically attempts
     to find references to books.  For example,
@@ -76,7 +76,7 @@ class BookExtractor(extract.Extractor):
         self.storage.store(self.unid, emap)
 
 
-class BookStorage(extract.SQLExtractorStorage):
+class Storage(extract.SQLExtractorStorage):
     """
     Book storage.
     """

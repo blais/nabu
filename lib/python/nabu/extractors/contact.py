@@ -22,7 +22,7 @@ from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
 
 
-class ContactExtractor(extract.Extractor):
+class Extractor(extract.Extractor):
     """
     Transform that looks at field lists, like this::
 
@@ -78,7 +78,7 @@ class ContactExtractor(extract.Extractor):
                 self.store(flist)
 
 
-class ContactStorage(extract.SQLExtractorStorage):
+class Storage(extract.SQLExtractorStorage):
     """
     Contact storage.
     """

@@ -96,7 +96,7 @@ photogroup_directive.content = True
 
 #-------------------------------------------------------------------------------
 #
-class PhotoExtractor(extract.Extractor):
+class Extractor(extract.Extractor):
 ##     """
 ##     Transform that finds photos represented as line-blocks of less than lines,
 ##     where if it has three lines, the first line is taken to be a description,
@@ -189,7 +189,7 @@ class PhotoExtractor(extract.Extractor):
 
 
 
-## class PhotoStorage....):
+## class Storage....):
 ##     """
 ##     Photo storage.
 ##     """

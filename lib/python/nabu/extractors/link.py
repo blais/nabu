@@ -21,7 +21,7 @@ from docutils import nodes
 from nabu import extract
 
 
-class LinkExtractor(extract.Extractor):
+class Extractor(extract.Extractor):
     """
     Transform that finds links represented as line-blocks of less than lines,
     where if it has three lines, the first line is taken to be a description,
@@ -103,7 +103,7 @@ class LinkExtractor(extract.Extractor):
             self.x.storage.store(self.x.unid, lurl, ldesc, lkeys)
 
 
-class LinkStorage(extract.SQLExtractorStorage):
+class Storage(extract.SQLExtractorStorage):
     """
     Link storage.
     """
@@ -132,3 +132,4 @@ class LinkStorage(extract.SQLExtractorStorage):
 
         self.connection.commit()
         
+

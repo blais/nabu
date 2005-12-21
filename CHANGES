@@ -2,6 +2,13 @@
  CHANGES: nabu
 ===============
 
+Current Devel
+=============
+
+- Renamed the extractors consistently to "Extractor" and "Storage",
+  respectively, because we put one instance of each in each file.
+- Split document and doctree extractors between files.
+
 Version 0.91
 ============
 

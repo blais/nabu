@@ -21,7 +21,7 @@ from docutils import nodes
 from nabu import extract
 
 
-class EventExtractor(extract.Extractor):
+class Extractor(extract.Extractor):
     """
     Extract a field list that has a single field, with a key of Event.
     If the first text in the value is a parseable date, we enter that as the
@@ -59,12 +59,12 @@ class EventExtractor(extract.Extractor):
         def visit_field_list( self, node ):
             if len(node.children) != 1:
                 return
-            if not EventExtractor.evre.match(node.children[0].astext().lower()):
+            if not Extractor.evre.match(node.children[0].astext().lower()):
                 return
                 
             text = node.children[0].children[1].astext()
 
-            mo = EventExtractor.evcontentsre.match(text)
+            mo = Extractor.evcontentsre.match(text)
             if mo:
                 dt = datetime.date(*map(int, mo.group(1,2,3)))
                 desc = mo.group(4)
@@ -75,7 +75,7 @@ class EventExtractor(extract.Extractor):
             self.storage.store(self.unid, dt, desc)
 
 
-class EventStorage(extract.SQLExtractorStorage):
+class Storage(extract.SQLExtractorStorage):
     """
     Event storage.
     """

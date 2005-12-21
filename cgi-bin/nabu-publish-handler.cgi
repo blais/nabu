@@ -24,7 +24,8 @@ sys.path.append(join(root, 'lib', 'python'))
 
 # nabu imports
 from nabu import server, sources
-from nabu.extractors import document, link, contact, event, reference, book
+from nabu.extractors import document, doctree
+from nabu.extractors import link, contact, event, reference, book
 
 # local cgi directory imports.
 import connect
@@ -44,23 +45,23 @@ def main():
         print 'Status: 404 Document Not Found.'
         print
         return
-    
+
     # Get access to source storage.
     src_pp = sources.DBSourceStorage(module, conn)
     src = sources.PerUserSourceStorageProxy(src_pp)
 
     transforms = (
-        (document.DocumentExtractor, document.DocumentStorage(module, conn)),
-        (document.DoctreeExtractor, document.DoctreeStorage(module, conn)),
-        (event.EventExtractor, event.EventStorage(module, conn)),
-        (contact.ContactExtractor, contact.ContactStorage(module, conn)),
-        (reference.ReferenceExtractor, reference.ReferenceStorage(module, conn)),
-        (link.LinkExtractor, link.LinkStorage(module, conn)),
-        (book.BookExtractor, book.BookStorage(module, conn)),
+        (document.Extractor, document.Storage(module, conn)),
+        (doctree.Extractor, doctree.Storage(module, conn)),
+        (event.Extractor, event.Storage(module, conn)),
+        (contact.Extractor, contact.Storage(module, conn)),
+        (reference.Extractor, reference.Storage(module, conn)),
+        (link.Extractor, link.Storage(module, conn)),
+        (book.Extractor, book.Storage(module, conn)),
         )
 
     server.xmlrpc_handler(src, transforms, username, allow_reset=1)
-    
+
 if __name__ == '__main__':
     main()
 
