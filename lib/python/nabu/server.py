@@ -166,7 +166,8 @@ class PublishServerHandler:
             elif k == 'doctree':
                 doctree_utf8, parts = docutils.core.publish_from_doctree(
                     v, writer_name='pseudoxml',
-                    settings_overrides={'output_encoding': 'UTF-8'})
+                    settings_overrides={'output_encoding': 'UTF-8'},
+                    )
                 dic['%s_str' % k] = xmlrpclib.Binary(doctree_utf8)
                 del dic[k]
         return dic
@@ -206,6 +207,7 @@ class PublishServerHandler:
             'halt_level': 100, # never halt
             },
             )
+        # 'report_level': 1, FIXME remove.
 
         errortext = errstream.getvalue().decode('UTF-8')
         messages = self.__process(unid, filename, digest,

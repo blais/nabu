@@ -2,7 +2,12 @@
     TODO: nabu
 ==================
 
-- Finish more extractors and use it every day!
+- Find how to suppress output of errors in HTML conversion, to avoid catching
+  this output in the extractors and having this output pollute the contents of
+  the extractors.
+
+    e.g. photography.txt and contacts.
+
 
 - Revise and fix ``client.py --dump``
 
