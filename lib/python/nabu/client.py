@@ -129,7 +129,7 @@ def opts_publish( parser ):
         "These options specify where/how to upload or"
         "process the files on the server.")
 
-    group.add_option('-f', '--force', action='store_true',
+    group.add_option('-F', '--force', action='store_true',
                       help="Force sending/processing all files regardless "
                       "of history.")
 

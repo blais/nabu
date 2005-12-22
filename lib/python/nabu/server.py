@@ -205,9 +205,9 @@ class PublishServerHandler:
             'error_encoding': 'UTF-8',
             'warning_stream': errstream,
             'halt_level': 100, # never halt
+            'report_level': 1,
             },
             )
-        # 'report_level': 1, FIXME remove.
 
         errortext = errstream.getvalue().decode('UTF-8')
         messages = self.__process(unid, filename, digest,

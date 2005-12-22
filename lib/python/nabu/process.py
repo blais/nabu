@@ -12,12 +12,14 @@ Process the document tree with a set of custom transforms.
 """
 
 # stdlib imports
-import StringIO
+import sys, StringIO
 
 # docutils imports
 import docutils.utils
 import docutils.frontend
 from docutils.transforms import Transformer
+
+from docutils.transforms.universal import FilterMessages
 
 # nabu imports
 from nabu.extract import Extractor
@@ -29,8 +31,13 @@ def transform_doctree( unid, doctree, transforms, pickle_receiver=None ):
     which will have an effect later on if using that stored document tree as
     a source for rendering.
     """
-    # populate with transforms
+    # create transformer
     doctree.transformer = Transformer(doctree)
+
+    # add a transform to remove system messages
+    doctree.transformer.add_transform(FilterMessages, priority=1)
+    
+    # populate with transforms
     for tclass, storage in transforms:
         assert issubclass(tclass, Extractor)
         doctree.transformer.add_transform(
@@ -45,7 +52,7 @@ def transform_doctree( unid, doctree, transforms, pickle_receiver=None ):
         'warning_stream': errstream,
         'error_encoding': 'UTF-8',
         'halt_level': 100, # never halt
-        'report_level': 0,
+        'report_level': 4,
         }, fend)
     doctree.reporter = docutils.utils.new_reporter('', settings)
 
