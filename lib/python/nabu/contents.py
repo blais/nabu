@@ -155,7 +155,7 @@ def render_index( uri, username, srcstore ):
     </p>
     ''' % uri
 
-    print >> os, '<table width="100%" class="dump nabu">'
+    print >> os, '<table width="100%" cellpadding="0" class="dump nabu">'
     sr = srcstore.get(username, None,
                       ('unid', 'filename', 'username', 'time', 'errors',))
 
@@ -305,7 +305,7 @@ def dump_table( conn, tablename, uri, unid=None, stored_unid=None ):
     If 'user' is specified, filter by that user.
     """
     os = StringIO.StringIO()
-    print >> os, '<h2>Table: %s</h2>' % tablename
+    print >> os, '<h2>Schema: %s</h2>' % tablename
 
     curs = conn.cursor()
     query, conds = "SELECT * FROM %s" % tablename, []
@@ -339,6 +339,8 @@ def dump_table( conn, tablename, uri, unid=None, stored_unid=None ):
 
                 elif isinstance(value, str) and len(value) > 100:
                     value = value[:30]
+                if isinstance(value, str):
+                    value = value.decode('utf-8')
                 print >> os, '<td>%s</td>' % value
             print >> os, '</tr>'
 
@@ -346,3 +348,4 @@ def dump_table( conn, tablename, uri, unid=None, stored_unid=None ):
         print >> os, '</table>'
 
     return os.getvalue()
+
