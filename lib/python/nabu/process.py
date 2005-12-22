@@ -52,7 +52,7 @@ def transform_doctree( unid, doctree, transforms, pickle_receiver=None ):
         'warning_stream': errstream,
         'error_encoding': 'UTF-8',
         'halt_level': 100, # never halt
-        'report_level': 4,
+        'report_level': 5,
         }, fend)
     doctree.reporter = docutils.utils.new_reporter('', settings)
 
