@@ -11,6 +11,9 @@
 Interfaces that should be implemented by extractors.
 """
 
+# stdlib imports
+from itertools import chain
+
 # docutils imports
 import docutils.transforms
 
@@ -85,7 +88,13 @@ class SQLExtractorStorage(ExtractorStorage):
 
     # Override this in the derived class.
     # This should be a map from the table name to the table schema.
+
+    # Tables that have a unid mapping.  The data associated with the document's
+    # unid are cleared automatically.
     sql_tables = {}
+
+    # Accessory tables that do not have a unid mapping.
+    sql_tables_other = {}
 
     def __init__( self, module, connection ):
         self.module, self.connection = module, connection
@@ -122,8 +131,13 @@ class SQLExtractorStorage(ExtractorStorage):
         """
         cursor = self.connection.cursor()
 
-        for tname, tschema in self.sql_tables.iteritems():
-            cursor.execute("DROP TABLE %s" % tname)
+        for tname, tschema in chain(self.sql_tables.iteritems(),
+                                    self.sql_tables_other.iteritems()):
+            cursor.execute("""
+               SELECT table_name FROM information_schema.tables WHERE table_name = %s
+               """, (tname,))
+            if cursor.rowcount > 0:
+                cursor.execute("DROP TABLE %s CASCADE" % tname)
             cursor.execute(tschema)
 
         self.connection.commit()

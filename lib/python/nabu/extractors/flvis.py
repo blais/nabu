@@ -56,3 +56,4 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
             self.curlist[name].append(node.children[1])
         else:
             self.curlist[name] = node.children[1]
+

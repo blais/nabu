@@ -12,14 +12,15 @@ Extract contact info.
 """
 
 # stdlib imports
-import re, types
+import sys, re, types
+from pprint import pprint, pformat ## FIXME remove
 
 # docutils imports
 from docutils import nodes
 
 # nabu imports
 from nabu import extract
-from nabu.extractors.flvis import FieldListVisitor
+## from nabu.extractors.flvis import FieldListVisitor
 
 
 class Extractor(extract.Extractor):
@@ -45,74 +46,137 @@ class Extractor(extract.Extractor):
 
     default_priority = 900
 
-    def store( self, flist ):
-        for k, v in flist.iteritems():
-            if isinstance(v, types.ListType):
-                flist[k] = ', '.join([x.astext() for x in v])
-            else:
-                flist[k] = v.astext()
+    re_short = re.compile('([a-z])(?: ([^ \t]+))?$')
 
-        # it's a contact info! store it.
-        self.storage.store(self.unid, flist)
+    def store( self, *data ):
+        self.storage.store(self.unid, *data)
 
     def apply( self, **kwargs ):
         self.unid, self.storage = kwargs['unid'], kwargs['storage']
 
-        v = FieldListVisitor(self.document)
-        v.initialize()
-        self.document.walk(v)
-        v.finalize()
+        v = FieldListVisitor(self, self.document)
+        self.document.walkabout(v)
 
-        for flist in v.getfieldlists():
-            # translate short names
-            for _from, _to in (('n', 'name'),
-                               ('e', 'email'),
-                               ('p', 'phone')):
-                try:
-                    flist[_to] = flist[_from]
-                except KeyError:
-                    pass
-                
-            if 'name' in flist and \
-               ('email' in flist or 'phone' in flist or 'address' in flist):
+#-------------------------------------------------------------------------------
+#
+_translations = {
+    'n': 'name',
+    'a': 'address',
+    'e': 'email',
+    'w': 'web',
+    'c': 'comment',
+    'comment': 'comments',
+    'p': 'phone'
+    }
 
-                from pprint import pprint, pformat ## FIXME remove
-                import sys
-                print >> sys.stderr, pformat(flist['name'])
+class FieldListVisitor(nodes.SparseNodeVisitor):
+    """
+    A visitor that accumulates field lists, and that returns dictionaries for
+    each of the lists.  If there are multiple equal field names, a list of the
+    values is associated to that name. The field names are taken to be
+    case-insensitive.
+    """
 
-                self.store(flist)
+    def __init__( self, extractor, *args, **kwds ):
+        nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
+        self.extractor = extractor
+        self.fields = None
+
+    def visit_field_list( self, node ):
+        # Setup accumulator.
+        self.fields = []
+
+    def visit_field_name( self, node ):
+        if self.fields is not None:
+            self.field_name = node.astext()
+
+    def visit_field_body( self, node ):
+        if self.fields is not None:
+            self.fields.append( (self.field_name, node.astext()) )
+            self.field_name = None
+
+    def depart_field_list( self, node ):
+        self.process(self.fields)
+        self.fields = None
+
+    def process( self, fields ):
+        """
+        Process a field list, attempting to find if it's a contact info.
+        """
+        tlist = []
+        tcount = {}
+        cname = None
+        for name, value in fields:
+            names = name.lower().split()
+            typ = _translations.get(names[0], names[0])
+
+            if typ == 'name':
+                # Only one name allowed in a single entry.
+                assert cname is None
+                cname = value
+                continue
+            
+            subtyp = ' '.join(names[1:])
+            tcount.setdefault(typ, 0)
+            tcount[typ] += 1
+
+            tlist.append( (typ, subtyp, value) )
+
+        if cname is None or not ('email' in tcount or
+                                 'phone' in tcount or
+                                 'address' in tcount):
+            return # Not a contact info.
+            
+        self.extractor.store(cname, tlist)
 
 
+#-------------------------------------------------------------------------------
+#
 class Storage(extract.SQLExtractorStorage):
     """
     Contact storage.
     """
-    sql_tables = { 'contact': '''
+    sql_tables = {
+        'contact': '''
+          CREATE TABLE contact
+          (
+             id SERIAL PRIMARY KEY,
+             unid TEXT NOT NULL,
+             name TEXT
+          )
+        '''}
 
-        CREATE TABLE contact
-        (
-           unid TEXT NOT NULL,
-           name TEXT,
-           email TEXT,
-           address TEXT,
-           bday TEXT
-        )
-
-        '''
+    sql_tables_other = {
+        'contact_field': '''
+          CREATE TABLE contact_field
+          (
+             contact_id TEXT REFERENCES contact (id) ON DELETE CASCADE,
+             type TEXT,
+             subtype TEXT,
+             value TEXT
+          )
+          ''',
         }
 
-    def store( self, unid, *args ):
-        data, = args
-        
-        cols = ('unid', 'name', 'email', 'address', 'bday')
-        values = [unid]
-        for n in cols[1:]:
-            values.append( data.get(n, '') )
-            
+    def store( self, unid, name, tfields ):
+        """
+        'unid' -> str: the unique id
+        'name' -> unicode: person or org name
+        'tfields' -> list of (type, subtype, value) tuples: list of other entries.
+        """
         cursor = self.connection.cursor()
+        cols = ('unid', 'name')
         cursor.execute("""
-          INSERT INTO contact (%s) VALUES (%%s, %%s, %%s, %%s, %%s)
-          """ % ', '.join(cols), values)
+          INSERT INTO contact (%s) VALUES (%%s, %%s);
+          SELECT currval('contact_id_seq');
+          """ % ', '.join(cols), (unid, name))
+        contactid = cursor.fetchone()[0]
+
+        for typ, subtyp, value in tfields:
+            cursor.execute("""
+              INSERT INTO contact_field (contact_id, type, subtype, value)
+                VALUES (%s, %s, %s, %s)
+              """, (contactid, typ, subtyp, value))
 
         self.connection.commit()
-        
+

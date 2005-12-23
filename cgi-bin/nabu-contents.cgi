@@ -30,7 +30,7 @@ from nabu import sources, contents, extract
 import connect
 
 
-ctype = 'Content-Type:', 'text/html; charset=UTF-8\n\n'
+ctype = 'Content-Type: text/html; charset=UTF-8\n\n'
 admins = ['admin'] # Administrator see all datasets.
 
 def main():

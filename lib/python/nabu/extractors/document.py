@@ -69,7 +69,7 @@ class Extractor(extract.Extractor):
 
         def visit_field_body( self, node ):
             if self.catchname:
-                self.extracted[self.catchname] = node.astext()
+                self.extracted[self.catchname] = node.astext().lower()
                 self.catchname = None
 
         def visit_title( self, node ):
