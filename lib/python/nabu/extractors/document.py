@@ -32,7 +32,7 @@ class Extractor(extract.Extractor):
     """
     default_priority = 900
 
-    biblifields = ['category', 'serie', 'location']
+    biblifields = ['category', 'serie', 'location', 'disclosure']
 
     def apply( self, unid=None, storage=None, pickle_receiver=None ):
         self.unid = unid
@@ -107,7 +107,13 @@ class Storage(extract.SQLExtractorStorage):
            abstract TEXT,
            category TEXT,
            serie TEXT,
-           location TEXT
+           location TEXT,
+           disclosure TEXT DEFAULT 'public',
+
+           CONSTRAINT disclosure_enum CHECK
+             (disclosure::text = 'public'::text OR
+              disclosure::text = 'restricted'::text OR
+              disclosure::text = 'private'::text)
         )
 
         '''
