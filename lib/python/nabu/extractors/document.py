@@ -12,7 +12,7 @@ Extract document tree and bibliographic fields.
 """
 
 # stdlib imports
-import re, datetime
+import sys, re, datetime
 import pickle
 ##import cPickle as pickle
 
@@ -108,25 +108,34 @@ class Storage(extract.SQLExtractorStorage):
            category TEXT,
            serie TEXT,
            location TEXT,
-           disclosure TEXT DEFAULT 'public',
 
-           CONSTRAINT disclosure_enum CHECK
-             (disclosure::text = 'public'::text OR
-              disclosure::text = 'restricted'::text OR
-              disclosure::text = 'private'::text)
+           -- Disclosure is
+           --  0: public
+           --  1: restricted
+           --  2: private
+           disclosure INT DEFAULT 2
         )
 
         '''
         }
 
+    # Mapping strings to disclosure levels.
+    discmap = {None: 2, # default
+               'public': 0,
+               'restricted': 1,
+               'private': 2}
+
     def store( self, unid, data ):
         data['unid'] = unid
         
         cols = ['unid', 'title', 'author', 'date',
-                'abstract', 'category', 'serie', 'location']
+                'abstract', 'category', 'serie', 'location',
+                'disclosure']
         for cname in cols:
             data.setdefault(cname, None)
         
+        data['disclosure'] = self.discmap[data.get('disclosure')]
+
         a = ', '.join(['%%(%s)s' % x for x in cols])
         query = """
           INSERT INTO document (%s) VALUES (%s)

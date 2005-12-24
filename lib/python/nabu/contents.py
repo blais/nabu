@@ -66,10 +66,10 @@ p#desc {
 
 '''
 
-stylesheet = ('http://docutils.sourceforge.net'
-              '/docutils/writers/html4css1/html4css1.css')
+stylesheet = (u'http://docutils.sourceforge.net'
+              u'/docutils/writers/html4css1/html4css1.css')
 
-pages_header = '''<!DOCTYPE html PUBLIC
+pages_header = u'''<!DOCTYPE html PUBLIC
    "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -85,7 +85,7 @@ pages_header = '''<!DOCTYPE html PUBLIC
 
 ''' % (stylesheet, css)
 
-pages_footer = '''
+pages_footer = u'''
 </body>
 </html>
 '''
@@ -144,9 +144,9 @@ def render_index( uri, username, srcstore ):
     Generate an index of documents.
     """
     os = StringIO.StringIO()
-    linkfmt = '%s?id=%%s&view=%%s' % uri
+    linkfmt = u'%s?id=%%s&view=%%s' % uri
     print >> os, pages_header
-    print >> os, '''
+    print >> os, u'''
     <h1>Nabu Database Contents</h1>
     <a href="%s?view=extracted">[view all extracted]</a>
     <p id="desc">
@@ -196,7 +196,7 @@ def render_source( unid, uri, username, srcstore ):
         # source and parsed results.
         doctree_str = docutils.core.publish_from_doctree(
             doctree, writer_name='pseudoxml',
-            settings_overrides={'output_encoding': 'UTF-8'})
+            settings_overrides={'output_encoding': 'unicode'})
     else:
         doctree_str = ''
 
@@ -249,16 +249,17 @@ def render_html( unid, uri, username, srcstore ):
     doctree = src['doctree']
 
     os = StringIO.StringIO()
+
     if doctree is None:
-        print >> os, 'Content-type:', 'text/plain'
+        print >> os, u'Content-type:', 'text/plain'
         print >> os
-        print >> os, '(No document tree in sources upload.)'
+        print >> os, u'(No document tree in sources upload.)'
         return os.getvalue()
 
     scheme, netloc, path, parameters, query, fragid = urlparse.urlparse(uri)
 
     settings = {'embed_stylesheet': False,
-                'output_encoding': 'UTF-8'}
+                'output_encoding': 'unicode'}
 
     parts = docutils.core.publish_parts(
        reader_name='doctree', source_class=docutils.io.DocTreeInput,
@@ -267,7 +268,7 @@ def render_html( unid, uri, username, srcstore ):
 
     print >> os, pages_header
     print >> os, navig(uri, unid)
-    os.write(parts['html_body'].encode('UTF-8'))
+    os.write(parts['html_body'])
     print >> os, pages_footer
     return os.getvalue()
 
