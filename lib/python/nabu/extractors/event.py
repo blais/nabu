@@ -12,7 +12,8 @@ Extract calendar events.
 """
 
 # stdlib imports
-import re, datetime
+import sys, re, datetime
+from pprint import pformat
 
 # docutils imports
 from docutils import nodes
@@ -21,6 +22,8 @@ from docutils import nodes
 from nabu import extract
 
 
+#-------------------------------------------------------------------------------
+#
 class Extractor(extract.Extractor):
     """
     Extract a field list that has a single field, with a key of Event.
@@ -34,17 +37,13 @@ class Extractor(extract.Extractor):
     
     """
     default_priority = 900
-
-    evre = re.compile('event')
-    evcontentsre = re.compile('\s*(\d\d\d\d)-(\d\d)-(\d\d)(.*)', re.DOTALL)
     
     def apply( self, **kwargs ):
         unid, storage = kwargs['unid'], kwargs['storage']
 
         v = self.Visitor(self.document, unid, storage)
-        self.document.walk(v)
+        self.document.walkabout(v)
 
-        from pprint import pformat
         self.document.reporter.info(
             'Event extractor: %s' % pformat(v.extracted))
 
@@ -55,26 +54,67 @@ class Extractor(extract.Extractor):
             self.unid = unid
             self.storage = storage
             self.extracted = {}
-            
-        def visit_field_list( self, node ):
+
+        def visit_definition_list_item( self, node ):
+            # Initialize
+            self.dates, self.desc = [], None
+
+        def visit_term( self, node ):
             if len(node.children) != 1:
                 return
-            if not Extractor.evre.match(node.children[0].astext().lower()):
+
+            datetext = node.children[0].astext().lower()
+            mo = evre.match(datetext)
+            if not mo:
                 return
-                
-            text = node.children[0].children[1].astext()
 
-            mo = Extractor.evcontentsre.match(text)
-            if mo:
-                dt = datetime.date(*map(int, mo.group(1,2,3)))
-                desc = mo.group(4)
-            else:
-                dt = datetime.date.today()
-                desc = text
-            
-            self.storage.store(self.unid, dt, desc)
+            self.dates = parse_date(mo)
+
+        def visit_definition( self, node ):
+            self.desc = node.astext()
+
+        def depart_definition_list_item( self, node ):
+            for d, t in self.dates:
+                self.storage.store(self.unid, d, t, self.desc)
 
 
+
+#-------------------------------------------------------------------------------
+#
+evre = re.compile('(?:([a-z][a-z][a-z])\s+)?'
+                  '(\d\d\d\d)-(\d\d)-((?:\d\d|\s*,\s*)*)'
+                  '(?:\s+(\d\dh)(\d\d)?)?')
+
+def parse_date( mo ):
+    """
+    Parse a date string, given the match object that corresponds to the re.
+    """
+    year, month = map(int, mo.group(2, 3))
+    days = [int(x.strip()) for x in mo.group(4).split(',')]
+    hour = mo.group(5) and int(mo.group(5)[:-1]) or None
+    minutes = mo.group(6) and int(mo.group(6)) or None
+    if hour:
+        if len(days) > 1:
+            print >> sys.stderr, 'Warning: multiple days and hours'
+            # FIXME: we need a real warning system to return errors to the user.
+
+    all = []
+    for day in days:
+        date = datetime.date(year, month, day)
+        if minutes is not None:
+            time = datetime.time(hour, minutes)
+        elif hour is not None:
+            time = datetime.time(hour)
+        else:
+            time = None
+
+        all.append( (date, time) )
+
+    return all
+
+
+#-------------------------------------------------------------------------------
+#
 class Storage(extract.SQLExtractorStorage):
     """
     Event storage.
@@ -85,16 +125,41 @@ class Storage(extract.SQLExtractorStorage):
         (
            unid TEXT NOT NULL,
            date DATE,
+           time TIME,
            description TEXT
         )
 
         '''
         }
 
-    def store( self, unid, dt, description ):
+    def store( self, unid, date, time, description ):
         cursor = self.connection.cursor()
         cursor.execute("""
-          INSERT INTO event (unid, date, description) VALUES (%s, %s, %s)
-          """, (unid, dt, description))
+          INSERT INTO event (unid, date, time, description)
+            VALUES (%s, %s, %s, %s)
+          """, (unid, date, time, description))
         self.connection.commit()
 
+
+
+
+#-------------------------------------------------------------------------------
+#
+def test():
+    legal = ('fri 2005-12-30',
+             'sat 2005-12-31',
+             '2006-01-05',
+             '2006-01-13, 14, 16',
+             '2006-01-04 20h42',
+             '2006-01-04 23h',
+             '2006-01-05, 06, 09, 10',)
+    for s in legal:
+        mo = evre.match(s)
+        assert mo
+        print s, mo.groups()
+        parse_date(mo)
+
+
+
+if __name__ == '__main__':
+    test()
