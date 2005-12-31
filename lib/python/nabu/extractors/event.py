@@ -55,6 +55,8 @@ class Extractor(extract.Extractor):
             self.storage = storage
             self.extracted = {}
 
+            self.desc = None
+            
         def visit_definition_list_item( self, node ):
             # Initialize
             self.dates, self.desc = [], None
