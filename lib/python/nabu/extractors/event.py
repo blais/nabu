@@ -71,11 +71,17 @@ class Extractor(extract.Extractor):
             self.dates = parse_date(mo)
 
         def visit_definition( self, node ):
-            self.desc = node.astext()
+            self.desc = []               
+
+        def visit_list_item( self, node ):
+            if self.desc is not None:
+                self.desc.append(node.astext())
+            raise nodes.SkipChildren
 
         def depart_definition_list_item( self, node ):
             for d, t in self.dates:
-                self.storage.store(self.unid, d, t, self.desc)
+                for child in self.desc:
+                    self.storage.store(self.unid, d, t, child)
 
 
 
@@ -123,6 +129,7 @@ class Storage(extract.SQLExtractorStorage):
 
         CREATE TABLE event
         (
+           id SERIAL PRIMARY KEY,
            unid TEXT NOT NULL,
            date DATE,
            time TIME,
