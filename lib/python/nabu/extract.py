@@ -104,7 +104,8 @@ class SQLExtractorStorage(ExtractorStorage):
         # Check that the database tables exist and if they don't, create them.
         for tname, tschema in self.sql_tables.iteritems():
             cursor.execute("""
-               SELECT table_name FROM information_schema.tables WHERE table_name = %s
+               SELECT table_name FROM information_schema.tables
+                 WHERE table_name = %s
                """, (tname,))
             if cursor.rowcount == 0:
                 cursor.execute(tschema)
@@ -134,7 +135,8 @@ class SQLExtractorStorage(ExtractorStorage):
         for tname, tschema in chain(self.sql_tables.iteritems(),
                                     self.sql_tables_other.iteritems()):
             cursor.execute("""
-               SELECT table_name FROM information_schema.tables WHERE table_name = %s
+               SELECT table_name FROM information_schema.tables
+                 WHERE table_name = %s
                """, (tname,))
             if cursor.rowcount > 0:
                 cursor.execute("DROP TABLE %s CASCADE" % tname)
