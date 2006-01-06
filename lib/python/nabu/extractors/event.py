@@ -160,7 +160,7 @@ class Storage(extract.SQLExtractorStorage):
 #-------------------------------------------------------------------------------
 #
 wkdays = {'mon': 0, 'tue': 1, 'wed': 2, 'thu': 3, 'fri': 4, 'sat': 5, 'sun': 6,
-          'lun': 0, 'mar': 1, 'mer': 2, 'jeu': 3, 'ven': 4, 'sam': 5, 'dim': 6}
+          'lun': 0, 'ma': 1, 'mer': 2, 'jeu': 3, 'ven': 4, 'sam': 5, 'dim': 6}
 
 months = {'jan': 1,
           'feb': 2, 'fev': 2,

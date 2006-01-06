@@ -23,6 +23,15 @@ from nabu import extract
 ## from nabu.extractors.flvis import FieldListVisitor
 
 
+## FIXME: you need to support
+##
+##   Jan 28, 29, 30, 31, 1, 2, 3, 4
+##      * Crossing the month boundary in a single set should be easy
+##
+##   Jan 28 -- Feb 4
+##      * This would be nice too...
+##
+
 class Extractor(extract.Extractor):
     """
     Transform that looks at field lists, like this::
