@@ -134,7 +134,8 @@ class Storage(extract.SQLExtractorStorage):
         for cname in cols:
             data.setdefault(cname, None)
         
-        data['disclosure'] = self.discmap[data.get('disclosure')]
+        disc = data.get('disclosure').split()[0]
+        data['disclosure'] = self.discmap[disc]
 
         a = ', '.join(['%%(%s)s' % x for x in cols])
         query = """

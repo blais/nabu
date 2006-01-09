@@ -433,34 +433,38 @@ def opts_finder( parser ):
                                   """These options affect how the publisher
                                   finds and recognizes files.""")
 
+    group.add_option('-n', '--dry-run', action='store_true',
+                     help="Only print files found that have marker, and "
+                     "don't upload.")
+
     group.add_option('-r', '--recurse', '--recurse',
-                      action='store_true', dest='recursive', default=True,
-                      help="Disable recursion for directories.")
+                     action='store_true', dest='recursive', default=True,
+                     help="Disable recursion for directories (default).")
 
     group.add_option('-R', '--no-recurse', '--dont-recurse',
-                      action='store_false', dest='recursive',
-                      help="Disable recursion for directories.")
+                     action='store_false', dest='recursive',
+                     help="Disable recursion for directories.")
 
     group.add_option('-E', '--exclude', action='append', metavar='PATTERN',
-                      default=['CVS', '.svn', '*~', '*.bak'],
-                      help="Ignore files and subdirectories whose basenames "
-                      "match the given globbing pattern.  You can append "
-                      "many of these options.  Typically you would ignore "
-                      "something like ['.svn', 'CVS'].  You do not need to "
-                      "bother setting up patterns to ignore binary files, we "
-                      "process those very efficiently.")
+                     default=['CVS', '.svn', '*~', '*.bak'],
+                     help="Ignore files and subdirectories whose basenames "
+                     "match the given globbing pattern.  You can append "
+                     "many of these options.  Typically you would ignore "
+                     "something like ['.svn', 'CVS'].  You do not need to "
+                     "bother setting up patterns to ignore binary files, we "
+                     "process those very efficiently.")
 
     group.add_option('--marker-regexp', action='store', metavar='REGEXP',
-                      default=':Id:\s+(\S*)',
-                      help="Regular expression to search for marker. "
-                      "It must contain a single group. Note that the entire "
-                      "matched contents may be removed from source.")
-
+                     default=':Id:\s+(\S*)',
+                     help="Regular expression to search for marker. "
+                     "It must contain a single group. Note that the entire "
+                     "matched contents may be removed from source.")
+    
     group.add_option('--header-length', action='store', type='int',
-                      metavar='LENGTH', default=1024,
-                      help="Length of the header (in characters) to look "
-                      "for the marker at the top of each file "
-                      "(the default is roughly 20 lines).")
+                     metavar='LENGTH', default=1024,
+                     help="Length of the header (in characters) to look "
+                     "for the marker at the top of each file "
+                     "(the default is roughly 20 lines).")
 
     parser.add_option_group(group)
 
@@ -859,7 +863,11 @@ def main():
             if not args:
                 args = ['.']
             candidates = find_candidates(opts, args)
-            publish(candidates, opts, args)
+            if opts.dry_run:
+                for f in candidates:
+                    print '%s {%s}' % (f.fn, f.unid)
+            else:
+                publish(candidates, opts, args)
     except xmlrpclib.Fault, e:
         raise SystemExit("Error: an error occurred on the server:\n %s\n" % e +
                          "Contact the server administrator for support.")
