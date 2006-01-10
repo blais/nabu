@@ -257,7 +257,9 @@ def parse_dtspec( s ):
             year = int(year)
 
         # days
-        days = [int(x.strip()) for x in mo.group(3).split(',')]
+        daystr = mo.group(3)
+        assert daystr is not None
+        days = [int(x.strip()) for x in daystr.split(',')]
 
         dates = [datetime.date(year, month, x) for x in days]
 
@@ -276,7 +278,9 @@ def parse_dtspec( s ):
 
         # Our first match is either a day or month
         dm, days = mo.groups()
-        days = [int(x.strip()) for x in mo.group(2).split(',')]
+        daystr = mo.group(2)
+        assert daystr is not None
+        days = [int(x.strip()) for x in daystr.split(',')]
 
         if dm in wkdays:
             if len(days) > 1:
@@ -392,7 +396,10 @@ def test():
         print 'b', dt[1]
         assert res == dt[1]
 
+def test2():
+    print parse_dtspec('2006-01-17, 18, 19, 20 12h00')
+
 
 if __name__ == '__main__':
-    test()
+    test2()
 

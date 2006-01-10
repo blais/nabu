@@ -8,6 +8,9 @@
 
     e.g. photography.txt and contacts.
 
+- Nabu ``-l`` is broken.
+
+- Test and check with docutils 0.4
 
 - Revise and fix ``client.py --dump``
 
