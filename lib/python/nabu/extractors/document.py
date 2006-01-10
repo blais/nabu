@@ -134,7 +134,9 @@ class Storage(extract.SQLExtractorStorage):
         for cname in cols:
             data.setdefault(cname, None)
         
-        disc = data.get('disclosure').split()[0]
+        disc = data.get('disclosure')
+        if disc:
+            disc = disc.split()[0] # Get only first word.
         data['disclosure'] = self.discmap[disc]
 
         a = ', '.join(['%%(%s)s' % x for x in cols])
