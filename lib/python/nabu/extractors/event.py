@@ -159,8 +159,20 @@ class Storage(extract.SQLExtractorStorage):
 
 #-------------------------------------------------------------------------------
 #
-wkdays = {'mon': 0, 'tue': 1, 'wed': 2, 'thu': 3, 'fri': 4, 'sat': 5, 'sun': 6,
-          'lun': 0, 'ma': 1, 'mer': 2, 'jeu': 3, 'ven': 4, 'sam': 5, 'dim': 6}
+wkdays = {}
+wkdays.update(y, x for x, y in enumerate(
+    ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')) )
+
+wkdays.update(y, x for x, y in enumerate(
+    ('monday', 'tuesday', 'wednesday', 'thursday', 'friday',
+     'saturday', 'sunday')) )
+
+wkdays.update(y, x for x, y in enumerate(
+    ('lun', 'ma', 'mer', 'jeu', 'ven', 'sam', 'dim')) )
+
+wkdays.update(y, x for x, y in enumerate(
+    ('lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi',
+     'samedi', 'dimanche')) )
 
 months = {'jan': 1,
           'feb': 2, 'fev': 2,
@@ -174,6 +186,11 @@ months = {'jan': 1,
           'oct': 10,
           'nov': 11,
           'dec': 12}
+
+months.update(y, x for x, y in enumerate(
+    ('january', 'february', 'march', 'april', 'may', 'june',
+     'july', 'august', 'september', 'october', 'november', 'december')) )
+
 
 timespec = '(\d\d)h(\d\d)?'
 hlre = re.compile('(.*)\s+(?:%s)(?:\s*--?\s*%s)?' % (timespec, timespec))
@@ -189,11 +206,11 @@ all3 = '(%s)' % '|'.join(itertools.chain(wkdays.iterkeys(), months.iterkeys()))
 
 manydays = '((?:\d\d?|\s*,\s*)*)'
 
-telist = ((0, '(?:(\d\d\d\d)-)?(\d\d?)[-/]%s$' % manydays),
-          (1, '%s$' % alldays),
-          (2, '%s %s$' % (all3, manydays)),
-          (3, '%s\s+(\d+)\s+%s$' % (all3, all3)),
-          (4, '%s\s+%s\s+(\d+)$' % (all3, all3)),
+telist = (('f', '(?:(\d\d\d\d)-)?(\d\d?)[-/]%s$' % manydays),
+          ('m', '%s$' % alldays),
+          ('n', '[a-zA-Z]+ %s$' % manydays),
+          ('y', '%s\s+(\d+)\s+%s$' % (all3, all3)),
+          ('z', '%s\s+%s\s+(\d+)$' % (all3, all3)),
           )
 tere = [(no, re.compile(x, re.I)) for no, x in telist]
 
@@ -241,7 +258,7 @@ def parse_dtspec( s ):
     today = datetime.date.today()
 
     dates = []
-    if case == 0:
+    if case == 'f':
         #print case, mo.groups()
 
         # month
@@ -263,7 +280,7 @@ def parse_dtspec( s ):
 
         dates = [datetime.date(year, month, x) for x in days]
 
-    elif case == 1:
+    elif case == 'd':
         #print case, mo.groups()
 
         # Our match is necessarity a day.
@@ -273,11 +290,12 @@ def parse_dtspec( s ):
 
         dates = [date]
 
-    elif case == 2:
+    elif case == 'm':
         #print case, mo.groups()
 
         # Our first match is either a day or month
         dm, days = mo.groups()
+        dm = dm.lower()
         daystr = mo.group(2)
         assert daystr is not None
         days = [int(x.strip()) for x in daystr.split(',')]
@@ -310,12 +328,12 @@ def parse_dtspec( s ):
 
             dates = [datetime.date(year, month, x) for x in days]
 
-    elif case in (3, 4):
+    elif case in ('y', 'z'):
         #print case, mo.groups()
 
-        if case == 3:
+        if case == 'y':
             th1, day, th2 = mo.groups()
-        elif case == 4:
+        elif case == 'z':
             th1, th2, day = mo.groups()
 
         day = int(day)
