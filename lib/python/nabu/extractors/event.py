@@ -160,17 +160,17 @@ class Storage(extract.SQLExtractorStorage):
 #-------------------------------------------------------------------------------
 #
 wkdays = {}
-wkdays.update(y, x for x, y in enumerate(
+wkdays.update((y, x) for x, y in enumerate(
     ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')) )
 
-wkdays.update(y, x for x, y in enumerate(
+wkdays.update((y, x) for x, y in enumerate(
     ('monday', 'tuesday', 'wednesday', 'thursday', 'friday',
      'saturday', 'sunday')) )
 
-wkdays.update(y, x for x, y in enumerate(
+wkdays.update((y, x) for x, y in enumerate(
     ('lun', 'ma', 'mer', 'jeu', 'ven', 'sam', 'dim')) )
 
-wkdays.update(y, x for x, y in enumerate(
+wkdays.update((y, x) for x, y in enumerate(
     ('lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi',
      'samedi', 'dimanche')) )
 
@@ -187,7 +187,7 @@ months = {'jan': 1,
           'nov': 11,
           'dec': 12}
 
-months.update(y, x for x, y in enumerate(
+months.update((y, x) for x, y in enumerate(
     ('january', 'february', 'march', 'april', 'may', 'june',
      'july', 'august', 'september', 'october', 'november', 'december')) )
 
