@@ -8,17 +8,14 @@
 
 \mode<presentation>
 {
- \usetheme{default}
-%%   \usetheme{Singapore}
+%\usetheme{default}
+\usetheme{Singapore}
   \setbeamertemplate{frametitle}[default][left]
   \setbeamercovered{transparent}
 }
 
 \usepackage[english]{babel}
-% or whatever
-
 \usepackage[latin1]{inputenc}
-% or whatever
 
 \usepackage{times}
 \usepackage[T1]{fontenc}
@@ -176,21 +173,28 @@
 %   Strike Two -- Ideas for the talk from Rachel's place
 % ========================================================
 
+
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
   \frametitle{Introduction}
 
-  I'm going to take a long winding road to introduce this project via a set of
-  PIM examples\dots
+  Nabu is\dots
+  \begin{itemize}
+  \item \dots not a Wiki
+  \item \dots not a blog software
+  \item \dots not a personal information manager
+  \item \dots not a document publishing tool
+  \item \dots not a generic data entry system
+  \end{itemize}
 
 \vfill\pause
+  So I'm going to take a long winding road to introduce this project via a set
+  of examples using personal information management.
 
-  This will be an ode to the power and elegance of simple text files \dots
-
+\vfill
+  This will be \emph{an ode to the power and elegance of simple text files}\dots
 
 \end{frame}
-
-
 
 
 %-------------------------------------------------------------------------------
@@ -198,13 +202,13 @@
   \frametitle{1992 - Bookmarks}
 
   \begin{itemize}
-    \item Xmosaic bookmarks
-    \item Bookmarking lots of sites left and right
+    \item Using Xmosaic
+    \item Creating lots of bookmarks lots of sites \\
+       (we did not have Google)
   \end{itemize}
 
 \pause
-A script was born (\verb@bmmgr@), typical input:
-
+\emph{A script} was born, with typical input like this:
 
 \begin{verbatim}
   Raymond Hettinger's photography
@@ -213,10 +217,12 @@ A script was born (\verb@bmmgr@), typical input:
 \end{verbatim}
 
   \begin{itemize}
-    \item Output to Xmosaic, then Netscape, then Mozilla, then IE \dots
-    \item Eventually Firefox
-    \item ... and what next?
+    \item Then came Netscape, \pause then came Mozilla, \pause then came IE \dots
+    \pause
+    \item Eventually came Firefox and we were happy ever after\dots
   \end{itemize}
+
+  \hfill \dots or maybe not?
 
 % - In 1992, I was using Xmosaic, the good old days of Linux had not arrived yet
 % - Then Netscape came about, introduced some changes, and then Mozilla
@@ -231,17 +237,24 @@ A script was born (\verb@bmmgr@), typical input:
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Bookmarks - Problems}
+  \frametitle{1992 - Bookmarks - Problems}
 
-  A tree is inadequate, and organizing by hand is an annoyance
-
+  Problems I had with this system:
   \begin{itemize}
-    \item Bookmarks belong in many nodes
-    \item Sharing \textit{some} of these bookmarks (e.g. del.icio.us)
-    \item Searching the bookmarks (too many bookmarks!)
+    \item A tree is inadequate for storing links (Bookmarks belong in many
+      ``groups''), and organizing by hand is an annoyance
+
+    \item You might want to share \textit{some} of these bookmarks \\
+      (e.g. del.icio.us)
+
+    \item You might want to search your bookmarks
   \end{itemize}
 
-% - I wrote tengis, which is a small, simple database of bookmarks
+\vfill\pause
+  \emph{Another script} was born\dots
+  \begin{itemize}
+  \item \texttt{tengis}: a small GUI app/database of bookmarks
+  \end{itemize}
 
 \end{frame}
 
@@ -251,93 +264,116 @@ A script was born (\verb@bmmgr@), typical input:
   \frametitle{1997 - Address Book}
 
   \begin{itemize}
-    \item Little paper booklets\dots
+    \item I was using ``paper'' technology (little booklets)\dots
 
 \vfill\pause
-
-    \item Using Netscape to store my contacts in LDIF
+    \item Then using Netscape to store my contacts in LDIF
 
 \vfill\pause
+    \item One day, an \texttt{nroff} user shows me his fabulous ``ascii''
+      technology:
 
-    \item My MSc director, a nroff user, shows me his ascii system
+{\small
+\begin{verbatim}
+      n: Librairie Michel Fortin inc.
+      a: 3714 St-Denis
+      p: +1.514.849.5719
+\end{verbatim}}
   \end{itemize}
 
 \vfill\pause
 
-  \dots I've been living happily with text files since then \dots
-  \begin{itemize}
-    \item Using paragraph grep from a shell (e.g. \verb@pargrep.pl@)
-  \end{itemize}
-
-\vfill\pause
-
-  \hfill \dots Or have I? 
+  Using ``paragraph grep'' from a shell, I lived happily ever after\dots
+\vfill
+  \hfill \dots or have I? 
 
 \end{frame}
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{1999 - Blog}
+  \frametitle{1999 - I want to start a Blog}
 
-  Before blogs were blogs\dots
+  Those were the days before blogs were blogs\dots
 
   \begin{itemize}
   \item 199?: Phil Greenspun - \verb@photo.net@
-  \item 1997: Patrick Jennings/Synaptic - cycling through China
-  \item \dots I'm inspired: I write \dots another Python script.
+  \item 1997: Pat Jennings/Synaptic - cycling through China
+  \item I'm inspired!  \quad So I write \dots \emph{another Python script}
   \end{itemize}
 
 \vfill\pause
 
-  \verb@adventures@ is born
+  \verb@adventures@ script is born
   \begin{itemize}
-    \item Grows into a monster
-    \item Inputing XML was awful
-    \item So I converted to input in ReStructuredText
-    \item Regenerating static pages is not fun
+    \item It takes its input in fashionable XML (it was truly awful)
+    \item So I converted it to take input in \dots simple text
+    \item And then I discovered ReStructuredText and started hacking with it
+    \item Still, regenerating static pages is not fun, dynamic database-backed
+      web sites are more interesting
   \end{itemize}
 
 \end{frame}
-
-
-
-% 200?
-% ====
-% 
-% - I discover restructured text
-% 
-% FIXME: todo, check the age of docutils, when was it started?
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2004 - The Art of Taking Notes}
+  \frametitle{2002 - The Art of Taking Notes}
 
-  I'm getting a little bit old, losing memory\dots  \pause or maybe \\
+  I'm getting a little bit old, I'm losing memory\dots
+
+\vfill 
+  But I'm a little less stupid now and I just \textbf{KNOW} in advance that I
+  will forget.
 
 \vfill
+  When I start a new task, I \textbf{invariably} start a new text file to take
+  notes on it.
 
-  I'm a little less stupid now and I just \textbf{KNOW} that I will forget. \\
-
-\vfill\pause
-
-  New task: I start a new text file to take notes.
-
+\vfill
   This is great, because:
   \begin{itemize}
     \item I can grep the files
-
-    \item I can more easily interrupt my work
-
-    \item Contains URLs in context, rather than in a global list
-
+    \item I can more easily interrupt my work (there is a memory of the task)
+    \item I can put URLs (bookmarks) in context, in these files, rather than in
+      a global list
   \end{itemize}
 
+\end{frame}
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{2002 - The Art of Taking Notes}
+  \framesubtitle{Wikis Suck}
+
   I would like to share many of these short technical documents when people
-  ask questions \dots
+  ask questions \dots naturally, the idea of using Wikis come to mind.
+
+\vfill
+  But wikis \emph{suck} for jotting down notes\dots
+
+\begin{itemize}
+\item Anything but the most trivial topic title looks horrible:
+
+\begin{verbatim}
+  BrazilTravelNotes
+\end{verbatim}
+
+\item The editor facilities in most of the browsers are inadequate
+  \begin{itemize}
+  \item Who has never lost a file being edited in a textarea?
+  \item I'm a programmer, I want real editing capabilities!
+  \end{itemize}
+\end{itemize}
+
+\vfill\pause
+% * Cool idea: link an emacs instance within Firefox.
+% * Does not identify the meanings within the files either.
+
 
 \end{frame}
+
 
 
 %-------------------------------------------------------------------------------
@@ -356,9 +392,37 @@ Travel notes:
 
 %% \end{verbatim}
 
+\end{frame}
 
-% .. <diagram with files and information stored across them>
-% 
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{Data Across Documents}
+
+
+
+%% TODO: create a slide with an example travel file with some varied data
+
+  (explain how extractors work)
+
+\end{frame}
+
+
+
+
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{Data Across Documents}
+
+  My data is scattered \emph{across} the set of all documents
+
+  \includegraphics[width=1.0\textwidth]{across.pdf}
+
+\end{frame}
+
+
 % What if I could identify and extract the meaningful parts of information from
 % those files and store it appropriately?
 % 
@@ -374,38 +438,6 @@ Travel notes:
 % - Many years in the making, will probably never happen in its ideal form
 
 
-\end{frame}
-
-
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{Wikis Suck}
-
-Why?
-
-\begin{itemize}
-
-\item Anything but the most trivial title looks horrible:
-
-\begin{verbatim}
-  BrazilTravelNotes
-\end{verbatim}
-
-\item The editor facilities in most of the browsers is lame
-  \begin{itemize}
-  \item Who has never lost a file being edited in a browser?
-  \end{itemize}
-
-% * Cool idea: link an emacs instance within Firefox.
-% * Does not identify the meanings within the files either.
-
-\end{itemize}
-
-\end{frame}
-
-
-
-
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
@@ -417,19 +449,6 @@ Why?
   ways.
 
 \end{frame}
-
-
-
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{What Nabu is not\dots}
-
-Not a Wiki
-
-
-
-\end{frame}
-
 
 
 %-------------------------------------------------------------------------------
@@ -446,7 +465,28 @@ Not a Wiki
 \begin{frame}[fragile]
   \frametitle{Design}
 
-\includegraphics[width=1.0\textwidth]{../nabu1.pdf}
+\includegraphics[width=0.9\textwidth]{../nabu1.pdf}
+
+\end{frame}
+
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{Components}
+
+  \begin{itemize}
+  \item Nabu Publisher Client: searches the files on the client side and sends
+    the modified ones to the server
+
+  \item Nabu Server: receives the files, parses them through docutils and runs
+    the configured extractors, thereby storing 
+
+  \item Storage: 
+
+  \item Presentation
+
+  \end{itemize}
 
 \end{frame}
 
@@ -456,15 +496,13 @@ Not a Wiki
 \begin{frame}[fragile]
   \frametitle{Target Audience}
  
- Not for your mom!
-\vfill
- 
-\pause
- Programmers have developed this great ability: to edit text files.
+ It's not for your mom!   \\
+ It is for Programmers have developed the ability to edit text files.
  
  \begin{itemize}
- \item we understand indentation
- \item we know spacing, justification, filling, etc.
+ \item We understand indentation
+ \item We know about spacing, justification, filling, etc.
+ \item We are careful about pesky little details
  \end{itemize}
  
  Leverage it!
@@ -491,6 +529,10 @@ Emacs or vi are always kept running.
  
 \end{frame}
  
+
+
+
+% Have a single slide that describes the :Id: tag in a document
 
 
 
@@ -553,6 +595,16 @@ Emacs or vi are always kept running.
 
 
 
+
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{}
+
+example slide with rendered input document, as a blog
+
+\end{frame}
 
 
 
@@ -670,3 +722,13 @@ allows you to avoid having to write input forms
 % single map with them, or a list of locations, they could be accompanied with a
 % trail, and then each trail be displayed separately
 
+
+
+
+% * borrow someone's mouse for the show
+% * use xannotate during the presentation
+
+
+
+
+TODO: check dates: 1992 for Xmosaic, 2000 for docutils
