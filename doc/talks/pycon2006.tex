@@ -204,7 +204,7 @@
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2000 - I want to start a Blog}
+  \frametitle{2000 - Blog}
 
   Those were the days before blogs were blogs\dots
 
@@ -236,17 +236,20 @@
   I'm getting a little bit old, I'm losing memory\dots
 
 \vfill
-  But I'm a little less stupid now and I just \textbf{KNOW} in advance that I
-  will forget.  When I start a new task, I \textbf{invariably} start a new text
-  file to take notes on it.
+
+  But older becomes smarter and now I just \textbf{know} in advance that I will
+  forget.  When I start a new task, I \textbf{invariably} start a new text file
+  to take notes on it.
 
 \vfill
+
   This is great, because:
   \begin{itemize}
     \item I can grep the files
-    \item I can more easily interrupt my work (there is a memory of the task)
-    \item I can put URLs (bookmarks) in context, in these files, rather than in
-      a global bookmarks file
+    \item I can more easily interrupt my work \\
+      (there is a memory of the task)
+    \item I can put URLs in context, in these files, rather than in a global
+      bookmarks file
   \end{itemize}
 
 \end{frame}
@@ -275,7 +278,7 @@
   \item Who has never lost a file being edited in a TEXTAREA?
   \item I'm a programmer, I want powerful editing!
     I live in Emacs
-  \item I want to be able to save without submitting
+  \item I want to be able to save my files without having to submit
   \end{itemize}
 \end{itemize}
 
@@ -309,18 +312,24 @@
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data}
+  \frametitle{2005 - Travel Files - Mixed Data Example}
 
 One example of these notes files are my travel files:
 \begin{itemize}
-\item They contain a list of things to do for a trip, personal notes,
-  itineraries \\
-  ($\rightarrow$ document)
-\item They contain addresses of people and places to visit \\
-  ($\rightarrow$ contact info)
-\item They contain URLs of related websites ($\rightarrow$ bookmarks)
-\item They contain references to books and articles \\
-  ($\rightarrow$ publications)
+
+\item They contain a list of things to do for a trip, personal notes, 
+  itineraries 
+  (\textbf{document})
+
+\item They contain addresses of people and places to visit
+  (\textbf{contact info})
+
+\item They contain URLs of related websites 
+  (\textbf{bookmarks})
+
+\item They contain references to books and articles 
+  (\textbf{publications})
+
 \end{itemize}
 
 \end{frame}
@@ -328,7 +337,7 @@ One example of these notes files are my travel files:
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data}
+  \frametitle{2005 - Travel Files - Mixed Data Example}
 
 {\footnotesize
 \begin{verbatim}
@@ -356,7 +365,7 @@ Itinerary Proposals
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data}
+  \frametitle{2005 - Travel Files - Mixed Data Example}
 
 {\footnotesize
 \begin{verbatim}
@@ -385,7 +394,7 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data}
+  \frametitle{2005 - Travel Files - Mixed Data Example}
 
 {\footnotesize
 \begin{verbatim}
@@ -431,9 +440,9 @@ Accomodation
 
 \vfill\pause
 
-  You may have heard this idea before: the Semantic Web
+  Related idea: the Semantic Web
   \begin{itemize}
-  \item In an ideal world, HTML authors would identify all relevant parts of
+  \item In an ideal world, web page authors would identify all relevant parts of
     their documents with appropriate markup
 
   \item You would then be able to create e.g. the ``yellow pages'' of the entire
@@ -442,6 +451,8 @@ Accomodation
   \item Search engines are taking a stab at this holy grail
 
   \end{itemize}
+
+\vfill
 
   But I want this \textbf{now}, and for just my personal corpus of files, even
   if it's a restricted version of this idea.  I want a database built from the
@@ -455,17 +466,18 @@ Accomodation
   \frametitle{The Goal}
 
   Build a system that can extract semantically meaningful informations in my set
-  of personal info files and store them in a structured way (in database
-  tables), so I can use this information later and serve in new, interesting
-  ways.
+  of personal info files, using weak heuristics and conventions, and store them
+  in a structured way (in database tables), so I can use this information later
+  and serve it in new, interesting ways.
 
 \vfill
 
   Nabu is a Python library that allows you to do that.
   \begin{itemize}
   \item It is not tied specifically to PIM info
-  \item You can write extractors for anything, you just have to select the
-    docutils structures and conventions that you are going to recognize
+  \item You can write extractors for anything, you just have to establish
+    conventions for the docutils structures that you are going to
+    recognize/extract
   \item On the client it requires only Python to publish files
   \end{itemize}
 
@@ -489,8 +501,8 @@ Accomodation
   \frametitle{Components}
 
   \begin{itemize}
-  \item Nabu Publisher Client: searches the files on the client side and sends
-    the modified ones to the server
+  \item \textbf{Nabu Publisher Client}: searches the files on the client side
+    and sends the modified ones to the server
     \begin{itemize}
     \item It fetches MD5 sums from the server and compares the local files
     \item Files are identifies by an embedded Id, so file locations don't matter
@@ -499,13 +511,13 @@ Accomodation
 \end{verbatim}
     \end{itemize}
 
-  \item Nabu Server: receives the files, parses them through docutils and runs
-    the configured extractors, thereby storing the data
+  \item \textbf{Nabu Server}: receives the files, parses them through docutils
+    and runs the configured extractors, thereby storing the data
 
-  \item Storage: typically, your database server \\
+  \item \textbf{Storage}: typically, your database server \\
     (or files or anything else if you like)
 
-  \item Presentation: that's your own thing \\
+  \item \textbf{Presentation}: that's your own thing \\
      (Nabu does not provide presentation)
 
   \end{itemize}
@@ -520,6 +532,52 @@ Accomodation
 \includegraphics[width=0.9\textwidth]{../nabu1.pdf}
 
 \end{frame}
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{ReStructuredText and docutils}
+
+  \texttt{docutils} is a 2D parser
+  \begin{itemize}
+  \item Its structures are recursive
+  \item You have to establish conventions for recognizing the stuff you want to
+    extract from your text files 
+  \end{itemize}
+  
+
+  \includegraphics[width=0.8\textwidth]{rest2d.png}
+
+\end{frame}
+
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{ReStructuredText and docutils}
+
+  Complete docutils pipeline
+
+\vfill
+
+  \includegraphics[width=1.0\textwidth]{docutils1.pdf}
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{ReStructuredText and docutils}
+
+  Partial docutils pipeline (no output, just to run the extractors)
+
+\vfill
+
+  \includegraphics[width=1.0\textwidth]{docutils2.pdf}
+
+\end{frame}
+
+% ask Goodger to get up
 
 
 %-------------------------------------------------------------------------------
@@ -612,79 +670,14 @@ class AddressStorage(extract.SQLExtractorStorage):
 
 \vfill
 
-  I want to leverage this ability!
-
-\end{frame}
-
-
-
-
-
-% before ?
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{ReStructuredText and docutils}
-
-  \includegraphics[width=0.8\textwidth]{rest2d.png}
-
-\end{frame}
-
-
-
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{ReStructuredText and docutils}
-
-  \includegraphics[width=1.0\textwidth]{docutils1.pdf}
+  Leverage this ability!
 
 \end{frame}
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{ReStructuredText and docutils}
-
-  \includegraphics[width=1.0\textwidth]{docutils2.pdf}
-
-\end{frame}
-
-% ReStructuredText
-% ================
-%
-% .. ask Goodger to get up
-%
-%    "If you see this guy in the corridor, show him some love, give him a hug."
-%
-% - The best text-to-structure conversion tool.
-% - Finds the best compromises (all decisions are documented thoroughly)
-%
-%
-% .. <show some text with recursive boxes in it>
-%
-
-% FIXME: build a graph with the docutils structure, the one with
-% reader/transform/writer, same as in the documentation, with the intention to
-
-% explain that I've had to modify it and to stop the process halfway and that I
-% store this document in pickled format
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{Document Presentation Example}
+  \frametitle{Presentation: Document Example}
 
   \begin{center}
     \includegraphics[width=0.7\textwidth]{page-shot.pdf}
@@ -695,7 +688,7 @@ class AddressStorage(extract.SQLExtractorStorage):
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Events Example}
+  \frametitle{Presentation: Events/Calendar Example}
 
 {\small
 \begin{verbatim}
@@ -732,7 +725,7 @@ sat 2005-12-31
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Events Example}
+  \frametitle{Presentation: Events/Calendar Example}
   \framesubtitle{Calendar View}
 
 \includegraphics[width=1.0\textwidth]{calendar-shot.pdf}
@@ -746,14 +739,16 @@ sat 2005-12-31
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Other Examples}
+  \frametitle{Presentation: Other Examples}
 
   \begin{itemize}
+  \item You can serve your extracted bookmarks from a server using RSS format
+
   \item Billing info: you could define a simple timesheet format in a text file
     and have some kind per-task or per-client billing info page
 
   \item Dynamic website data: you could use Nabu to feed some data for a web
-    site, this allows you to avoid having to write input forms
+    site, this allows you to \textbf{avoid having to write input forms}
 
   \end{itemize}
 
@@ -762,7 +757,7 @@ sat 2005-12-31
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Nabu Contents Browser - Extracted}
+  \frametitle{Debugging: Nabu Contents Browser - Extracted}
 
 \includegraphics[width=1.0\textwidth]{ll-extracted.pdf}
 
@@ -771,7 +766,7 @@ sat 2005-12-31
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Nabu Contents Browser - Upload Info}
+  \frametitle{Debugging: Nabu Contents Browser - Upload Info}
 
 \includegraphics[width=1.0\textwidth]{ll-upload.pdf}
 
@@ -785,20 +780,17 @@ sat 2005-12-31
 \begin{frame}[fragile]
   \frametitle{Problems}
 
-- Creating precise reStructuredText can be fragile from the user's point-of-view
+  \begin{itemize}
+  \item creating precise reStructuredText can be fragile from the user's
+    point-of-view
 
-- you need to make sure that your set of Ids are unique
-  - use UUIDs (78d8a600-abb4-49c0-a0fc-1c315cddbc1a)
+  \item you need to make sure that your set of Ids are unique
+    \begin{itemize}
+    \item use UUIDs (\verb=78d8a600-abb4-49c0-a0fc-1c315cddbc1a=)
+    \end{itemize}
 
-- You end up getting dragged into the docutils project a bit
-
-(EXAMPLE)
-
-% - You have to understand how restructuredtext gets parsed
-%
-%   - You end up getting dragged into the docutils project a bit
-%
-%   --> You can use rst2pseudoxml.py to easily debug and learn input syntaxes
+  \item You end up getting your head around the docutils document structure
+  \end{itemize}
 
 \end{frame}
 
@@ -808,8 +800,8 @@ sat 2005-12-31
   \frametitle{Future Work}
 
   \begin{itemize}
-  \item Stabilize (I need to finish my own presentation layer)
-  \item Support encryption in the publisher client
+  \item Stabilize (I need to write more presentations for my data)
+  \item Support encryption in the publisher client, hidden files
   \item Support per-document options
   \end{itemize}
 
@@ -839,7 +831,6 @@ Nabu homepage:\\
 % Add: MapExtractor that can extract all my links to Google maps and create a
 % single map with them, or a list of locations, they could be accompanied with a
 % trail, and then each trail be displayed separately
-
 
 
 
