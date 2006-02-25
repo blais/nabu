@@ -1,6 +1,6 @@
 all:
-	pdflatex pycon2006.tex && acroread pycon2006.pdf
+	pdflatex pycon2006.tex
 
 clean:
-	rm -f *.log *.nav *.toc *.vrb *.snm *.aux *.bbl *.blg *.out *.pdf
+	rm -f *.log *.nav *.toc *.vrb *.snm *.aux *.bbl *.blg *.out
 

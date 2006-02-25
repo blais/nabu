@@ -27,7 +27,7 @@
 
 \institute{Furius Enterprise}
 
-\date{February 2006}
+\date{PyCon 2006 (February 2006)}
 
 \subject{Nabu Presentation @ PyCon 2006}
 
@@ -168,24 +168,21 @@
 
 
 
-% 
-% ========================================================
-%   Strike Two -- Ideas for the talk from Rachel's place
-% ========================================================
-
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
   \frametitle{Introduction}
 
-  Nabu is\dots
+  Nabu is \emph{not}\dots
   \begin{itemize}
-  \item \dots not a Wiki
-  \item \dots not a blog software
-  \item \dots not a personal information manager
-  \item \dots not a document publishing tool
-  \item \dots not a generic data entry system
+  \item \dots a Wiki
+  \item \dots a blog software
+  \item \dots a personal information manager
+  \item \dots a document publishing tool
+  \item \dots a generic data entry system
+  \item \dots a desktop search system
   \end{itemize}
+  It's a little bit of all these things.
 
 \vfill\pause
   So I'm going to take a long winding road to introduce this project via a set
@@ -199,7 +196,7 @@
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{1992 - Bookmarks}
+  \frametitle{1993 - Bookmarks}
 
   \begin{itemize}
     \item Using Xmosaic
@@ -208,7 +205,8 @@
   \end{itemize}
 
 \pause
-\emph{A script} was born, with typical input like this:
+\emph{A script} was born, with typical input like this in a single \textbf{text
+  file}:
 
 \begin{verbatim}
   Raymond Hettinger's photography
@@ -217,14 +215,18 @@
 \end{verbatim}
 
   \begin{itemize}
-    \item Then came Netscape, \pause then came Mozilla, \pause then came IE \dots
+    \item Then came Netscape, \pause then came Mozilla, \pause then came IE
+      \dots with corresponding converters.
+
     \pause
     \item Eventually came Firefox and we were happy ever after\dots
   \end{itemize}
 
   \hfill \dots or maybe not?
 
-% - In 1992, I was using Xmosaic, the good old days of Linux had not arrived yet
+
+
+% - In 1993, I was using Xmosaic, the good old days of Linux had not arrived yet
 % - Then Netscape came about, introduced some changes, and then Mozilla
 % - I wanted to keep my preciously organized bookmarks from one browser to the next
 % - In those days, bookmarks had more value, we did not have Google to help us out
@@ -235,28 +237,30 @@
 
 \end{frame}
 
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{1992 - Bookmarks - Problems}
 
-  Problems I had with this system:
-  \begin{itemize}
-    \item A tree is inadequate for storing links (Bookmarks belong in many
-      ``groups''), and organizing by hand is an annoyance
+%% %-------------------------------------------------------------------------------
+%% \begin{frame}[fragile]
+%%   \frametitle{1993 - Bookmarks - Problems}
+%% 
+%%   Problems I had with this system:
+%%   \begin{itemize}
+%%     \item A tree is inadequate for storing links (Bookmarks belong in many
+%%       ``groups''), and organizing by hand is an annoyance
+%% 
+%%     \item You might want to share \textit{some} of these bookmarks \\
+%%       (e.g. del.icio.us)
+%% 
+%%     \item You might want to search your bookmarks
+%%   \end{itemize}
+%% 
+%% \vfill\pause
+%%   \emph{Another script} was born\dots
+%%   \begin{itemize}
+%%   \item \texttt{tengis}: a small GUI app/database of bookmarks
+%%   \end{itemize}
+%% 
+%% \end{frame}
 
-    \item You might want to share \textit{some} of these bookmarks \\
-      (e.g. del.icio.us)
-
-    \item You might want to search your bookmarks
-  \end{itemize}
-
-\vfill\pause
-  \emph{Another script} was born\dots
-  \begin{itemize}
-  \item \texttt{tengis}: a small GUI app/database of bookmarks
-  \end{itemize}
-
-\end{frame}
 
 
 %-------------------------------------------------------------------------------
@@ -264,14 +268,15 @@
   \frametitle{1997 - Address Book}
 
   \begin{itemize}
-    \item I was using ``paper'' technology (little booklets)\dots
+    \item I was using ``paper'' technology to store my contact info - little
+      booklets\dots
 
 \vfill\pause
     \item Then using Netscape to store my contacts in LDIF
 
 \vfill\pause
-    \item One day, an \texttt{nroff} user shows me his fabulous ``ascii''
-      technology:
+    \item One day, an \texttt{nroff} user showed me his fabulous ``ascii''
+      technology to store contacts:
 
 {\small
 \begin{verbatim}
@@ -283,7 +288,7 @@
 
 \vfill\pause
 
-  Using ``paragraph grep'' from a shell, I lived happily ever after\dots
+  Using ``paragraph-grep'' from a shell, I lived happily ever after\dots
 \vfill
   \hfill \dots or have I? 
 
@@ -292,25 +297,26 @@
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{1999 - I want to start a Blog}
+  \frametitle{2000 - I want to start a Blog}
 
   Those were the days before blogs were blogs\dots
 
   \begin{itemize}
-  \item 199?: Phil Greenspun - \verb@photo.net@
   \item 1997: Pat Jennings/Synaptic - cycling through China
+  \item 1999: Phil Greenspun - \verb@photo.net@
   \item I'm inspired!  \quad So I write \dots \emph{another Python script}
   \end{itemize}
 
 \vfill\pause
 
-  \verb@adventures@ script is born
+  Yet another script is born:
   \begin{itemize}
     \item It takes its input in fashionable XML (it was truly awful)
-    \item So I converted it to take input in \dots simple text
+    \item So later I converted it to take input from \dots \emph{simple text
+      files}
     \item And then I discovered ReStructuredText and started hacking with it
-    \item Still, regenerating static pages is not fun, dynamic database-backed
-      web sites are more interesting
+%%     \item Regenerating static pages is not fun, dynamic database-backed web
+%%       sites are more interesting
   \end{itemize}
 
 \end{frame}
@@ -320,15 +326,12 @@
 \begin{frame}[fragile]
   \frametitle{2002 - The Art of Taking Notes}
 
-  I'm getting a little bit old, I'm losing memory\dots
+  I'm getting a little bit old, I'm losing memory\dots 
 
 \vfill 
   But I'm a little less stupid now and I just \textbf{KNOW} in advance that I
-  will forget.
-
-\vfill
-  When I start a new task, I \textbf{invariably} start a new text file to take
-  notes on it.
+  will forget.  When I start a new task, I \textbf{invariably} start a new text
+  file to take notes on it.
 
 \vfill
   This is great, because:
@@ -336,7 +339,7 @@
     \item I can grep the files
     \item I can more easily interrupt my work (there is a memory of the task)
     \item I can put URLs (bookmarks) in context, in these files, rather than in
-      a global list
+      a global bookmarks file
   \end{itemize}
 
 \end{frame}
@@ -347,8 +350,8 @@
   \frametitle{2002 - The Art of Taking Notes}
   \framesubtitle{Wikis Suck}
 
-  I would like to share many of these short technical documents when people
-  ask questions \dots naturally, the idea of using Wikis come to mind.
+  I would like to share many of these short technical documents with other
+  people \dots naturally, the idea of using Wikis come to mind.
 
 \vfill
   But wikis \emph{suck} for jotting down notes\dots
@@ -360,10 +363,12 @@
   BrazilTravelNotes
 \end{verbatim}
 
-\item The editor facilities in most of the browsers are inadequate
+\item The editor capabilities of browsers are inadequate
   \begin{itemize}
-  \item Who has never lost a file being edited in a textarea?
-  \item I'm a programmer, I want real editing capabilities!
+  \item Who has never lost a file being edited in a TEXTAREA?
+  \item I'm a programmer, I want powerful editing!  
+    I live in Emacs
+  \item I want to be able to save without submitting
   \end{itemize}
 \end{itemize}
 
@@ -371,8 +376,27 @@
 % * Cool idea: link an emacs instance within Firefox.
 % * Does not identify the meanings within the files either.
 
-
 \end{frame}
+
+
+%% %-------------------------------------------------------------------------------
+%% \begin{frame}[fragile]
+%%   \frametitle{Real Editing}
+%% 
+%% I live in Emacs.
+%% 
+%% When I first log in on my machine, I invariably do:
+%% \begin{enumerate}
+%% \item start a shell
+%% \item start emacs
+%% \item start a web browser
+%% \end{enumerate}
+%% 
+%% Most of you are probably doing the same.
+%% 
+%% Emacs or vi are always kept running.
+%%  
+%% \end{frame}
 
 
 
@@ -380,17 +404,102 @@
 \begin{frame}[fragile]
   \frametitle{2005 - Travel Files - Mixed Data}
 
-Travel notes:
+One example of these notes files are my travel files:
 \begin{itemize}
-\item Things to do, personal notes, itineraries ($\rightarrow$ simple text)
-\item Addresses of people to visit ($\rightarrow$ contact info)
-\item URLs of related websites ($\rightarrow$ bookmarks)
-\item References to books and articles ($\rightarrow$ publications)
+\item They contain a list of things to do for a trip, personal notes,
+  itineraries \\
+  ($\rightarrow$ document)
+\item They contain addresses of people and places to visit \\
+  ($\rightarrow$ contact info)
+\item They contain URLs of related websites ($\rightarrow$ bookmarks)
+\item They contain references to books and articles \\ 
+  ($\rightarrow$ publications)
 \end{itemize}
 
-%% \begin{verbatim}
+\end{frame}
 
-%% \end{verbatim}
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{2005 - Travel Files - Mixed Data}
+
+{\footnotesize
+\begin{verbatim}
+====================
+   Trip to Brazil
+====================
+
+:Id: brazil-trip-notes
+:Category: Travel
+:Disclosure: public
+
+Itinerary Proposals
+===================
+
+  Jan 25
+    * Fly to Salvador da Bahia, Brazil
+
+  Jan 26
+    * Drink Caipirinhas
+\end{verbatim}
+}
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{2005 - Travel Files - Mixed Data}
+
+{\footnotesize
+\begin{verbatim}
+Visa
+====
+
+* :n: Consulat général du Brésil À Montréal
+  :a: 2000, rue Mansfield, bureau 1700, Montréal (QC) H3A 3A5
+  :f: (514) 499-3963
+  :e: vistos@consbrasmontreal.org
+  :w: http://www.consbrasmontreal.org/
+
+Vaccinations
+============
+http://www.mdtravelhealth.com/destinations/samerica/brazil.html
+
+  Routine immunizations
+    All travelers should be up-to-date on tetanus-diphtheria,
+    measles-mumps-rubella, polio, and varicella immunizations
+
+\end{verbatim}
+}
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{2005 - Travel Files - Mixed Data}
+
+{\footnotesize
+\begin{verbatim}
+
+Accomodation
+============
+
+* :n: ÂMBAR POUSADA
+  :a: Rua Afonso Celso, 485, Barra. Salvador - Bahia - Brasil
+  :p: 55-71-3264-6956 / 3267-1507
+  :e: ambarpousada@ambarpousada.com.br
+  :w: http://www.ambarpousada.com.br/
+
+  Para chegar
+ 
+  Do aeroporto, tem ônibus executivo "Praça da Sé" via Farol da Barra durante o
+  dia, tem que saltar no Barra Center, na praia. Se você chegar à noite ou se
+  preferir o taxi, peçam por e-mail e mandaremos, por sua conta, um dos nossos
+  taxistas preferidos!
+\end{verbatim}
+}
 
 \end{frame}
 
@@ -399,44 +508,38 @@ Travel notes:
 \begin{frame}[fragile]
   \frametitle{Data Across Documents}
 
+  My data is scattered \emph{across} the set of all my documents
 
-
-%% TODO: create a slide with an example travel file with some varied data
-
-  (explain how extractors work)
+  \includegraphics[width=1.0\textwidth]{across3.pdf}
 
 \end{frame}
-
-
-
-
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
   \frametitle{Data Across Documents}
 
-  My data is scattered \emph{across} the set of all documents
+  What if I could \emph{identify} and \emph{extract} the meaningful parts from
+  those files and store them appropriately?  What could I build with this?
 
-  \includegraphics[width=1.0\textwidth]{across.pdf}
+\vfill\pause
+
+  You may have heard this idea before: the Semantic Web
+  \begin{itemize}
+  \item In an ideal world, HTML authors would identify all relevant parts of
+    their documents with appropriate markup
+
+  \item You would then be able to create e.g. the ``yellow pages'' of the entire
+    internet
+
+  \item Search engines are taking a stab at this holy grail
+
+  \end{itemize}
+
+  But I want this \textbf{now}, and for just my personal corpus of files, even
+  if it's a restricted version of this idea.
 
 \end{frame}
-
-
-% What if I could identify and extract the meaningful parts of information from
-% those files and store it appropriately?
-% 
-% What could I build with this?
-% 
-% - You may have heard this idea before: the Semantic Web
-% 
-%   It would allow searching the "address book" of the entire internet!
-%
-% - If anyone has a stab at this today, it's google
-% - I think it will get better, but it will never be perfect
-% 
-% - Many years in the making, will probably never happen in its ideal form
-
 
 
 %-------------------------------------------------------------------------------
@@ -448,17 +551,57 @@ Travel notes:
   tables), so I can use this information later and serve in new, interesting
   ways.
 
+\vfill
+
+  Nabu is a Python library that allows you to do that.
+  \begin{itemize}
+  \item It is not tied specifically to PIM info
+  \item You can write extractors for anything, you just have to select the
+    docutils structures and conventions that you are going to recognize
+  \end{itemize}
+
+%   If I had served you this definition in the first place, I'm not sure you
+%   would be sitting here.
+
 \end{frame}
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Overview}
+  \frametitle{Components / Overview}
 
 \includegraphics[width=1.0\textwidth]{../nabu2.pdf}
 
 \end{frame}
 
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{Components}
+
+  \begin{itemize}
+  \item Nabu Publisher Client: searches the files on the client side and sends
+    the modified ones to the server
+    \begin{itemize}
+    \item It fetches MD5 sums from the server and compares the local files
+    \item Files are identifies by an embedded Id, so file locations don't matter
+\begin{verbatim}
+   :Id: 8844db51-36ee-4e2a-8255-84e804f5cbe2
+\end{verbatim}
+    \end{itemize}
+
+  \item Nabu Server: receives the files, parses them through docutils and runs
+    the configured extractors, thereby storing the data
+
+  \item Storage: typically, your database server \\
+    (or files or anything else if you like)
+
+  \item Presentation: that's your own thing \\
+     (Nabu does not provide presentation)
+
+  \end{itemize}
+
+\end{frame}
 
 
 %-------------------------------------------------------------------------------
@@ -473,61 +616,37 @@ Travel notes:
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Components}
+  \frametitle{Extractors}
 
-  \begin{itemize}
-  \item Nabu Publisher Client: searches the files on the client side and sends
-    the modified ones to the server
-
-  \item Nabu Server: receives the files, parses them through docutils and runs
-    the configured extractors, thereby storing 
-
-  \item Storage: 
-
-  \item Presentation
-
-  \end{itemize}
 
 \end{frame}
-
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
   \frametitle{Target Audience}
  
- It's not for your mom!   \\
- It is for Programmers have developed the ability to edit text files.
+{\large\begin{center}
+\textbf{It's not for your mom!}
+\end{center}}
+
+  It is intended only for people who have developed the ability to edit text
+  files carefully (typically programmers, you guys).
  
  \begin{itemize}
  \item We understand indentation
  \item We know about spacing, justification, filling, etc.
  \item We are careful about pesky little details
+ \item This is what makes creating ReST files possible
  \end{itemize}
  
- Leverage it!
+\vfill
+
+  I want to leverage this ability!
  
 \end{frame}
 
  
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{Real Editing}
-
-I live in Emacs.
-
-When I first log in on my machine, I invariably do:
-\begin{enumerate}
-\item start a shell
-\item start emacs
-\item start a web browser
-\end{enumerate}
-
-Most of you are probably doing the same.
-
-Emacs or vi are always kept running.
- 
-\end{frame}
  
 
 
@@ -600,9 +719,11 @@ Emacs or vi are always kept running.
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{}
+  \frametitle{Document Presentation Example}
 
-example slide with rendered input document, as a blog
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{page-shot.pdf}
+  \end{center}
 
 \end{frame}
 
@@ -617,6 +738,7 @@ example slide with rendered input document, as a blog
 \begin{frame}[fragile]
   \frametitle{Events Example}
 
+{\small
 \begin{verbatim}
 sat 2005-12-31 19h30
   - NYE Evening chez Stuart
@@ -644,13 +766,15 @@ sat 2005-12-31
   - Vote par anticipation
 
 \end{verbatim}
+}
 
 \end{frame}
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Calendar View}
+  \frametitle{Events Example}
+  \framesubtitle{Calendar View}
 
 \includegraphics[width=1.0\textwidth]{calendar-shot.pdf}
 
@@ -688,6 +812,9 @@ sat 2005-12-31
 
 - Creating precise reStructuredText can be fragile from the user's point-of-view
 
+- you need to make sure that your set of Ids is unique
+  - use UUIDs (78d8a600-abb4-49c0-a0fc-1c315cddbc1a)
+
 (EXAMPLE)
 
 \end{frame}
@@ -724,11 +851,17 @@ allows you to avoid having to write input forms
 
 
 
+% You need to talk about sharing a corpus of documents between users
+
+% mention something about a Subversion hook
+
+
+
 
 % * borrow someone's mouse for the show
 % * use xannotate during the presentation
 
+% * add a slide about Python training
 
 
-
-TODO: check dates: 1992 for Xmosaic, 2000 for docutils
+%%  TODO:  (explain how extractors work)
