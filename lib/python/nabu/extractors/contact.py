@@ -115,14 +115,17 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
         tlist = []
         tcount = {}
         cname = None
+        if fields is None:
+            return
+        
         for name, value in fields:
             names = name.lower().split()
             typ = _translations.get(names[0], names[0])
 
             if typ == 'name':
-                # Only one name allowed in a single entry.
-                assert cname is None
-                cname = value
+                # Only grab the first name in a single entry
+                if cname is None:
+                    cname = value 
                 continue
             
             subtyp = ' '.join(names[1:])

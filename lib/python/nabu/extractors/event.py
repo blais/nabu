@@ -208,7 +208,7 @@ manydays = '((?:\d\d?|\s*,\s*)*)'
 
 telist = (('f', '(?:(\d\d\d\d)-)?(\d\d?)[-/]%s$' % manydays),
           ('m', '%s$' % alldays),
-          ('n', '[a-zA-Z]+ %s$' % manydays),
+          ('n', '([a-zA-Z]+)\s+%s$' % manydays),
           ('y', '%s\s+(\d+)\s+%s$' % (all3, all3)),
           ('z', '%s\s+%s\s+(\d+)$' % (all3, all3)),
           )
@@ -259,7 +259,7 @@ def parse_dtspec( s ):
 
     dates = []
     if case == 'f':
-        #print case, mo.groups()
+        print >> sys.stderr, '===', case, mo.groups()
 
         # month
         month = int(mo.group(2))
@@ -280,18 +280,18 @@ def parse_dtspec( s ):
 
         dates = [datetime.date(year, month, x) for x in days]
 
-    elif case == 'd':
-        #print case, mo.groups()
+    elif case == 'm':
+        print >> sys.stderr, '===', case, mo.groups()
 
-        # Our match is necessarity a day.
+        # Our match is necessarily a day.
         wkday = wkdays[mo.group(1)]
         date = today + datetime.timedelta(
             days=(wkday + 7 - today.weekday()) % 7)
 
         dates = [date]
 
-    elif case == 'm':
-        #print case, mo.groups()
+    elif case == 'n':
+        print >> sys.stderr, '===', case, mo.groups()
 
         # Our first match is either a day or month
         dm, days = mo.groups()
@@ -329,7 +329,7 @@ def parse_dtspec( s ):
             dates = [datetime.date(year, month, x) for x in days]
 
     elif case in ('y', 'z'):
-        #print case, mo.groups()
+        print >> sys.stderr, '===', case, mo.groups()
 
         if case == 'y':
             th1, day, th2 = mo.groups()
@@ -370,39 +370,39 @@ def test():
     Test all date/time spec input formats.
     """
 
-    date = datetime.date(2006, 01, 4)
+    date = datetime.date(2006, 12, 4)
     oneday = datetime.timedelta(days=1)
     t1 = datetime.time(20)
     t2 = datetime.time(21, 12)
-    tests = (('2006-01-04', [(date, None, None)]),
-             ('01-4', [(date, None, None)]),
-             ('01/4', [(date, None, None)]),
-             ('jan 4', [(date, None, None)]),
-             ('wed', [(date, None, None)]),
-             ('wed 4', [(date, None, None)]),
-             ('wed 25', [(datetime.date(2006, 01, 25), None, None)]),
-             ('wed jan 4', [(date, None, None)]),
-             ('jan 4 wed', [(date, None, None)]),
-             ('2006-01-4 20h00 ', [(date, t1, None)]),
-             ('2006-01-4 20h00-21h12', [(date, t1, t2)]),
-             ('2006-01-4 20h', [(date, t1, None)]),
+    tests = (('2006-12-04', [(date, None, None)]),
+             ('12-4', [(date, None, None)]),
+             ('12/4', [(date, None, None)]),
+             ('dec 4', [(date, None, None)]),
+             ('wed', [(datetime.date(2006, 3, 1), None, None)]),
+             ('wed 4', [(datetime.date(2006, 10, 4), None, None)]),
+             ('wed 25', [(datetime.date(2006, 10, 25), None, None)]),
+             ('wed dec 27', [(datetime.date(2006, 12, 27), None, None)]),
+             ('dec 27 wed', [(datetime.date(2006, 12, 27), None, None)]),
+             ('2006-12-4 20h00 ', [(date, t1, None)]),
+             ('2006-12-4 20h00-21h12', [(date, t1, t2)]),
+             ('2006-12-4 20h', [(date, t1, None)]),
 
              # multiple days
-             ('2006-01-4, 5 ', [(date, None, None),
+             ('2006-12-4, 5 ', [(date, None, None),
                                  (date + oneday, None, None)]),
-             ('jan 4, 5 ', [(date, None, None),
+             ('dec 4, 5 ', [(date, None, None),
                              (date + oneday, None, None)]),
-             ('01-4, 5 ', [(date, None, None),
+             ('12-4, 5 ', [(date, None, None),
                             (date + oneday, None, None)]),
-             ('01/4, 5 ', [(date, None, None),
+             ('12/4, 5 ', [(date, None, None),
                             (date + oneday, None, None)]),
 
-             ('2006-01-4, 5, 6 ', [(date, None, None),
+             ('2006-12-4, 5, 6 ', [(date, None, None),
                                      (date + oneday, None, None),
                                      (date + oneday + oneday, None, None)]),
 
              # multiple days and times
-             ('2006-01-4, 5 21h12', [(date, t2, None),
+             ('2006-12-4, 5 21h12', [(date, t2, None),
                                       (date + oneday, t2, None)]),
              )
 
@@ -410,14 +410,17 @@ def test():
         print
         print dt[0]
         res = parse_dtspec(dt[0])
-        print 'a', res
-        print 'b', dt[1]
+        print 'expected', dt[1]
+        print 'gotten  ', res
         assert res == dt[1]
 
 def test2():
     print parse_dtspec('2006-01-17, 18, 19, 20 12h00')
 
+def test3():
+    print parse_dtspec('tue')
+
 
 if __name__ == '__main__':
-    test2()
+    test()
 
