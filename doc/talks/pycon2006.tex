@@ -20,14 +20,15 @@
 \usepackage{times}
 \usepackage[T1]{fontenc}
 
-\title{Nabu: A Data Publishing System Using ReST}
-\subtitle{Python Training Presentation Slides}
+\title{What is Nabu?}
+\subtitle{A Data Publishing System Using ReST}
 
 \author{Martin Blais}
 
 \institute{Furius Enterprise}
 
-\date{PyCon 2006 (February 2006)}
+\date{PyCon 2006 \\
+{\small (Dallas, Texas, 23-26 february 2006)}}
 
 \subject{Nabu Presentation @ PyCon 2006}
 
@@ -44,10 +45,6 @@
   \end{frame}
 }
 
-
-% If you wish to uncover everything in a step-wise fashion, uncomment
-% the following command:
-%\beamerdefaultoverlayspecification{<+->}
 
 \begin{document}
 
@@ -85,7 +82,7 @@
   Nabu is \emph{not}\dots
   \begin{itemize}
   \item \dots a Wiki
-  \item \dots a blog software
+  \item \dots blogging software
   \item \dots a personal information manager
   \item \dots a document publishing tool
   \item \dots a generic data entry system
@@ -93,7 +90,7 @@
   \end{itemize}
   It's a little bit of all these things.
 
-\vfill\pause
+\vfill
   So I'm going to take a long winding road to introduce this project via a set
   of examples using personal information management.
 
@@ -113,7 +110,6 @@
        (we did not have Google)
   \end{itemize}
 
-\pause
 \emph{A script} was born, with typical input like this in a single \textbf{text
   file}:
 
@@ -124,10 +120,9 @@
 \end{verbatim}
 
   \begin{itemize}
-    \item Then came Netscape, \pause then came Mozilla, \pause then came IE
+    \item Then came Netscape, then came Mozilla, then came IE
       \dots with corresponding converters.
 
-    \pause
     \item Eventually came Firefox and we were happy ever after\dots
   \end{itemize}
 
@@ -161,7 +156,7 @@
 %%     \item You might want to search your bookmarks
 %%   \end{itemize}
 %%
-%% \vfill\pause
+%% \vfill
 %%   \emph{Another script} was born\dots
 %%   \begin{itemize}
 %%   \item \texttt{tengis}: a small GUI app/database of bookmarks
@@ -178,12 +173,12 @@
     \item I was using ``paper'' technology to store my contact info - little
       booklets\dots
 
-\vfill\pause
-    \item Then using Netscape to store my contacts in LDIF
+\vfill
+    \item Then I used Netscape to store my contacts in LDIF
 
-\vfill\pause
-    \item One day, an \texttt{nroff} user showed me his fabulous ``ascii''
-      technology to store contacts:
+\vfill
+    \item One day, an old \texttt{nroff} user showed me this fabulous ``ascii''
+      technology to store his contacts:
 
 {\small
 \begin{verbatim}
@@ -191,12 +186,17 @@
       a: 3714 St-Denis
       p: +1.514.849.5719
 \end{verbatim}}
+  (He was a \verb=vi= user)
+
   \end{itemize}
 
-\vfill\pause
-
-  Using ``paragraph-grep'' from a shell, I lived happily ever after\dots
 \vfill
+
+  Using this and ``paragraph-grep'' from a shell, I lived happily ever
+ after\dots
+
+\vfill
+
   \hfill \dots or have I?
 
 \end{frame}
@@ -206,24 +206,27 @@
 \begin{frame}[fragile]
   \frametitle{2000 - Blog}
 
-  Those were the days before blogs were blogs\dots
+  Those were the days before blogs were called blogs\dots
 
   \begin{itemize}
-  \item 1997: Pat Jennings/Synaptic - cycling through China
-  \item 1999: Phil Greenspun - \verb@photo.net@
-  \item I'm inspired!  \quad So I write \dots \emph{another Python script}
+  \item Pat Jennings/Synaptic - cycling through China
+  \item Phil Greenspun - \verb@photo.net@
+  \item I'm inspired!  \quad So I write \dots 
   \end{itemize}
 
 \vfill\pause
 
-  Yet another script is born:
+  \dots \emph{another script}
   \begin{itemize}
     \item It takes its input in fashionable XML (it was truly awful)
     \item So later I converted it to take input from \dots \emph{simple text
       files}
-    \item And then I discovered ReStructuredText and started hacking with it
-%%     \item Regenerating static pages is not fun, dynamic database-backed web
-%%       sites are more interesting
+
+    \item Eventually I discovered ReStructuredText and converted my system to
+          use it
+
+%% Regenerating static pages is not fun, dynamic database-backed web
+%% sites are more interesting
   \end{itemize}
 
 \end{frame}
@@ -233,13 +236,13 @@
 \begin{frame}[fragile]
   \frametitle{2002 - The Art of Taking Notes}
 
-  I'm getting a little bit old, I'm losing memory\dots
+  I'm getting a little bit old now, I'm losing memory\dots
 
 \vfill
 
-  But older becomes smarter and now I just \textbf{know} in advance that I will
-  forget.  When I start a new task, I \textbf{invariably} start a new text file
-  to take notes on it.
+  But the older become smarter and now I just \textbf{know} in advance that I
+ will forget.  When I start a new task, I \textbf{invariably} start a new text
+ file to take notes on it.
 
 \vfill
 
@@ -312,17 +315,18 @@
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data Example}
+  \frametitle{Mixed Data Example: Travel Files}
 
-One example of these notes files are my travel files:
+  One example of these notes files are my travel files, they contains many
+  different types of things:
 \begin{itemize}
 
 \item They contain a list of things to do for a trip, personal notes, 
   itineraries 
-  (\textbf{document})
+  (\textbf{documents})
 
 \item They contain addresses of people and places to visit
-  (\textbf{contact info})
+  (\textbf{contact infos})
 
 \item They contain URLs of related websites 
   (\textbf{bookmarks})
@@ -337,7 +341,7 @@ One example of these notes files are my travel files:
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data Example}
+  \frametitle{Mixed Data Example: Travel Files}
 
 {\footnotesize
 \begin{verbatim}
@@ -365,7 +369,7 @@ Itinerary Proposals
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data Example}
+  \frametitle{Mixed Data Example: Travel Files}
 
 {\footnotesize
 \begin{verbatim}
@@ -392,32 +396,32 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
 \end{frame}
 
 
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{2005 - Travel Files - Mixed Data Example}
-
-{\footnotesize
-\begin{verbatim}
-
-Accomodation
-============
-
-* :n: ÂMBAR POUSADA
-  :a: Rua Afonso Celso, 485, Barra. Salvador - Bahia - Brasil
-  :p: 55-71-3264-6956 / 3267-1507
-  :e: ambarpousada@ambarpousada.com.br
-  :w: http://www.ambarpousada.com.br/
-
-  Para chegar
-
-  Do aeroporto, tem ônibus executivo "Praça da Sé" via Farol da Barra durante o
-  dia, tem que saltar no Barra Center, na praia. Se você chegar à noite ou se
-  preferir o taxi, peçam por e-mail e mandaremos, por sua conta, um dos nossos
-  taxistas preferidos!
-\end{verbatim}
-}
-
-\end{frame}
+%% %-------------------------------------------------------------------------------
+%% \begin{frame}[fragile]
+%%   \frametitle{Mixed Data Example: Travel Files}
+%% 
+%% {\footnotesize
+%% \begin{verbatim}
+%% 
+%% Accomodation
+%% ============
+%% 
+%% * :n: ÂMBAR POUSADA
+%%   :a: Rua Afonso Celso, 485, Barra. Salvador - Bahia - Brasil
+%%   :p: 55-71-3264-6956 / 3267-1507
+%%   :e: ambarpousada@ambarpousada.com.br
+%%   :w: http://www.ambarpousada.com.br/
+%% 
+%%   Para chegar
+%% 
+%%   Do aeroporto, tem ônibus executivo "Praça da Sé" via Farol da Barra durante o
+%%   dia, tem que saltar no Barra Center, na praia. Se você chegar à noite ou se
+%%   preferir o taxi, peçam por e-mail e mandaremos, por sua conta, um dos nossos
+%%   taxistas preferidos!
+%% \end{verbatim}
+%% }
+%% 
+%% \end{frame}
 
 
 %-------------------------------------------------------------------------------
@@ -445,10 +449,10 @@ Accomodation
   \item In an ideal world, web page authors would identify all relevant parts of
     their documents with appropriate markup
 
-  \item You would then be able to create e.g. the ``yellow pages'' of the entire
-    internet
+  \item You would then be able to collect and use this data, e.g. create an
+        ``address book'' of the internet
 
-  \item Search engines are taking a stab at this holy grail
+  \item I think that search engines are taking a stab at this holy grail
 
   \end{itemize}
 
@@ -505,19 +509,27 @@ Accomodation
     and sends the modified ones to the server
     \begin{itemize}
     \item It fetches MD5 sums from the server and compares the local files
-    \item Files are identifies by an embedded Id, so file locations don't matter
+    \item Files are identified by an embedded Id, so file locations don't matter
 \begin{verbatim}
    :Id: 8844db51-36ee-4e2a-8255-84e804f5cbe2
 \end{verbatim}
     \end{itemize}
 
+\pause
   \item \textbf{Nabu Server}: receives the files, parses them through docutils
     and runs the configured extractors, thereby storing the data
+    \begin{itemize}
+    \item All extracted data is tagged with the unique id for the file
+    \item When a file is uploaded, old data from that file is removed and new
+      data replaces it
+    \end{itemize}
 
+\pause
   \item \textbf{Storage}: typically, your database server \\
     (or files or anything else if you like)
 
-  \item \textbf{Presentation}: that's your own thing \\
+\pause
+  \item \textbf{Presentation}: your own favourite thing \\
      (Nabu does not provide presentation)
 
   \end{itemize}
@@ -536,27 +548,9 @@ Accomodation
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{ReStructuredText and docutils}
+  \frametitle{Integration with docutils}
 
-  \texttt{docutils} is a 2D parser
-  \begin{itemize}
-  \item Its structures are recursive
-  \item You have to establish conventions for recognizing the stuff you want to
-    extract from your text files 
-  \end{itemize}
-  
-
-  \includegraphics[width=0.8\textwidth]{rest2d.png}
-
-\end{frame}
-
-
-
-%-------------------------------------------------------------------------------
-\begin{frame}[fragile]
-  \frametitle{ReStructuredText and docutils}
-
-  Complete docutils pipeline
+  Here is the complete docutils pipeline:
 
 \vfill
 
@@ -567,9 +561,10 @@ Accomodation
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{ReStructuredText and docutils}
+  \frametitle{Integration with docutils}
 
-  Partial docutils pipeline (no output, just to run the extractors)
+  Here is the modified, partial docutils pipeline (no output, just process in
+  order to run the extractors):
 
 \vfill
 
@@ -582,6 +577,31 @@ Accomodation
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
+  \frametitle{Extractors: Visit docutils document tree}
+
+  \texttt{docutils} is a ``2D parser''
+  \begin{itemize}
+  \item Its structures are recursive boxes of stuff
+  \item For your extractors you have to establish conventions for recognizing
+    the stuff you want to extract from your text files
+  \end{itemize}
+
+\vfill
+
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{rest2d.png}
+
+\vfill e.g. has name and (has email or has address)
+
+\end{center}
+
+
+\end{frame}
+
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
   \frametitle{Extractors}
 
   You need to write extractors for the stuff that you are interested in, for
@@ -589,8 +609,8 @@ Accomodation
 
 {\scriptsize
 \begin{verbatim}
-  * :name: Bill Gates
-    :email: billg@microsoft.com
+     * :name: Bill Gates
+       :email: billg@microsoft.com
 \end{verbatim}
 }
 
@@ -641,7 +661,7 @@ class AddressVisitor(...):
 class AddressStorage(extract.SQLExtractorStorage):
 
     def store( self, unid, name, tfields ):
-    ... # store the stuff in a database
+        ... # store the stuff in a database
 
 \end{verbatim}
 %    default_priority = 900
@@ -658,8 +678,8 @@ class AddressStorage(extract.SQLExtractorStorage):
 \textbf{It's not for your mom!}
 \end{center}}
 
-  It is intended only for people who have developed the ability to edit text
-  files carefully (typically programmers, you guys).
+  Nabu is intended only for use by people who have developed the \emph{ability
+    to edit text files carefully} (typically programmers, i.e. you guys).
 
  \begin{itemize}
  \item We understand indentation
@@ -670,7 +690,9 @@ class AddressStorage(extract.SQLExtractorStorage):
 
 \vfill
 
+\begin{center}
   Leverage this ability!
+\end{center}
 
 \end{frame}
 
@@ -680,7 +702,7 @@ class AddressStorage(extract.SQLExtractorStorage):
   \frametitle{Presentation: Document Example}
 
   \begin{center}
-    \includegraphics[width=0.7\textwidth]{page-shot.pdf}
+    \includegraphics[width=0.9\textwidth]{page-shot.pdf}
   \end{center}
 
 \end{frame}
@@ -742,10 +764,17 @@ sat 2005-12-31
   \frametitle{Presentation: Other Examples}
 
   \begin{itemize}
-  \item You can serve your extracted bookmarks from a server using RSS format
+  \item Bookmarks: You can serve your extracted bookmarks from a server using
+    RSS format
 
   \item Billing info: you could define a simple timesheet format in a text file
-    and have some kind per-task or per-client billing info page
+    and have some kind per-task or per-client billing info page that is always
+    up-to-date
+
+  \item Filter all extracted links to Google Maps and generate a map of all of
+    the locations with links to the original documents
+
+  \item \dots (insert your own here) \dots
 
   \item Dynamic website data: you could use Nabu to feed some data for a web
     site, this allows you to \textbf{avoid having to write input forms}
@@ -757,7 +786,18 @@ sat 2005-12-31
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Debugging: Nabu Contents Browser - Extracted}
+  \frametitle{Debugging: Nabu Contents Browser}
+  \framesubtitle{View Uploaded File Details}
+
+\includegraphics[width=1.0\textwidth]{ll-upload.pdf}
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+  \frametitle{Debugging: Nabu Contents Browser}
+  \framesubtitle{View Extracted Info}
 
 \includegraphics[width=1.0\textwidth]{ll-extracted.pdf}
 
@@ -766,13 +806,25 @@ sat 2005-12-31
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Debugging: Nabu Contents Browser - Upload Info}
+  \frametitle{Multiple Users}
 
-\includegraphics[width=1.0\textwidth]{ll-upload.pdf}
+  There are two approches:
+
+  \begin{enumerate}
+  \item Multiple users share a single body of files
+    \begin{itemize}
+    \item You could update to Nabu on a \textbf{Subversion hook} when files are
+      committed
+    \end{itemize}
+
+  \item Each user has a distinct body of files
+    \begin{itemize}
+    \item The Nabu server supports disjoint sets of ids per-user
+    \end{itemize}
+
+  \end{enumerate}
 
 \end{frame}
-
-
 
 
 
@@ -781,15 +833,23 @@ sat 2005-12-31
   \frametitle{Problems}
 
   \begin{itemize}
-  \item creating precise reStructuredText can be fragile from the user's
+  \item Creating precise reStructuredText can be fragile from the user's
     point-of-view
 
-  \item you need to make sure that your set of Ids are unique
     \begin{itemize}
-    \item use UUIDs (\verb=78d8a600-abb4-49c0-a0fc-1c315cddbc1a=)
+    \item You end up having to wrap your head around the docutils document
+      structure and knowing ReST really well in order to generate what you need
+      (but that is ok)
     \end{itemize}
 
-  \item You end up getting your head around the docutils document structure
+\vfill
+
+  \item You need to make sure that your set of ids are unique
+    \begin{itemize}
+    \item I like to use UUIDs like this:
+       \verb=  78d8a600-abb4-49c0-a0fc-1c315cddbc1a  =
+    \end{itemize}
+
   \end{itemize}
 
 \end{frame}
@@ -800,9 +860,16 @@ sat 2005-12-31
   \frametitle{Future Work}
 
   \begin{itemize}
-  \item Stabilize (I need to write more presentations for my data)
+
+  \item Stabilize more
+    \begin{itemize}
+    \item I need to write more presentations for my data
+    \end{itemize}
+  
   \item Support encryption in the publisher client, hidden files
+
   \item Support per-document options
+
   \end{itemize}
 
 \end{frame}
@@ -812,12 +879,23 @@ sat 2005-12-31
 \begin{frame}[fragile]
   \frametitle{Questions}
 
-{\LARGE
   \begin{center}
-Nabu homepage:\\
+
+{\LARGE
+Nabu homepage: \\
 \verb=http://furius.ca/nabu/=
-  \end{center}
 }
+
+\vfill
+
+Slides will be posted there. \\
+I will be around during the sprints.
+
+\vfill
+
+{\LARGE Questions?}
+
+  \end{center}
 
 \end{frame}
 
@@ -826,29 +904,6 @@ Nabu homepage:\\
 \end{document}
 
 
-
-
-% Add: MapExtractor that can extract all my links to Google maps and create a
-% single map with them, or a list of locations, they could be accompanied with a
-% trail, and then each trail be displayed separately
-
-
-
-
-% You need to talk about sharing a corpus of documents between users
-
-% mention something about a Subversion hook
-
-
-
-
 % * borrow someone's mouse for the show
 % * use xannotate during the presentation
 
-
-
-
-
-
-% TODO: explain how the extracted data gets REPLACED whenever a document is
-% uploaded
