@@ -1,15 +1,14 @@
 %
 % Introduction slides
 %
-\documentclass[compress,trans]{beamer}
-%\documentclass{beamer}
+%\documentclass[compress,trans]{beamer}
+\documentclass{beamer}
 
 \usepackage{graphicx}
 
 \mode<presentation>
 {
-%\usetheme{default}
-\usetheme{Singapore}
+\usetheme{Singapore} % Singapore, default
   \setbeamertemplate{frametitle}[default][left]
   \setbeamercovered{transparent}
 }
@@ -178,7 +177,7 @@
 
 \vfill
     \item One day, an old \texttt{nroff} user showed me this fabulous ``ascii''
-      technology to store his contacts:
+      technology to store his contact info:
 
 {\small
 \begin{verbatim}
@@ -229,6 +228,10 @@
 %% sites are more interesting
   \end{itemize}
 
+\vfill
+
+  And I was happy with static HTML files forever\dots \hfill \dots \emph{not!}
+
 \end{frame}
 
 
@@ -236,7 +239,7 @@
 \begin{frame}[fragile]
   \frametitle{2002 - The Art of Taking Notes}
 
-  I'm getting a little bit old now, I'm losing memory\dots
+  I'm getting a little bit old now, I'm losing bits of memory\dots
 
 \vfill
 
@@ -316,6 +319,10 @@
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
   \frametitle{Mixed Data Example: Travel Files}
+
+  Lots of scattered notes files\dots
+
+\vfill
 
   One example of these notes files are my travel files, they contains many
   different types of things:
@@ -452,7 +459,7 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
   \item You would then be able to collect and use this data, e.g. create an
         ``address book'' of the internet
 
-  \item I think that search engines are taking a stab at this holy grail
+  \item Search engines are taking a stab at this holy grail
 
   \end{itemize}
 
@@ -470,9 +477,9 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
   \frametitle{The Goal}
 
   Build a system that can extract semantically meaningful informations in my set
-  of personal info files, using weak heuristics and conventions, and store them
-  in a structured way (in database tables), so I can use this information later
-  and serve it in new, interesting ways.
+  of personal info files, using weak heuristics and conventions, and store this
+  information in a structured way (in database tables), so I can use this
+  information later and serve it in new, interesting ways.
 
 \vfill
 
@@ -482,7 +489,8 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
   \item You can write extractors for anything, you just have to establish
     conventions for the docutils structures that you are going to
     recognize/extract
-  \item On the client it requires only Python to publish files
+  \item On the client it requires only Python to publish text files \\
+    (minimize dependencies to allow easy deployment)
   \end{itemize}
 
 %   If I had served you this definition in the first place, I'm not sure you
@@ -541,14 +549,14 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
 \begin{frame}[fragile]
   \frametitle{Design}
 
-\includegraphics[width=0.9\textwidth]{../nabu1.pdf}
+\includegraphics[width=0.9\textwidth]{design.pdf}
 
 \end{frame}
 
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Integration with docutils}
+  \frametitle{Extractors: Integration with docutils}
 
   Here is the complete docutils pipeline:
 
@@ -561,7 +569,7 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Integration with docutils}
+  \frametitle{Extractors: Integration with docutils}
 
   Here is the modified, partial docutils pipeline (no output, just process in
   order to run the extractors):
@@ -577,7 +585,7 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Extractors: Visit docutils document tree}
+  \frametitle{Extractors: docutils document tree}
 
   \texttt{docutils} is a ``2D parser''
   \begin{itemize}
@@ -602,7 +610,7 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Extractors}
+  \frametitle{Extractors: Viewing the docutils parse tree}
 
   You need to write extractors for the stuff that you are interested in, for
   example:
@@ -644,7 +652,7 @@ http://www.mdtravelhealth.com/destinations/samerica/brazil.html
 
 %-------------------------------------------------------------------------------
 \begin{frame}[fragile]
-  \frametitle{Extractors}
+  \frametitle{Extractors: Implementation}
 
 {\small
 Then implement it:
@@ -819,7 +827,8 @@ sat 2005-12-31
 
   \item Each user has a distinct body of files
     \begin{itemize}
-    \item The Nabu server supports disjoint sets of ids per-user
+    \item The Nabu server supports disjoint sets of ids per-user, so that users
+      don't have to manually manage avoiding collisions
     \end{itemize}
 
   \end{enumerate}
