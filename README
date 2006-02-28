@@ -11,7 +11,31 @@
 
    ---(From `Wikipedia <http://en.wikipedia.org/wiki/Nabu>`_)
 
+
 .. contents::
+..
+    1   Description
+      1.1  Example: Extracting Contact Info
+      1.2  Example: Blogging System
+      1.3  Example: Automatic Bookmarks List
+      1.4  Example: Shared Events Calendar
+      1.5  Customizability: Writing Extractors
+      1.6  Target Audience
+    2   Features
+      2.1  Nabu is not ...
+    3   Documentation
+      3.1  For Content Writers
+      3.2  Technical
+      3.3  Design
+      3.4  Talks
+      3.5  Test Drive Nabu
+    4   Download
+    5   Reporting Bugs
+    6   Links
+    7   Installation and Dependencies
+    8   Copyright and License
+    9   Acknowledgements
+    10  Author
 
 
 Description
@@ -146,7 +170,7 @@ what you want, and write a simple object to store it in the way you prefer.  You
 can use any system you like to store the data in a database or in text files
 (SQL DBAPI, an ORM, files, ...).
 
-.. note:: 
+.. note::
 
    At the moment I have not had time to write complex extractors yet, due to
    work/time constraints, but I will soon write a system to selectively publish
@@ -261,7 +285,7 @@ Not a generic data entry format
   be better to write custom code to parse a known format rather than leverage
   Nabu for this.  The docutils_ processing on the server is not extremely fast,
   and if you need speed for lots of data (say, thousands of files), you will
-  probably find this too slow.  
+  probably find this too slow.
 
   However, for smaller sets of files, Nabu could be used this way.  Or if you
   have to input various kinds of structures within different contexts which can
@@ -307,6 +331,12 @@ Design
 
 - `Future <doc/nabu-ideas.html>`_: future, postponed or rejected ideas. Stuff
   that I would like to do that is not on the immediate list;
+
+
+Talks
+-----
+
+- PyCon 2006 Presentation `(PDF) <doc/talks/pycon2006.pdf>`_
 
 
 Test Drive Nabu

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>nabu: a Publishing System using Text Files</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -19,9 +19,12 @@
 <div class="document" id="nabu-a-publishing-system-using-text-files">
 <h1 class="title">nabu: a Publishing System using Text Files</h1>
 <blockquote>
-<p>&quot;Nabu is the Babylonian god of wisdom and writing, worshipped by
-Babylonians as the son of Marduk and his consort, Sarpanitum, and as
-the grandson of Ea.&quot;</p>
+<p>&quot;Nabu is the Babylonian god of wisdom and writing [...]  Nabu is accorded the
+office of patron of the scribes, taking over from the Sumerian goddess
+Nisaba. His consort is Tashmetum. His symbols are the clay writing tablet
+with the writing stylus. [...]  His power over human existence is immense,
+because Nabu engraves the destiny of each person, as the Gods have decided,
+on the tablets of sacred record.&quot;</p>
 <p class="attribution">&mdash;(From <a class="reference" href="http://en.wikipedia.org/wiki/Nabu">Wikipedia</a>)</p>
 </blockquote>
 <div class="contents topic">
@@ -44,18 +47,41 @@ the grandson of Ea.&quot;</p>
 <li><a class="reference" href="#for-content-writers" id="id14" name="id14">For Content Writers</a></li>
 <li><a class="reference" href="#technical" id="id15" name="id15">Technical</a></li>
 <li><a class="reference" href="#design" id="id16" name="id16">Design</a></li>
-<li><a class="reference" href="#test-drive-nabu" id="id17" name="id17">Test Drive Nabu</a></li>
+<li><a class="reference" href="#talks" id="id17" name="id17">Talks</a></li>
+<li><a class="reference" href="#test-drive-nabu" id="id18" name="id18">Test Drive Nabu</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#download" id="id18" name="id18">Download</a></li>
-<li><a class="reference" href="#reporting-bugs" id="id19" name="id19">Reporting Bugs</a></li>
-<li><a class="reference" href="#links" id="id20" name="id20">Links</a></li>
-<li><a class="reference" href="#installation-and-dependencies" id="id21" name="id21">Installation and Dependencies</a></li>
-<li><a class="reference" href="#copyright-and-license" id="id22" name="id22">Copyright and License</a></li>
-<li><a class="reference" href="#acknowledgements" id="id23" name="id23">Acknowledgements</a></li>
-<li><a class="reference" href="#author" id="id24" name="id24">Author</a></li>
+<li><a class="reference" href="#download" id="id19" name="id19">Download</a></li>
+<li><a class="reference" href="#reporting-bugs" id="id20" name="id20">Reporting Bugs</a></li>
+<li><a class="reference" href="#links" id="id21" name="id21">Links</a></li>
+<li><a class="reference" href="#installation-and-dependencies" id="id22" name="id22">Installation and Dependencies</a></li>
+<li><a class="reference" href="#copyright-and-license" id="id23" name="id23">Copyright and License</a></li>
+<li><a class="reference" href="#acknowledgements" id="id24" name="id24">Acknowledgements</a></li>
+<li><a class="reference" href="#author" id="id25" name="id25">Author</a></li>
 </ul>
 </div>
+<!-- 1   Description
+  1.1  Example: Extracting Contact Info
+  1.2  Example: Blogging System
+  1.3  Example: Automatic Bookmarks List
+  1.4  Example: Shared Events Calendar
+  1.5  Customizability: Writing Extractors
+  1.6  Target Audience
+2   Features
+  2.1  Nabu is not ...
+3   Documentation
+  3.1  For Content Writers
+  3.2  Technical
+  3.3  Design
+  3.4  Talks
+  3.5  Test Drive Nabu
+4   Download
+5   Reporting Bugs
+6   Links
+7   Installation and Dependencies
+8   Copyright and License
+9   Acknowledgements
+10  Author -->
 <div class="section">
 <h1><a class="toc-backref" href="#id4" id="description" name="description">Description</a></h1>
 <p>Assuming that a user can easily create text documents --this is the case for
@@ -316,14 +342,20 @@ that I would like to do that is not on the immediate list;</li>
 </ul>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id17" id="test-drive-nabu" name="test-drive-nabu">Test Drive Nabu</a></h2>
+<h2><a class="toc-backref" href="#id17" id="talks" name="talks">Talks</a></h2>
+<ul class="simple">
+<li>PyCon 2006 Presentation <a class="reference" href="doc/talks/pycon2006.pdf">(PDF)</a></li>
+</ul>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id18" id="test-drive-nabu" name="test-drive-nabu">Test Drive Nabu</a></h2>
 <ul class="simple">
 <li><a class="reference" href="doc/nabu-beta.html">Test Drive</a>: test drive Nabu on our server;</li>
 </ul>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id18" id="download" name="download">Download</a></h1>
+<h1><a class="toc-backref" href="#id19" id="download" name="download">Download</a></h1>
 <p>You can download the <a class="reference" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name
 <tt class="docutils literal"><span class="pre">nabu</span></tt>.  Usage instructions can be found <a class="reference" href="doc/nabu-usage.html">here</a>.</p>
 <p>Snapshots of the latest Nabu source code can be found in the <a class="reference" href="/downloads/nabu">Download Area</a>.  It consists mostly of server code, but it also contains
@@ -341,11 +373,11 @@ on personal projects (works for me), and I'm committed to fix bugs reported by
 others.  When I get some feedback I will select version number (probably 1.0).</p>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id19" id="reporting-bugs" name="reporting-bugs">Reporting Bugs</a></h1>
+<h1><a class="toc-backref" href="#id20" id="reporting-bugs" name="reporting-bugs">Reporting Bugs</a></h1>
 <p>Send email to the author: Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.</p>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id20" id="links" name="links">Links</a></h1>
+<h1><a class="toc-backref" href="#id21" id="links" name="links">Links</a></h1>
 <p>Some links to projects with similar goals, or that have some kind of conceptual
 relation:</p>
 <ul class="simple">
@@ -353,7 +385,7 @@ relation:</p>
 </ul>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id21" id="installation-and-dependencies" name="installation-and-dependencies">Installation and Dependencies</a></h1>
+<h1><a class="toc-backref" href="#id22" id="installation-and-dependencies" name="installation-and-dependencies">Installation and Dependencies</a></h1>
 <dl class="docutils">
 <dt>Nabu Publisher Client</dt>
 <dd><p class="first">A single file written in Python.</p>
@@ -397,12 +429,12 @@ database.</p>
 </dl>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id22" id="copyright-and-license" name="copyright-and-license">Copyright and License</a></h1>
+<h1><a class="toc-backref" href="#id23" id="copyright-and-license" name="copyright-and-license">Copyright and License</a></h1>
 <p>Copyright (C) 2005  Martin Blais.
 This code is distributed under the <a class="reference" href="COPYING">GNU General Public License</a>.</p>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id23" id="acknowledgements" name="acknowledgements">Acknowledgements</a></h1>
+<h1><a class="toc-backref" href="#id24" id="acknowledgements" name="acknowledgements">Acknowledgements</a></h1>
 <p>This project uses two important libraries to do its thing:</p>
 <ul class="simple">
 <li>the <a class="reference" href="http://docutils.sourceforge.net">Docutils</a> project (written mostly by
@@ -414,7 +446,7 @@ the light of day;</li>
 <p>It is also built in the Python language.</p>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id24" id="author" name="author">Author</a></h1>
+<h1><a class="toc-backref" href="#id25" id="author" name="author">Author</a></h1>
 <p>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</p>
 <!-- "Text files are forever" -->
 <!-- - -Martin -->
