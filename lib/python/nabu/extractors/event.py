@@ -425,3 +425,6 @@ def test3():
 if __name__ == '__main__':
     test()
 
+
+
+# FIXME: e.g. "march 16" is not accepted yet, full names should work too
