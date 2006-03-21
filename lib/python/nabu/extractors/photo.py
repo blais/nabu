@@ -46,7 +46,7 @@ def photo_directive( name, arguments, options, content, lineno,
     options['photo'] = '1'
     image_node = nodes.image(block_text, **options)
 
-    if options['align'] == 'center':
+    if 'align' in options and options['align'] == 'center':
         div_node = nodes.section(CLASS='photodiv')
         div_node.append(image_node)
         results = [div_node]

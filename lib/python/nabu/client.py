@@ -323,11 +323,14 @@ def opts_others( parser ):
     group.add_option('-e', '--errors', '--dump-errors', action='store_true',
                       help="Don't publish, fetch error status from the server.")
 
+    group.add_option('--print-config', '--config', action='store_true',
+                      help="Just print the client configuration info.")
+
     group.add_option('-d', '--dump', '--dump-all', '--debug',
                      action='store_true',
-                      help="Don't publish, print server contents for debugging. "
-                     "If you specify some unique ids, server information about "
-                     "that document is printed.")
+                      help="Don't publish, print server contents for debugging."
+                     " If you specify some unique ids, server information about"
+                     " that document is printed.")
 
     group.add_option('-X', '--clear-all', action='count', default=0,
                      help="Clear the entire database for this user.  If "
@@ -350,6 +353,13 @@ def errors( opts ):
         print '=== From %s {%s}' % (e['filename'], e['unid'])
         print e['errors']
 
+def print_config( opts, args ):
+    """
+    Print the client configuration.
+    """
+    print '======= server url:', opts.server_url
+
+    
 def dump( opts, args ):
     """
     Dump/debug server contents.
@@ -850,6 +860,8 @@ def main():
     try:
         if opts.errors:
             errors(opts)
+        elif opts.print_config:
+            print_config(opts, args)
         elif opts.dump:
             dump(opts, args)
         elif opts.clear_all:
