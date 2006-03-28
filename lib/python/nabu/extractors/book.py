@@ -71,7 +71,11 @@ class Extractor(extract.Extractor):
     def store( self, flist ):
         emap = {}
         for k, v in flist.iteritems():
-            emap[k] = v.astext()
+            if isinstance(v, (list, tuple)):
+                s = '\n'.join(map(lambda x: x.astext(), v))
+            else:
+                s = v.astext()
+            emap[k] = s
 
         self.storage.store(self.unid, emap)
 
