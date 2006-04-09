@@ -1,0 +1,29 @@
+==================================================
+   A Blurb/Abstract to Distribute for this Talk
+==================================================
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2006-04-07
+:Abstract:
+
+
+Desktop search tools (e.g. Google Desktop) build a database of the
+information that is stored on your computer. Wouldn't it be great
+if some of this desktop database could be used to automatically
+feed your online blog, or a website?
+
+Also, wouldn't it be immensely useful if the "types" of information
+found in your documents could be automatically identified? (i.e. a
+mini "semantic web", but for your own files) For example, by
+finding all the "addresses" in all of your personal files, you
+could easily build your address book.
+
+Are you someone who uses plain text files instead of fancy
+specialized programs to maintain your personal data?
+
+If you find any of the above interesting, this talk is for you. I
+am proposing a system, Nabu, built in Python using
+ReStructuredText, Docutils and text files, that can be used to
+collect "typed" data from those files and fill a remote database
+with the extracted data. This data can then be used to feed a wiki,
+a blog, a web site, or any other kind of presentation layer you
+desire.
