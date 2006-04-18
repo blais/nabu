@@ -5,6 +5,12 @@
 - Write an extractor for all my google maps links and create a list of them, so
   I can find locations easily.  MapExtractor
 
+- Write an extractor for dictionary definitions;  in this format:
+
+    defn: unwonted
+       Definition of unwontedness.
+
+
 - Find how to suppress output of errors in HTML conversion, to avoid catching
   this output in the extractors and having this output pollute the contents of
   the extractors.
