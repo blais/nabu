@@ -66,8 +66,7 @@ p#desc {
 
 '''
 
-stylesheet = (u'http://docutils.sourceforge.net'
-              u'/docutils/writers/html4css1/html4css1.css')
+stylesheet = (u'/docutils-style.css')
 
 pages_header = u'''<!DOCTYPE html PUBLIC
    "-//W3C//DTD XHTML 1.0 Transitional//EN"
