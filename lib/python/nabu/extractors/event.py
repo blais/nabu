@@ -179,7 +179,7 @@ months = {'jan': 1,
           'feb': 2, 'fev': 2,
           'mar': 3,
           'apr': 4, 'avr': 4,
-          'may': 5, 'may': 5,
+          'may': 5, 'mai': 5,
           'jun': 6,
           'jul': 7, 'jui': 7,
           'aug': 8, 'aou': 8,
@@ -188,7 +188,7 @@ months = {'jan': 1,
           'nov': 11,
           'dec': 12}
 
-months.update((y, x) for x, y in enumerate(
+months.update((y, x+1) for x, y in enumerate(
     ('january', 'february', 'march', 'april', 'may', 'june',
      'july', 'august', 'september', 'october', 'november', 'december')) )
 
@@ -379,7 +379,9 @@ def test():
              ('12-4', [(date, None, None)]),
              ('12/4', [(date, None, None)]),
              ('dec 4', [(date, None, None)]),
-             ('wed', [(datetime.date(2006, 3, 1), None, None)]),
+             ('dec 4, 5', [(date, None, None),
+                           (date + oneday, None, None)]),
+             ('wed', [(datetime.date(2006, 4, 26), None, None)]),
              ('wed 4', [(datetime.date(2006, 10, 4), None, None)]),
              ('wed 25', [(datetime.date(2006, 10, 25), None, None)]),
              ('wed dec 27', [(datetime.date(2006, 12, 27), None, None)]),
@@ -405,6 +407,7 @@ def test():
              # multiple days and times
              ('2006-12-4, 5 21h12', [(date, t2, None),
                                       (date + oneday, t2, None)]),
+
              )
 
     for dt in tests:

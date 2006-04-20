@@ -2,6 +2,9 @@
     TODO: nabu
 ==================
 
+- We need to detect encoding errors better, I have too many documents which do
+  not get detected/guessed automatically
+
 - Write an extractor for all my google maps links and create a list of them, so
   I can find locations easily.  MapExtractor
 
