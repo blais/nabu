@@ -5,6 +5,8 @@
 Current Devel
 =============
 
+- Fixed bug with events date parsing.
+
 - Renamed the extractors consistently to "Extractor" and "Storage",
   respectively, because we put one instance of each in each file.
 - Split document and doctree extractors between files.
