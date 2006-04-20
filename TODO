@@ -2,6 +2,9 @@
     TODO: nabu
 ==================
 
+- When we change a document's unique Id, the old document remains in the
+  database… is there anything we can do about that?
+
 - We need to detect encoding errors better, I have too many documents which do
   not get detected/guessed automatically
 
