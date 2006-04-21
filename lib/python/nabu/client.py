@@ -225,9 +225,9 @@ def publish( candidates, opts, args ):
             errors, messages = server.process_source(
                 pfile.unid, pfile.fn, xmlrpclib.Binary(pfile.contents))
             if errors:
-                sys.stdout.write(errors.encode('replace'))
+                sys.stdout.write(errors.encode('latin1', 'replace'))
             if opts.print_messages and messages:
-                sys.stdout.write(messages.encode('replace'))
+                sys.stdout.write(messages.encode('latin1', 'replace'))
             continue
 
         elif opts.process_locally >= 1:
