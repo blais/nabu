@@ -55,7 +55,7 @@ import docutils.io
 # nabu imports
 from nabu import extract, process
 
-def load_extractor( fn ):
+def load_extractor(fn):
     """
     Imports the extractor module and returns an extractor class found in it.
     """
@@ -84,11 +84,11 @@ class GabberStorage(extract.ExtractorStorage):
     A storage that prints out the stuff that it receives in a human-readable way
     to a stream rather than actually store it.
     """
-    def __init__( self, stream ):
+    def __init__(self, stream):
         self.s = stream
         self.console_encoding = 'iso-8859-1'
 
-    def store( self, *args, **kwds ):
+    def store(self, *args, **kwds):
         print >> self.s
         for a in args:
             print >> self.s, pformat(a).encode(self.console_encoding)

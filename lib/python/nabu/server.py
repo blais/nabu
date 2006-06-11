@@ -29,10 +29,10 @@ class SimpleAccumulator:
     """
     Simple accumulator object that can only grow a list one item at a time.
     """
-    def __init__( self, lis ):
+    def __init__(self, lis):
         self.acc = lis
 
-    def append( self, new ):
+    def append(self, new):
         self.acc.append(new)
 
 class PublishServerHandler:
@@ -41,7 +41,7 @@ class PublishServerHandler:
     """
     username = 'guest'
 
-    def __init__( self, srcstore, transforms, allow_reset=False ):
+    def __init__(self, srcstore, transforms, allow_reset=False):
         """
         Create the server handler with the given source storage backend, and a
         list of tranforms to apply when processing document trees.  The
@@ -55,25 +55,25 @@ class PublishServerHandler:
 
         self.username = None
 
-    def reload( self, username ):
+    def reload(self, username):
         """
         Use this it the server is reused between different requests.
         """
         self.username = username
 
-    def ping( self ):
+    def ping(self):
         return 0
 
-    def getallids( self ):
+    def getallids(self):
         return self.sources.getallids(self.username)
 
-    def gethistory( self, idlist=None ):
+    def gethistory(self, idlist=None):
         """
         Returns the digests for the list of requested ids.
         """
         return self.sources.getdigests(self.username, idlist)
 
-    def clearall( self ):
+    def clearall(self):
         """
         Clear the entire database.
         This is requested from the client interface.
@@ -87,7 +87,7 @@ class PublishServerHandler:
         self.sources.clear(self.username)
         return 0
 
-    def clearids( self, idlist ):
+    def clearids(self, idlist):
         """
         Clear all entries for a set of ids.
         """
@@ -107,7 +107,7 @@ class PublishServerHandler:
 
         return 0
 
-    def reset_schema( self ):
+    def reset_schema(self):
         """
         Resets the schema for the extractors.
         This may be used for development, debugging, and configuration.
@@ -120,7 +120,7 @@ class PublishServerHandler:
         else:
             return 0 # indicate no reset performed.
 
-    def dumpall( self ):
+    def dumpall(self):
         """
         Returns information about all the documents stored for a specific user.
         """
@@ -128,7 +128,7 @@ class PublishServerHandler:
                    self.sources.get(self.username,
             attributes=('unid', 'filename', 'time', 'username', 'errors',)))
 
-    def dumpone( self, unid ):
+    def dumpone(self, unid):
         """
         Returns information about a single uploaded source.
         """
@@ -143,7 +143,7 @@ class PublishServerHandler:
         dic = values[0]
         return self.__xform_xmlrpc(dic)
 
-    def geterrors( self ):
+    def geterrors(self):
         """
         Return a list of mappings with the error texts.
         """
@@ -151,7 +151,7 @@ class PublishServerHandler:
                    self.sources.get(self.username,
                                     attributes=('unid', 'filename', 'errors',)))
 
-    def __xform_xmlrpc( self, odic ):
+    def __xform_xmlrpc(self, odic):
         """
         Transform dictionary values to be returnable thru xmlrpc.
         Returns a new dictionary.
@@ -172,7 +172,7 @@ class PublishServerHandler:
                 del dic[k]
         return dic
 
-    def process_source( self, unid, filename, contents_bin ):
+    def process_source(self, unid, filename, contents_bin):
         """
         Process a single file.
         We assume that the file comes wrapped in a Binary, encoded in UTF-8.
@@ -214,8 +214,8 @@ class PublishServerHandler:
                                   contents_utf8, doctree, None, errortext)
         return errortext, messages
 
-    def process_doctree( self, unid, filename, digest,
-                         contents_bin, doctree_bin, errortext ):
+    def process_doctree(self, unid, filename, digest,
+                         contents_bin, doctree_bin, errortext):
         """
         Process a single file.  We assume that the file and document tree comes
         wrapped in a Binary, encoded in UTF-8.
@@ -232,8 +232,8 @@ class PublishServerHandler:
                                   errortext.decode('UTF-8'))
         return '', messages
 
-    def __process( self, unid, filename, digest, contents_utf8,
-                   doctree, docpickled, errortext ):
+    def __process(self, unid, filename, digest, contents_utf8,
+                   doctree, docpickled, errortext):
         """
         Process the given tree, extracting the information entries from it and
         replacing the existing entries with the newly extracted ones.
@@ -288,7 +288,7 @@ class PublishServerHandler:
         
         return messages or u''
 
-    def get_transforms_config( self ):
+    def get_transforms_config(self):
         """
         Return a textual description of the supported transforms that this
         server is configured with. We simply concatenate the docstrings of the
@@ -311,7 +311,7 @@ class PublishServerHandler:
         return helptext
 
 
-def xmlrpc_handler( srcstore, transforms, username, allow_reset=0 ):
+def xmlrpc_handler(srcstore, transforms, username, allow_reset=0):
     """
     Given a source storage instance and a list of (transform class, transform
     storage) pairs, implement a basic XMLRPC handler loop.

@@ -33,7 +33,7 @@ class Extractor(docutils.transforms.Transform):
     """
 
     @classmethod
-    def init_parser( cls ):
+    def init_parser(cls):
         """
         Initialization that is bound to occur before the parser.  By default
         this method does nothing, and it's fine and dandy.
@@ -43,7 +43,7 @@ class Extractor(docutils.transforms.Transform):
         """
         # noop.
 
-    def apply( self, **kwargs ):
+    def apply(self, **kwargs):
         """
         Apply the transform to the document tree.
         See the documentation for docutils.transforms.Transform.
@@ -55,21 +55,21 @@ class ExtractorStorage:
     Interface to implement by objects which will store extracted data associated
     with a document.
     """
-    def store( self, unid, *args ):
+    def store(self, unid, *args):
         """
         Store the given data, which could be of any type, associated with the
         given unid.  Note: it it very important to store the data in a way that
         we can later associate or clear it with the given unid.
         """
 
-    def clear( self, unid=None ):
+    def clear(self, unid=None):
         """
         Clear all the data for this extractor, that is associated with the given
         unid.  If no id is specified, clear all the data associated with this
         storage.
         """
 
-    def reset_schema( self ):
+    def reset_schema(self):
         """
         Resets the schema.
         This may be used for development, debugging, and configuration.
@@ -96,7 +96,7 @@ class SQLExtractorStorage(ExtractorStorage):
     # Accessory tables that do not have a unid mapping.
     sql_tables_other = {}
 
-    def __init__( self, module, connection ):
+    def __init__(self, module, connection):
         self.module, self.connection = module, connection
 
         cursor = self.connection.cursor()
@@ -112,7 +112,7 @@ class SQLExtractorStorage(ExtractorStorage):
 
         self.connection.commit()
 
-    def clear( self, unid=None ):
+    def clear(self, unid=None):
         """
         Default implementation that clears the entries/tables.
         """
@@ -126,7 +126,7 @@ class SQLExtractorStorage(ExtractorStorage):
 
         self.connection.commit()
 
-    def reset_schema( self ):
+    def reset_schema(self):
         """
         Default implementation that drops the tables.
         """
@@ -158,7 +158,7 @@ class SQLObjectExtractorStorage(ExtractorStorage):
 
     sqlobject_classes = [] # override this in the derived class.
 
-    def __init__( self, connection ):
+    def __init__(self, connection):
         assert self.sqlobject_classes
 
         # Initialize the connections for all the wrappers.
@@ -169,7 +169,7 @@ class SQLObjectExtractorStorage(ExtractorStorage):
         for cls in self.sqlobject_classes:
             cls.createTable(ifNotExists=True)
 
-    def clear( self, unid=None ):
+    def clear(self, unid=None):
         """
         Default implementation that clears the entries/tables.
         """
@@ -180,7 +180,7 @@ class SQLObjectExtractorStorage(ExtractorStorage):
                 for s in cls.select(cls.q.unid == unid):
                     s.destroySelf()
 
-    def reset_schema( self ):
+    def reset_schema(self):
         """
         Default implementation that drops the tables.
         """

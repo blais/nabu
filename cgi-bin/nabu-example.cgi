@@ -152,7 +152,7 @@ testing Nabu and we're not responsible for the contents.
 
 #-------------------------------------------------------------------------------
 #
-def render_front_page( conn ):
+def render_front_page(conn):
     """
     Prints list of documents uploaded.
     """
@@ -184,7 +184,7 @@ def render_front_page( conn ):
     
 #-------------------------------------------------------------------------------
 #
-def render_categories( conn ):
+def render_categories(conn):
     """
     Prints a div with a list of categories.
     """
@@ -209,7 +209,7 @@ def render_categories( conn ):
 
 #-------------------------------------------------------------------------------
 #
-def render_random_links( conn ):
+def render_random_links(conn):
     """
     Prints a div with random links.
     """
@@ -228,7 +228,7 @@ def render_random_links( conn ):
 
 #-------------------------------------------------------------------------------
 #
-def render_document( conn, unid ):
+def render_document(conn, unid):
     assert unid is not None
     
     curs = conn.cursor()

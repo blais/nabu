@@ -91,7 +91,7 @@ if sys.version_info[:2] < (2, 4):
 #-------------------------------------------------------------------------------
 
 _server = None
-def get_server( opts ):
+def get_server(opts):
     """
     Create server lazily, because we might not have any candidates.
     """
@@ -122,7 +122,7 @@ def get_server( opts ):
 
     return _server
 
-def opts_publish( parser ):
+def opts_publish(parser):
     # processing options
     group = optparse.OptionGroup(parser,
         "Processing options",
@@ -164,7 +164,7 @@ def opts_publish( parser ):
 
     parser.add_option_group(group)
 
-def opts_clear( parser ):
+def opts_clear(parser):
     group = optparse.OptionGroup(parser,
         "Clear/remove options",
         "These options specify which files to remove (if any)")
@@ -179,7 +179,7 @@ def opts_clear( parser ):
 
     parser.add_option_group(group)
 
-def publish( candidates, opts, args ):
+def publish(candidates, opts, args):
     """
     Publish files.
     """
@@ -314,7 +314,7 @@ def publish( candidates, opts, args ):
 # Other Actions
 #-------------------------------------------------------------------------------
 
-def opts_others( parser ):
+def opts_others(parser):
     group = optparse.OptionGroup(parser,
         "Other actions",
         "Alternative actions, other than publish. "
@@ -344,7 +344,7 @@ def opts_others( parser ):
 
     parser.add_option_group(group)
 
-def errors( opts ):
+def errors(opts):
     """
     Print last errors in the server.
     """
@@ -353,14 +353,14 @@ def errors( opts ):
         print '=== From %s {%s}' % (e['filename'], e['unid'])
         print e['errors']
 
-def print_config( opts, args ):
+def print_config(opts, args):
     """
     Print the client configuration.
     """
     print '======= server url:', opts.server_url
 
     
-def dump( opts, args ):
+def dump(opts, args):
     """
     Dump/debug server contents.
     """
@@ -405,7 +405,7 @@ def dump( opts, args ):
                 print utf8_text.encode('latin-1', 'replace')
                 print
 
-def clear( opts ):
+def clear(opts):
     """
     Issues a clear request to the server.
     """
@@ -420,7 +420,7 @@ def clear( opts ):
         else:
             raise SystemExit("Server does not allow to reset the schema.")
 
-def help_transforms( opts ):
+def help_transforms(opts):
     """
     Fetches the help about the server configuration and the transforms it
     supports.
@@ -436,7 +436,7 @@ def help_transforms( opts ):
 # Finder
 #-------------------------------------------------------------------------------
 
-def opts_finder( parser ):
+def opts_finder(parser):
     # finder options
     group = optparse.OptionGroup(parser,
                                   "Finder options",
@@ -482,13 +482,13 @@ class File:
     """
     Struct to hold information about a candidate.
     """
-    def __init__( self, fn, unid, digest, contents ):
+    def __init__(self, fn, unid, digest, contents):
         self.fn = fn
         self.unid = unid
         self.digest = digest
         self.contents = contents # always a UTF-8 encoded string
 
-def find_candidates( opts, args ):
+def find_candidates(opts, args):
     """
     Finds the list of candidate files.
     """
@@ -513,7 +513,7 @@ def find_candidates( opts, args ):
 
 codingre = re.compile('.*-\\*-\s*coding:\s*(\S+)\s*.*-\\*-')
 
-def find_to_publish( fnordns, opts ):
+def find_to_publish(fnordns, opts):
     """
     Discover files, figure out which ones are candidates to be processed, and
     returns a list of those objects.
@@ -623,7 +623,7 @@ def find_to_publish( fnordns, opts ):
 # Utils
 #-------------------------------------------------------------------------------
 
-def exclude_list( names, exclude ):
+def exclude_list(names, exclude):
     """
     Returns a list of the names which do not match any of the given exclude
     patterns.
@@ -637,7 +637,7 @@ def exclude_list( names, exclude ):
             newnames.append(n)
     return newnames
 
-def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
+def process_dirs_or_files(args, exclude=[], recurse=True, ignore_error=False):
     """
     From a list of directories or filenames, yield filenames.
     (This is a generic function and you can reuse it in other places.)
@@ -677,7 +677,7 @@ def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
 # Config / Global Options
 #-------------------------------------------------------------------------------
 
-def opts_global( parser ):
+def opts_global(parser):
     parser.add_option('-v', '--verbose', action='store_true',
                       help="Increase verbosity")
 
@@ -780,7 +780,7 @@ def parse_options():
 
     return opts, args
 
-def search_parents( fnordns, confname ):
+def search_parents(fnordns, confname):
     """
     Search the given list of files or directories and their parents, for the
     file named `confname`.  The files and directories are searched in the order
@@ -801,7 +801,7 @@ def search_parents( fnordns, confname ):
 
     return None
 
-def read_config( opts, args ):
+def read_config(opts, args):
     """
     Read, parse and verify values from config file.
     Returns a dictionary of all values read in the file.

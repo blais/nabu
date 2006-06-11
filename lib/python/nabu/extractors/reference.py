@@ -24,7 +24,7 @@ class Extractor(extract.Extractor):
     """
     default_priority = 900
 
-    def apply( self, **kwargs ):
+    def apply(self, **kwargs):
         self.unid, self.storage = kwargs['unid'], kwargs['storage']
 
         v = self.Visitor(self.document)
@@ -33,7 +33,7 @@ class Extractor(extract.Extractor):
 
     class Visitor(nodes.SparseNodeVisitor):
 
-        def visit_reference( self, node ):
+        def visit_reference(self, node):
             # store the bookmark
             if 'refuri' in node.attributes:
                 self.x.storage.store(self.x.unid, node.attributes['refuri'])
@@ -54,7 +54,7 @@ class Storage(extract.SQLExtractorStorage):
         '''
         }
 
-    def store( self, unid, url ):
+    def store(self, unid, url):
         cursor = self.connection.cursor()
         cursor.execute("""
           INSERT INTO reference (unid, url) VALUES (%s, %s)

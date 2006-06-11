@@ -91,7 +91,7 @@ pages_footer = u'''
 
 #-------------------------------------------------------------------------------
 #
-def navig_index( uri ):
+def navig_index(uri):
     """
     Render a simple navigation header div in the document pages.
     """
@@ -103,7 +103,7 @@ def navig_index( uri ):
     </div>
     '''% uri
 
-def navig( uri, unid ):
+def navig(uri, unid):
     """
     Render a simple navigation header div in the document pages.
     """
@@ -138,7 +138,7 @@ def render_notfound():
 
 #-------------------------------------------------------------------------------
 #
-def render_index( uri, username, srcstore ):
+def render_index(uri, username, srcstore):
     """
     Generate an index of documents.
     """
@@ -178,7 +178,7 @@ def render_index( uri, username, srcstore ):
 
 #-------------------------------------------------------------------------------
 #
-def render_source( unid, uri, username, srcstore ):
+def render_source(unid, uri, username, srcstore):
     """
     Render a basic page that dumps all the information available for a source
     upload.
@@ -235,7 +235,7 @@ def render_source( unid, uri, username, srcstore ):
 
 #-------------------------------------------------------------------------------
 #
-def render_html( unid, uri, username, srcstore ):
+def render_html(unid, uri, username, srcstore):
     """
     Render the document tree naively, as HTML.
 
@@ -273,7 +273,7 @@ def render_html( unid, uri, username, srcstore ):
 
 #-------------------------------------------------------------------------------
 #
-def render_extracted( unid, stored_unid, uri, username, conn, tables ):
+def render_extracted(unid, stored_unid, uri, username, conn, tables):
     """
     Render information that was extracted from this document.
 
@@ -297,7 +297,7 @@ def render_extracted( unid, stored_unid, uri, username, conn, tables ):
 
 #-------------------------------------------------------------------------------
 #
-def dump_table( conn, tablename, uri, unid=None, stored_unid=None ):
+def dump_table(conn, tablename, uri, unid=None, stored_unid=None):
     """
     Print extracted information (again, for fun, this is not necessary).
     Try to print the extracted info in a generic way.

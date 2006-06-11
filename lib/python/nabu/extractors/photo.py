@@ -29,8 +29,8 @@ align_values = ('left', 'center', 'right')
 def align(argument):
     return directives.choice(argument, align_values)
 
-def photo_directive( name, arguments, options, content, lineno,
-                     content_offset, block_text, state, state_machine ):
+def photo_directive(name, arguments, options, content, lineno,
+                    content_offset, block_text, state, state_machine):
     """
     Special photo directive, which will display a thumbnail of the image with a
     link to a photo page.
@@ -60,8 +60,8 @@ photo_directive.options = {'alt': directives.unchanged,
 
 #-------------------------------------------------------------------------------
 #
-def photogroup_directive( name, arguments, options, content, lineno,
-                          content_offset, block_text, state, state_machine ):
+def photogroup_directive(name, arguments, options, content, lineno,
+                         content_offset, block_text, state, state_machine):
 
     # figure out what this is doing.
     references = map(lambda x: x.strip(), content)
@@ -99,11 +99,11 @@ class Extractor(extract.Extractor):
     default_priority = 900
 
     @classmethod
-    def init_parser( cls ):
+    def init_parser(cls):
         directives.register_directive('photo', photo_directive)
         directives.register_directive('photogroup', photogroup_directive)
 
-    def apply( self, **kwargs ):
+    def apply(self, **kwargs):
         # Note: For now, this changes the document tree via the directives but
         # does not store anything.
         return

@@ -78,7 +78,7 @@ class Extractor(extract.Extractor):
     """
     default_priority = 900
 
-    def apply( self, **kwargs ):
+    def apply(self, **kwargs):
         unid, storage = kwargs['unid'], kwargs['storage']
 
         v = self.Visitor(self.document, unid, storage)
@@ -89,7 +89,7 @@ class Extractor(extract.Extractor):
 
     class Visitor(nodes.SparseNodeVisitor):
 
-        def __init__( self, document, unid, storage ):
+        def __init__(self, document, unid, storage):
             nodes.SparseNodeVisitor.__init__(self, document)
             self.unid = unid
             self.storage = storage
@@ -97,11 +97,11 @@ class Extractor(extract.Extractor):
 
             self.desc = None
 
-        def visit_definition_list_item( self, node ):
+        def visit_definition_list_item(self, node):
             # Initialize
             self.dates, self.desc = [], None
 
-        def visit_term( self, node ):
+        def visit_term(self, node):
             if len(node.children) != 1:
                 return
             text = node.children[0].astext().lower()
@@ -111,15 +111,15 @@ class Extractor(extract.Extractor):
             except KeyError:
                 self.dates = []
 
-        def visit_definition( self, node ):
+        def visit_definition(self, node):
             self.desc = []
 
-        def visit_list_item( self, node ):
+        def visit_list_item(self, node):
             if self.desc is not None:
                 self.desc.append(node.astext())
             raise nodes.SkipChildren
 
-        def depart_definition_list_item( self, node ):
+        def depart_definition_list_item(self, node):
             for d, t1, t2 in self.dates:
                 for child in self.desc:
                     self.storage.store(self.unid, d, t1, t2, child)
@@ -147,7 +147,7 @@ class Storage(extract.SQLExtractorStorage):
         '''
         }
 
-    def store( self, unid, date, time1, time2, description ):
+    def store(self, unid, date, time1, time2, description):
         cursor = self.connection.cursor()
         cursor.execute("""
           INSERT INTO event (unid, date, time1, time2, description)
@@ -219,7 +219,7 @@ evre_dotw = re.compile('([a-z][a-z][a-z])'
                        '(?:\s+(\d\dh)(\d\d)?)?$')
 
 
-def parse_dtspec( s ):
+def parse_dtspec(s):
     """
     Parse a date/time spec and return a list of (date, time1, time2) tuples.
     """

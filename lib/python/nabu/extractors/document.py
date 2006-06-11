@@ -34,7 +34,7 @@ class Extractor(extract.Extractor):
 
     biblifields = ['category', 'serie', 'location', 'disclosure']
 
-    def apply( self, unid=None, storage=None, pickle_receiver=None ):
+    def apply(self, unid=None, storage=None, pickle_receiver=None):
         self.unid = unid
         self.storage = storage
 
@@ -51,32 +51,32 @@ class Extractor(extract.Extractor):
 
     class Visitor(nodes.SparseNodeVisitor):
 
-        def __init__( self, *args, **kwds ):
+        def __init__(self, *args, **kwds):
             nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
             self.extracted = {}
             self.catchname = None
 
-        def visit_docinfo( self, node ):
+        def visit_docinfo(self, node):
             self.in_docinfo = 1
 
-        def depart_docinfo( self, node ):
+        def depart_docinfo(self, node):
             self.in_docinfo = 0
 
-        def visit_field_name( self, node ):
+        def visit_field_name(self, node):
             fname = node.astext().lower()
             if fname in self.xform.biblifields:
                 self.catchname = fname.encode('ascii')
 
-        def visit_field_body( self, node ):
+        def visit_field_body(self, node):
             if self.catchname:
                 self.extracted[self.catchname] = node.astext().lower()
                 self.catchname = None
 
-        def visit_title( self, node ):
+        def visit_title(self, node):
             if 'title' not in self.extracted:
                 self.extracted['title'] = node.astext()
 
-        def visit_author( self, node ):
+        def visit_author(self, node):
             if 'author' not in self.extracted:
                 self.extracted['author'] = node.astext()
 
@@ -125,7 +125,7 @@ class Storage(extract.SQLExtractorStorage):
                'restricted': 1,
                'private': 2}
 
-    def store( self, unid, data ):
+    def store(self, unid, data):
         data['unid'] = unid
         
         cols = ['unid', 'title', 'author', 'date',

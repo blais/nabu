@@ -26,28 +26,28 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
     case-insensitive.
     """
 
-    def __init__( self, *args, **kwds ):
+    def __init__(self, *args, **kwds):
         nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
 
-    def initialize( self ):
+    def initialize(self):
         self.fieldlists = []
         self.curlist = {}
 
-    def finalize( self ):
+    def finalize(self):
         if self.curlist:
             self.fieldlists.append(self.curlist)
             self.curlist = {}
 
-    def getfieldlists( self ):
+    def getfieldlists(self):
         assert self.curlist == {} # you need to finalize
         return self.fieldlists
 
-    def visit_field_list( self, node ):
+    def visit_field_list(self, node):
         if self.curlist:
             self.fieldlists.append(self.curlist)
             self.curlist = {}
 
-    def visit_field( self, node ):
+    def visit_field(self, node):
         assert len(node.children) == 2
         name = node.children[0].astext().lower()
         if name in self.curlist:

@@ -57,10 +57,10 @@ class Extractor(extract.Extractor):
 
     re_short = re.compile('([a-z])(?: ([^ \t]+))?$')
 
-    def store( self, *data ):
+    def store(self, *data):
         self.storage.store(self.unid, *data)
 
-    def apply( self, **kwargs ):
+    def apply(self, **kwargs):
         self.unid, self.storage = kwargs['unid'], kwargs['storage']
 
         v = FieldListVisitor(self, self.document)
@@ -86,29 +86,29 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
     case-insensitive.
     """
 
-    def __init__( self, extractor, *args, **kwds ):
+    def __init__(self, extractor, *args, **kwds):
         nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
         self.extractor = extractor
         self.fields = None
 
-    def visit_field_list( self, node ):
+    def visit_field_list(self, node):
         # Setup accumulator.
         self.fields = []
 
-    def visit_field_name( self, node ):
+    def visit_field_name(self, node):
         if self.fields is not None:
             self.field_name = node.astext()
 
-    def visit_field_body( self, node ):
+    def visit_field_body(self, node):
         if self.fields is not None:
             self.fields.append( (self.field_name, node.astext()) )
             self.field_name = None
 
-    def depart_field_list( self, node ):
+    def depart_field_list(self, node):
         self.process(self.fields)
         self.fields = None
 
-    def process( self, fields ):
+    def process(self, fields):
         """
         Process a field list, attempting to find if it's a contact info.
         """
@@ -170,7 +170,7 @@ class Storage(extract.SQLExtractorStorage):
           ''',
         }
 
-    def store( self, unid, name, tfields ):
+    def store(self, unid, name, tfields):
         """
         'unid' -> str: the unique id
         'name' -> unicode: person or org name

@@ -20,7 +20,7 @@ class ExceptionXMLRPCRequestHandler(CGIXMLRPCRequestHandler):
     XMLRPC handler, with tracing for exceptions.
     This makes it much easier to fix exceptions when they occur on the server.
     """
-    def _dispatch( self, method, params ):
+    def _dispatch(self, method, params):
         try:
             return CGIXMLRPCRequestHandler._dispatch(self, method, params)
         except Exception, e:

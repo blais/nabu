@@ -43,7 +43,7 @@ class Extractor(extract.Extractor):
 
     default_priority = 900
 
-    def apply( self, **kwargs ):
+    def apply(self, **kwargs):
         self.unid, self.storage = kwargs['unid'], kwargs['storage']
 
         # Note: we use a special FieldListVisitor class that we've built
@@ -68,7 +68,7 @@ class Extractor(extract.Extractor):
             if book:
                 self.store(flist)
 
-    def store( self, flist ):
+    def store(self, flist):
         emap = {}
         for k, v in flist.iteritems():
             if isinstance(v, (list, tuple)):
@@ -99,7 +99,7 @@ class Storage(extract.SQLExtractorStorage):
         '''
         }
 
-    def store( self, unid, *args ):
+    def store(self, unid, *args):
         data, = args
         
         cols = ('unid', 'title', 'author', 'year', 'url', 'review')

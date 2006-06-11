@@ -18,7 +18,7 @@ import cgi
 
 #---------------------------------------------------------------------------
 #
-def crypt_pass( plpass ):
+def crypt_pass(plpass):
     """Crypt password for htpasswd file."""
     saltchoice = string.ascii_letters + string.digits
     salt = ''.join([random.choice(saltchoice) for x in xrange(2)])

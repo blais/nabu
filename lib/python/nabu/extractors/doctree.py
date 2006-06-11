@@ -34,7 +34,7 @@ class Extractor(extract.Extractor):
 
     default_priority = 999
 
-    def apply( self, unid=None, storage=None, pickle_receiver=None ):
+    def apply(self, unid=None, storage=None, pickle_receiver=None):
         self.unid = unid
         self.storage = storage
         # Store the document at this point.
@@ -58,7 +58,7 @@ class Storage(extract.SQLExtractorStorage):
         '''
         }
 
-    def store( self, unid, doctree ):
+    def store(self, unid, doctree):
 
         # Temporarily remove the reporter and transformer, just for pickling.
         saved_reporter = doctree.reporter

@@ -45,7 +45,7 @@ class Extractor(extract.Extractor):
     """
     default_priority = 900
 
-    def apply( self, **kwargs ):
+    def apply(self, **kwargs):
         self.unid, self.storage = kwargs['unid'], kwargs['storage']
 
         v = self.Visitor(self.document)
@@ -54,7 +54,7 @@ class Extractor(extract.Extractor):
 
     class Visitor(nodes.SparseNodeVisitor):
 
-        def visit_line_block( self, node ):
+        def visit_line_block(self, node):
             # check the number of lines
             if len(node.children) not in (1, 2, 3):
                 return
@@ -62,7 +62,7 @@ class Extractor(extract.Extractor):
             ldesc = lurl = lkeys = ''
 
             # check the various patterns above
-            def checkref( lineref ):
+            def checkref(lineref):
                 if not lineref.children[0]:
                     return False
                 if not isinstance(lineref.children[0], nodes.reference):
@@ -119,7 +119,7 @@ class Storage(extract.SQLExtractorStorage):
         '''
         }
 
-    def store( self, unid, url, description, keywords ):
+    def store(self, unid, url, description, keywords):
 
         cols = ('unid', 'url', 'description', 'keywords')
             

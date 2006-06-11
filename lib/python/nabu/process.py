@@ -25,7 +25,7 @@ from docutils.transforms.universal import FilterMessages
 from nabu.extract import Extractor
 
 
-def transform_doctree( unid, doctree, transforms, pickle_receiver=None ):
+def transform_doctree(unid, doctree, transforms, pickle_receiver=None):
     """
     Run the transforms on the document tree.  This may modify the tree,
     which will have an effect later on if using that stored document tree as

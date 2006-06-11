@@ -67,7 +67,7 @@ class CmdServerUser:
     """
     _server = None
 
-    def get_server( self, opts ):
+    def get_server(self, opts):
         """
         Create server lazily, because we might not have any candidates.
         """
@@ -84,7 +84,7 @@ class CmdFinder:
     """
     Base class for commands that find files.
     """
-    def addopts( self, lparser ):
+    def addopts(self, lparser):
         # finder options
         group2 = optparse.OptionGroup(lparser,
                                       "Publish command finder options",
@@ -122,7 +122,7 @@ class CmdFinder:
 
         lparser.add_option_group(group2)
 
-    def execute( self, opts, args ):
+    def execute(self, opts, args):
         # validate options
         try:
             opts.marker_regexp = re.compile(opts.marker_regexp, re.M)
@@ -147,7 +147,7 @@ class CmdPublish(CmdServerUser, CmdFinder):
     """
     names = ('publish',)
 
-    def addopts( self, lparser ):
+    def addopts(self, lparser):
         CmdFinder.addopts(self, lparser)
 
         # processing options
@@ -185,7 +185,7 @@ class CmdPublish(CmdServerUser, CmdFinder):
 
         lparser.add_option_group(group3)
 
-    def execute( self, opts, args ):
+    def execute(self, opts, args):
         CmdFinder.execute(self, opts, args)
         if not self.candidates:
             return
@@ -296,7 +296,7 @@ class CmdClear(CmdServerUser, CmdFinder):
     """
     names = ('clear', 'clean',)
 
-    def addopts( self, lparser ):
+    def addopts(self, lparser):
         CmdFinder.addopts(self, lparser)
         lparser.add_option('-t', '--found-only', action='store_true',
                            help="Only remove documents that were found.")
@@ -304,7 +304,7 @@ class CmdClear(CmdServerUser, CmdFinder):
                            help="Only remove documents that were NOT found.")
 ## FIXME TODO
         
-    def execute( self, opts, args ):
+    def execute(self, opts, args):
         server = self.get_server(opts)
 
         if opts.found_only:
@@ -327,7 +327,7 @@ class CmdErrors(CmdServerUser):
     """
     names = ('errors',)
 
-    def execute( self, opts, args ):
+    def execute(self, opts, args):
         errors_info = self.get_server(opts).geterrors()
         for e in errors_info:
             print '=== From %s {%s}' % (e['filename'], e['unid'])
@@ -339,7 +339,7 @@ class CmdDump(CmdServerUser):
     """
     names = ('list', 'contents', 'dump',)
 
-    def execute( self, opts, args ):
+    def execute(self, opts, args):
         attrs = ['unid', 'filename', 'username', 'time', 'errors']
         headers = [dict( (x, x.capitalize()) for x in attrs )]
         sources_info = self.get_server(opts).dump()
@@ -366,7 +366,7 @@ class File:
     """
     Struct to hold information about a candidate.
     """
-    def __init__( self, fn, unid, digest, contents ):
+    def __init__(self, fn, unid, digest, contents):
         self.fn = fn
         self.unid = unid
         self.digest = digest
@@ -374,7 +374,7 @@ class File:
 
 codingre = re.compile('.*-\\*-\s*coding:\s*(\S+)\s*.*-\\*-')
 
-def find_to_publish( fnordns, opts ):
+def find_to_publish(fnordns, opts):
     """
     Discover files, figure out which ones are candidates to be processed, and
     returns a list of those objects.
@@ -479,7 +479,7 @@ def find_to_publish( fnordns, opts ):
 # Utils
 #-------------------------------------------------------------------------------
 
-def exclude_list( names, exclude ):
+def exclude_list(names, exclude):
     """
     Returns a list of the names which do not match any of the given exclude
     patterns.
@@ -493,7 +493,7 @@ def exclude_list( names, exclude ):
             newnames.append(n)
     return newnames
 
-def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
+def process_dirs_or_files(args, exclude=[], recurse=True, ignore_error=False):
     """
     From a list of directories or filenames, yield filenames.
     (This is a generic function and you can reuse it in other places.)
@@ -533,7 +533,7 @@ def process_dirs_or_files( args, exclude=[], recurse=True, ignore_error=False ):
 # Config / Global Options
 #-------------------------------------------------------------------------------
 
-def parse_subcommands( gparser, subcmds, configvars, defcmd=None ):
+def parse_subcommands(gparser, subcmds, configvars, defcmd=None):
     """
     Parse given global arguments, find subcommand from given list of subcommand
     objects, parse local arguments and return a tuple of global options,
@@ -586,7 +586,7 @@ def parse_subcommands( gparser, subcmds, configvars, defcmd=None ):
 
     return sc, opts, subsubargs
 
-def parse_options( configvars ):
+def parse_options(configvars):
     """
     Parse the command-line and config file options and return a pair of opts,
     args like optparse.
