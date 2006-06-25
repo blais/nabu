@@ -5,6 +5,10 @@
 Current Devel
 =============
 
+- Removed ``--print-messages`` option to client, just use verbose now.
+
+- Fixed some error reporting.
+
 - Fixed bug with events date parsing.
 
 - Renamed the extractors consistently to "Extractor" and "Storage",

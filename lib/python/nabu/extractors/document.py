@@ -40,7 +40,7 @@ class Extractor(extract.Extractor):
 
         v = self.Visitor(self.document)
         v.xform = self
-        self.document.walk(v)
+        self.document.walkabout(v)
 
         from pprint import pformat
         self.document.reporter.info(
@@ -76,9 +76,12 @@ class Extractor(extract.Extractor):
 
         def visit_docinfo(self, node):
             self.in_docinfo = 1
-
+            
         def depart_docinfo(self, node):
             self.in_docinfo = 0
+
+            # Remove the bibliographic fields after processing.
+            node.clear()
 
         def visit_field_name(self, node):
             fname = node.astext().lower()

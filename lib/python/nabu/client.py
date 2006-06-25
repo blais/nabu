@@ -151,10 +151,6 @@ def opts_publish(parser):
         "You would use this if it makes sense for the markers "
         "appear in your published documents somehow.")
 
-    group.add_option('-m', '--print-messages', action='store_true',
-                     help="Print informative messages indicating what "
-                     "the transforms have parsed.")
-
     group.add_option('--dont-upload-source', action='store_true',
                      help="When processing locally, do not upload the source "
                      "document to the server.  Upload an empty string instead. "
@@ -222,7 +218,7 @@ def publish(candidates, opts, args):
             print '======= sending source for processing:  %s  {%s}' % \
                   (pfile.fn, pfile.unid)
 
-            report_level = not opts.print_messages and 2 or 0
+            report_level = not opts.verbose and 2 or 0
             errors, messages = server.process_source(
                 pfile.unid, pfile.fn, xmlrpclib.Binary(pfile.contents),
                 report_level)
@@ -291,7 +287,7 @@ def publish(candidates, opts, args):
                     errors)
                 if errors:
                     print errors
-                if opts.print_messages and messages:
+                if opts.verbose and messages:
                     print messages
 
             elif opts.process_locally == 2:
