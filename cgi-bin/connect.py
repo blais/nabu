@@ -13,8 +13,11 @@ the contents of the uploaded sources.  This is NOT meant as a presentation
 layer, this is really just for debugging stuff.
 """
 
-# psycopg2 imports
-import psycopg2
+# stdlib imports
+import sys
+
+# dbapi imports
+import psycopg2 as dbapi
 
 
 def connect_dbapi():
@@ -24,11 +27,18 @@ def connect_dbapi():
     """
     # connect to the database
     params = {
-        'database': 'nabu',
-        'user': 'nabu',
-        'password': 'pwnabu',
+        'database': 'nabudemo',
+        'user': 'nabudemo',
+        'password': '$nabudemo',
         'host': 'localhost',
     }
-    conn = psycopg2.connect(**params)
-    return psycopg2, conn
+    try:
+        conn = dbapi.connect(**params)
+    except dbapi.Error, e:
+        print 'Content-type:', 'text/plain'
+        print 'Status: 500 Could not connect to server.'
+        print
+        sys.exit(1)
+        
+    return dbapi, conn
 

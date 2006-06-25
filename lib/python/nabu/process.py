@@ -25,26 +25,27 @@ from docutils.transforms.universal import FilterMessages
 from nabu.extract import Extractor
 
 
-def transform_doctree(unid, doctree, transforms, pickle_receiver=None):
+def transform_doctree(unid, doctree, transforms, pickle_receiver=None,
+                      report_level=1):
     """
     Run the transforms on the document tree.  This may modify the tree,
     which will have an effect later on if using that stored document tree as
     a source for rendering.
     """
-    # create transformer
+    # Create transformer.
     doctree.transformer = Transformer(doctree)
 
-    # add a transform to remove system messages
+    # Add a transform to remove system messages.
     doctree.transformer.add_transform(FilterMessages, priority=1)
     
-    # populate with transforms
+    # Populate with transforms.
     for tclass, storage in transforms:
         assert issubclass(tclass, Extractor)
         doctree.transformer.add_transform(
             tclass, unid=unid, storage=storage,
             pickle_receiver=pickle_receiver)
 
-    # create an appropriate reporter
+    # Create an appropriate reporter.
     fend = docutils.frontend.OptionParser()
     settings = fend.get_default_values()
     errstream = StringIO.StringIO()
@@ -52,14 +53,16 @@ def transform_doctree(unid, doctree, transforms, pickle_receiver=None):
         'warning_stream': errstream,
         'error_encoding': 'UTF-8',
         'halt_level': 100, # never halt
-        'report_level': 5,
+        'report_level': report_level,
         }, fend)
     doctree.reporter = docutils.utils.new_reporter('', settings)
 
-    # apply the transforms
+    # Apply the transforms.
     doctree.transformer.apply_transforms()
     
-    # fix back the doctree to allow to be pickled 
+    # Fix back the doctree to allow to be pickled.
     doctree.transformer = doctree.reporter = None
 
+    # Return messages that were reported during the processing of the
+    # transforms.
     return errstream.getvalue().decode('UTF-8')

@@ -32,7 +32,7 @@ class Extractor(extract.Extractor):
     """
     default_priority = 900
 
-    biblifields = ['category', 'serie', 'location', 'disclosure']
+    biblifields = ['category', 'location', 'disclosure']
 
     def apply(self, unid=None, storage=None, pickle_receiver=None):
         self.unid = unid
@@ -46,7 +46,25 @@ class Extractor(extract.Extractor):
         self.document.reporter.info(
             'Document extractor: %s' % pformat(v.extracted))
 
+        self.post_process(v.extracted)
+
         self.storage.store(self.unid, v.extracted)
+
+    def post_process(self, extracted):
+        """
+        Post process gathered data.
+        """
+        # Split the category into category and subcategories.
+        try:
+            categories = map(unicode.strip, extracted['category'].split(','))
+            if len(categories) > 2:
+                self.document.reporter.error(
+                    "Too many levels in categories: '%s'" %
+                    extracted['category'])
+            elif len(categories) == 2:
+                extracted['category'], extracted['subcategory'] = categories
+        except KeyError:
+            pass
 
 
     class Visitor(nodes.SparseNodeVisitor):
@@ -106,7 +124,7 @@ class Storage(extract.SQLExtractorStorage):
            date DATE,
            abstract TEXT,
            category TEXT,
-           serie TEXT,
+           subcategory TEXT,
            location TEXT,
 
            -- Disclosure is
@@ -129,7 +147,7 @@ class Storage(extract.SQLExtractorStorage):
         data['unid'] = unid
         
         cols = ['unid', 'title', 'author', 'date',
-                'abstract', 'category', 'serie', 'location',
+                'abstract', 'category', 'subcategory', 'location',
                 'disclosure']
         for cname in cols:
             data.setdefault(cname, None)

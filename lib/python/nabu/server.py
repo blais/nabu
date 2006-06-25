@@ -18,6 +18,13 @@ import datetime
 import StringIO
 import cPickle as pickle
 
+## FIXME: remove
+import sys
+sys.path.append('/home/blais/p/conf/common/lib/python')
+import injectrace
+
+
+
 # docutils imports
 import docutils.core
 
@@ -172,10 +179,13 @@ class PublishServerHandler:
                 del dic[k]
         return dic
 
-    def process_source(self, unid, filename, contents_bin):
+    def process_source(self, unid, filename, contents_bin, report_level):
         """
         Process a single file.
+
         We assume that the file comes wrapped in a Binary, encoded in UTF-8.
+        This function returns a pair of (docutils conversion errors, transform
+        messages).
         """
         # Convert XML-RPC Binary into string.
         contents_utf8 = contents_bin.data
@@ -209,13 +219,19 @@ class PublishServerHandler:
             },
             )
 
+        # Errors during conversion to document tree.
         errortext = errstream.getvalue().decode('UTF-8')
+
         messages = self.__process(unid, filename, digest,
-                                  contents_utf8, doctree, None, errortext)
+                                  contents_utf8, doctree, None,
+                                  errortext,
+                                  report_level)
+
         return errortext, messages
 
     def process_doctree(self, unid, filename, digest,
-                         contents_bin, doctree_bin, errortext):
+                        contents_bin, doctree_bin, errortext,
+                        report_level):
         """
         Process a single file.  We assume that the file and document tree comes
         wrapped in a Binary, encoded in UTF-8.
@@ -229,11 +245,13 @@ class PublishServerHandler:
 
         messages = self.__process(unid, filename, digest,
                                   contents_utf8, doctree, docpickled,
-                                  errortext.decode('UTF-8'))
+                                  errortext.decode('UTF-8'),
+                                  report_level)
+
         return '', messages
 
     def __process(self, unid, filename, digest, contents_utf8,
-                   doctree, docpickled, errortext):
+                  doctree, docpickled, errortext, report_level):
         """
         Process the given tree, extracting the information entries from it and
         replacing the existing entries with the newly extracted ones.
@@ -271,15 +289,16 @@ class PublishServerHandler:
         # Transform the document tree.
         # Note: we apply the transforms before storing the document tree.
         messages = process.transform_doctree(
-            store_unid, doctree, self.transforms, pickle_receiver)
-        
-        # get the last of the received pickled documents (the most transformed).
+            store_unid, doctree, self.transforms, pickle_receiver,
+            report_level)
+
+        # Get the last of the received pickled documents (the most transformed).
         # We reuse that to store the doucment in the database.
         # If there is none, we pickled our own in the source.
         if pickles:
             docpickled = pickles[-1]
 
-        # add the transformed tree as a new uploaded source
+        # Add the transformed tree as a new uploaded source
         self.sources.add(self.username, unid, filename.replace('\\', '/'),
                          digest, datetime.datetime.now(),
                          contents_utf8.decode('utf-8'),

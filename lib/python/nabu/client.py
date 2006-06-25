@@ -222,11 +222,13 @@ def publish(candidates, opts, args):
             print '======= sending source for processing:  %s  {%s}' % \
                   (pfile.fn, pfile.unid)
 
+            report_level = not opts.print_messages and 2 or 0
             errors, messages = server.process_source(
-                pfile.unid, pfile.fn, xmlrpclib.Binary(pfile.contents))
+                pfile.unid, pfile.fn, xmlrpclib.Binary(pfile.contents),
+                report_level)
             if errors:
                 sys.stdout.write(errors.encode('latin1', 'replace'))
-            if opts.print_messages and messages:
+            if messages:
                 sys.stdout.write(messages.encode('latin1', 'replace'))
             continue
 

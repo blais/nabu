@@ -66,9 +66,9 @@ p#desc {
 
 '''
 
-stylesheet = (u'/docutils-style.css')
+stylesheet = ('/docutils-style.css')
 
-pages_header = u'''<!DOCTYPE html PUBLIC
+pages_header = '''<!DOCTYPE html PUBLIC
    "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -84,7 +84,7 @@ pages_header = u'''<!DOCTYPE html PUBLIC
 
 ''' % (stylesheet, css)
 
-pages_footer = u'''
+pages_footer = '''
 </body>
 </html>
 '''
@@ -204,7 +204,8 @@ def render_source(unid, uri, username, srcstore):
     print >> os, navig(uri, unid)
     print >> os, '<h1>Source</h1>'
     print >> os, '<dl>'
-    print >> os, '<dt>Source Filename</dt><dd>%s</dd>' % escape(src['filename'])
+    print >> os, ('<dt>Source Filename</dt><dd>%s</dd>' %
+                  escape(src['filename'].encode('utf-8')))
     print >> os, '<dt>User</dt><dd>%s</dd>' % escape(src['username'])
     print >> os, '<dt>Time Uploaded</dt><dd>%s</dd>' % escape(str(src['time']))
     print >> os, '<dt>Digest</dt><dd>%s</dd>' % escape(src['digest'])
@@ -221,7 +222,7 @@ def render_source(unid, uri, username, srcstore):
         print >> os, '</pre>'
     print >> os, '<a name="doctree"/><h2>Document Tree</h2>'
     print >> os, '<pre>'
-    print >> os, escape(doctree_str)
+    print >> os, escape(doctree_str.encode('utf-8'))
     print >> os, '</pre>'
     print >> os, '<hr/>'
     print >> os, '<a name="source"/><h2>Source</h2>'
@@ -230,7 +231,7 @@ def render_source(unid, uri, username, srcstore):
     print >> os, '</pre>'
     print >> os, '<hr width="5"/>'
     print >> os, pages_footer
-    return os.getvalue()
+    return os.getvalue().decode('utf-8')
 
 
 #-------------------------------------------------------------------------------
