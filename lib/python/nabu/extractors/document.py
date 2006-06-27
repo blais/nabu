@@ -32,7 +32,7 @@ class Extractor(extract.Extractor):
     """
     default_priority = 900
 
-    biblifields = ['category', 'location', 'disclosure']
+    biblifields = ['tags', 'location', 'disclosure']
 
     def apply(self, unid=None, storage=None, pickle_receiver=None):
         self.unid = unid
@@ -54,17 +54,11 @@ class Extractor(extract.Extractor):
         """
         Post process gathered data.
         """
-        # Split the category into category and subcategories.
+        # Split the tags.
         try:
-            categories = map(unicode.strip, extracted['category'].split(','))
-            if len(categories) > 2:
-                self.document.reporter.error(
-                    "Too many levels in categories: '%s'" %
-                    extracted['category'])
-            elif len(categories) == 2:
-                extracted['category'], extracted['subcategory'] = categories
+            extracted['tags'] = map(unicode.strip, extracted['tags'].split(','))
         except KeyError:
-            pass
+            extracted['tags'] = []
 
 
     class Visitor(nodes.SparseNodeVisitor):
@@ -117,27 +111,35 @@ class Storage(extract.SQLExtractorStorage):
     uploaded sources storage to render the entire document as HTML, this is ok.
     """
 
-    sql_tables = { 'document': '''
+    sql_tables = {
+        'document': '''
 
-        CREATE TABLE document
-        (
-           unid TEXT NOT NULL,
-           title TEXT,
-           author TEXT,
-           date DATE,
-           abstract TEXT,
-           category TEXT,
-           subcategory TEXT,
-           location TEXT,
+            CREATE TABLE document
+            (
+               unid TEXT NOT NULL,
+               title TEXT,
+               author TEXT,
+               date DATE,
+               abstract TEXT,
+               location TEXT,
 
-           -- Disclosure is
-           --  0: public
-           --  1: restricted
-           --  2: private
-           disclosure INT DEFAULT 2
-        )
+               -- Disclosure is
+               --  0: public
+               --  1: restricted
+               --  2: private
+               disclosure INT DEFAULT 2
+            )
 
-        '''
+        ''',
+        'tags': '''
+
+            CREATE TABLE tags
+            (
+               unid TEXT NOT NULL,
+               tagname TEXT
+            )
+
+        ''',
         }
 
     # Mapping strings to disclosure levels.
@@ -150,7 +152,7 @@ class Storage(extract.SQLExtractorStorage):
         data['unid'] = unid
         
         cols = ['unid', 'title', 'author', 'date',
-                'abstract', 'category', 'subcategory', 'location',
+                'abstract', 'location',
                 'disclosure']
         for cname in cols:
             data.setdefault(cname, None)
@@ -160,12 +162,18 @@ class Storage(extract.SQLExtractorStorage):
             disc = disc.split()[0] # Get only first word.
         data['disclosure'] = self.discmap[disc]
 
+        cursor = self.connection.cursor()
         a = ', '.join(['%%(%s)s' % x for x in cols])
         query = """
           INSERT INTO document (%s) VALUES (%s)
           """ % (', '.join(cols), a)
-
-        cursor = self.connection.cursor()
         cursor.execute(query, data)
+
+        # Insert tags.
+        for tagname in data['tags']:
+            cursor.execute('''
+              INSERT INTO tags (unid, tagname) VALUES (%s, %s)
+            ''', (unid, tagname))
+        
         self.connection.commit()
 
