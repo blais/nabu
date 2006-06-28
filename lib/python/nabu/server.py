@@ -13,17 +13,11 @@ Server-side handlers for requests.
 
 # stdlib imports
 import xmlrpclib
+from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 import md5
 import datetime
 import StringIO
 import cPickle as pickle
-
-## FIXME: remove
-import sys
-sys.path.append('/home/blais/p/conf/common/lib/python')
-import injectrace
-
-
 
 # docutils imports
 import docutils.core
@@ -330,7 +324,10 @@ class PublishServerHandler:
         return helptext
 
 
-def xmlrpc_handler(srcstore, transforms, username, allow_reset=0):
+#-------------------------------------------------------------------------------
+#
+def xmlrpc_handler_cgi(srcstore, transforms, username,
+                       allow_reset=0):
     """
     Given a source storage instance and a list of (transform class, transform
     storage) pairs, implement a basic XMLRPC handler loop.
@@ -338,6 +335,23 @@ def xmlrpc_handler(srcstore, transforms, username, allow_reset=0):
     Note: this is an example, you might want to handle the XMLRPC loop
     differently, whatever you like.  This is being used by the example CGI
     handler.
+    """
+    # create a publish handler
+    server_handler = PublishServerHandler(
+        srcstore, transforms, allow_reset=allow_reset)
+
+    # prepare (reload) with the current user
+    server_handler.reload(username)
+    
+    # create an XMLRPC server handler and bind interface
+    handler = ExceptionXMLRPCRequestHandler()
+    handler.register_instance(server_handler)
+    handler.handle_request()
+
+def xmlrpc_handler_mp(srcstore, transforms, request_text, username,
+                      allow_reset=0):
+    """
+    Same as xmlrpc_handler_cgi() but within a mod_python environment.
     """
     # create a publish handler
     server_handler = PublishServerHandler(
@@ -353,6 +367,7 @@ def xmlrpc_handler(srcstore, transforms, username, allow_reset=0):
     server_handler.reload(username)
     
     # create an XMLRPC server handler and bind interface
-    handler = ExceptionXMLRPCRequestHandler()
+    handler = SimpleXMLRPCDispatcher()
     handler.register_instance(server_handler)
-    handler.handle_request()
+    return handler._marshaled_dispatch(request_text)
+

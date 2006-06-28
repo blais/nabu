@@ -260,7 +260,7 @@ def parse_dtspec(s):
 
     dates = []
     if case == 'f':
-        print >> sys.stderr, '===', case, mo.groups()
+        ## print >> sys.stderr, '===', case, mo.groups()
 
         # month
         month = int(mo.group(2))
@@ -282,7 +282,7 @@ def parse_dtspec(s):
         dates = [datetime.date(year, month, x) for x in days]
 
     elif case == 'm':
-        print >> sys.stderr, '===', case, mo.groups()
+        ## print >> sys.stderr, '===', case, mo.groups()
 
         # Our match is necessarily a day.
         wkday = wkdays[mo.group(1)]
@@ -292,7 +292,7 @@ def parse_dtspec(s):
         dates = [date]
 
     elif case == 'n':
-        print >> sys.stderr, '===', case, mo.groups()
+        ## print >> sys.stderr, '===', case, mo.groups()
 
         # Our first match is either a day or month
         dm, days = mo.groups()
@@ -330,7 +330,7 @@ def parse_dtspec(s):
             dates = [datetime.date(year, month, x) for x in days]
 
     elif case in ('y', 'z'):
-        print >> sys.stderr, '===', case, mo.groups()
+        ## print >> sys.stderr, '===', case, mo.groups()
 
         if case == 'y':
             th1, day, th2 = mo.groups()
@@ -431,3 +431,4 @@ if __name__ == '__main__':
 
 
 # FIXME: e.g. "march 16" is not accepted yet, full names should work too
+

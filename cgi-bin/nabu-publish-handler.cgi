@@ -60,7 +60,7 @@ def main():
         (book.Extractor, book.Storage(module, conn)),
         )
 
-    server.xmlrpc_handler(src, transforms, username, allow_reset=1)
+    server.xmlrpc_handler_cgi(src, transforms, username, allow_reset=1)
 
 if __name__ == '__main__':
     main()
