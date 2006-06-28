@@ -125,7 +125,7 @@ class Storage(extract.SQLExtractorStorage):
 
                -- Disclosure is
                --  0: public
-               --  1: restricted
+               --  1: shared
                --  2: private
                disclosure INT DEFAULT 2
             )
@@ -145,7 +145,7 @@ class Storage(extract.SQLExtractorStorage):
     # Mapping strings to disclosure levels.
     discmap = {None: 2, # default
                'public': 0,
-               'restricted': 1,
+               'shared': 1,
                'private': 2}
 
     def store(self, unid, data):
