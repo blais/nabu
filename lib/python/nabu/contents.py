@@ -185,7 +185,7 @@ def render_source(unid, uri, username, srcstore):
     """
     sr = srcstore.get(username, [unid],
                       ('unid', 'filename', 'username', 'time', 'digest',
-                       'errors', 'doctree', 'source'))
+                       'errors', 'doctree', 'source', 'encoding'))
     assert len(sr) == 1
     src = sr[0]
 
@@ -199,6 +199,9 @@ def render_source(unid, uri, username, srcstore):
     else:
         doctree_str = ''
 
+    encoding = src['encoding']
+    source = str(src['source']).decode(encoding).encode('utf-8')
+    
     os = StringIO.StringIO()
     print >> os, pages_header
     print >> os, navig(uri, unid)
@@ -206,6 +209,7 @@ def render_source(unid, uri, username, srcstore):
     print >> os, '<dl>'
     print >> os, ('<dt>Source Filename</dt><dd>%s</dd>' %
                   escape(src['filename'].encode('utf-8')))
+    print >> os, '<dt>Encoding</dt><dd>%s</dd>' % escape(encoding)
     print >> os, '<dt>User</dt><dd>%s</dd>' % escape(src['username'])
     print >> os, '<dt>Time Uploaded</dt><dd>%s</dd>' % escape(str(src['time']))
     print >> os, '<dt>Digest</dt><dd>%s</dd>' % escape(src['digest'])
@@ -227,7 +231,7 @@ def render_source(unid, uri, username, srcstore):
     print >> os, '<hr/>'
     print >> os, '<a name="source"/><h2>Source</h2>'
     print >> os, '<pre>'
-    print >> os, escape(src['source'].encode('utf-8'))
+    print >> os, escape(source)
     print >> os, '</pre>'
     print >> os, '<hr width="5"/>'
     print >> os, pages_footer

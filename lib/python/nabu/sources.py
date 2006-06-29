@@ -38,7 +38,7 @@ class SourceStorage:
         """
 
     def add(self, user, unid, filename, digest, time,
-             source, doctree, errors, docpickled=None):
+            source, encoding, doctree, errors, docpickled=None):
         """
         Add or replace a source entry for a specific unid.
 
@@ -139,10 +139,10 @@ class PerUserSourceStorageProxy(SourceStorage):
         return self.prox.clear(user, idlist)
 
     def add(self, user, unid, filename, digest, time,
-             source, doctree, errors, docpickled=None):
+            source, encoding, doctree, errors, docpickled=None):
         unid = self.__add_user(unid, user)
         return self.prox.add(user, unid, filename, digest, time,
-                             source, doctree, errors, docpickled)
+                             source, encoding, doctree, errors, docpickled)
 
     def __remove_user_dicts(self, dictlist, user):
         "Fixes unids in lists of dictionaries."
@@ -200,7 +200,8 @@ class DBSourceStorage(SourceStorage):
             digest VARCHAR(32) NOT NULL,
             username VARCHAR(32),
             "time" TIMESTAMP,
-            source TEXT,
+            source BYTEA,  -- Original encoding, so we use a blob
+            encoding TEXT, -- Source encoding
             doctree BYTEA,
             errors TEXT
         );
@@ -221,7 +222,8 @@ class DBSourceStorage(SourceStorage):
         # Checks that the database tables exist and if they don't, creates them.
         cursor = self.connection.cursor()
         cursor.execute("""
-           SELECT table_name FROM information_schema.tables WHERE table_name = %s
+           SELECT table_name FROM information_schema.tables
+             WHERE table_name = %s
            """, (DBSourceStorage.__table_name,))
         if cursor.rowcount == 0:
             self.reset_schema(False)
@@ -284,7 +286,7 @@ class DBSourceStorage(SourceStorage):
             self.connection.commit()
 
     def add(self, user, unid, filename, digest, time,
-             source, doctree, errors, docpickled=None):
+            source, encoding, doctree, errors, docpickled=None):
 
         if not self.store_source:
             source = u''
@@ -297,17 +299,19 @@ class DBSourceStorage(SourceStorage):
             docpickled = pickle.dumps(doctree)
 
         bindoc = self.module.Binary(docpickled)
+        binsource = self.module.Binary(source)
 
         cursor = self.connection.cursor()
         cursor.execute("""
            INSERT INTO %s
-             (unid, filename, digest, username, time, source, errors, doctree)
+             (unid, filename, digest, username, time,
+             source, encoding, errors, doctree)
            VALUES
-             (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)
+             (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)
              """ % DBSourceStorage.__table_name,
-           (unid, filename, digest, user, time, source, errors, bindoc))
+           (unid, filename, digest, user, time,
+            binsource, encoding, errors, bindoc))
         self.connection.commit()
-
 
     def get(self, user, idlist=None, attributes=[]):
         cursor = self.connection.cursor()
@@ -346,7 +350,7 @@ class DBSourceStorage(SourceStorage):
                     else:
                         value = None
 
-                elif attr in ['filename', 'source', 'errors']:
+                elif attr in ['filename', 'errors']:
                     # Note: we're assuming that the database is in UTF-8
                     # encoding.
                     value = value.decode('utf-8')

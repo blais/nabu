@@ -1,0 +1,10 @@
+============
+   un-uni
+============
+:Id: test-encoding-un-uni
+:Tags: TestEncodings
+
+Ce fichier contient quelques accents: École dûe pour garçons.
+Il est encodé en UTF-8, mais sans directive "coding".
+
+

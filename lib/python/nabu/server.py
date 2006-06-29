@@ -20,10 +20,10 @@ import StringIO
 import cPickle as pickle
 
 # docutils imports
-import docutils.core
+from docutils import core, io
 
 # nabu imports
-from nabu import process
+from nabu import process, client
 from nabu.utils import ExceptionXMLRPCRequestHandler
 
 class SimpleAccumulator:
@@ -165,7 +165,7 @@ class PublishServerHandler:
                 dic[k] = xmlrpclib.Binary(
                     v.encode('UTF-8'))
             elif k == 'doctree':
-                doctree_utf8, parts = docutils.core.publish_from_doctree(
+                doctree_utf8, parts = core.publish_from_doctree(
                     v, writer_name='pseudoxml',
                     settings_overrides={'output_encoding': 'UTF-8'},
                     )
@@ -177,15 +177,16 @@ class PublishServerHandler:
         """
         Process a single file.
 
-        We assume that the file comes wrapped in a Binary, encoded in UTF-8.
-        This function returns a pair of (docutils conversion errors, transform
-        messages).
+        We assume that the file comes wrapped in a Binary, in its original
+        encoding.  This function returns a pair of (docutils conversion errors,
+        transform messages).
         """
-        # Convert XML-RPC Binary into string.
-        contents_utf8 = contents_bin.data
+        # Convert XML-RPC Binary into string.  The string is encoded in its
+        # original encoding.
+        contents = contents_bin.data
 
         # Compute digest of contents.
-        m = md5.new(contents_utf8)
+        m = md5.new(contents)
         digest = m.hexdigest()
 
         # Add directives from extractors.
@@ -200,37 +201,37 @@ class PublishServerHandler:
 
         # process and store contents as a Unicode string
         errstream = StringIO.StringIO()
-        doctree = docutils.core.publish_doctree(
-            source=contents_utf8, source_path=filename,
+        publish_doctree = client.get_publisher()
+        doctree, encoding = publish_doctree(
+            source=contents, source_path=filename,
             reader_name='standalone',
             parser_name='restructuredtext',
             settings_overrides={
-            'input_encoding': 'UTF-8',
             'error_encoding': 'UTF-8',
             'warning_stream': errstream,
             'halt_level': 100, # never halt
             'report_level': 1,
             },
             )
-
+        
         # Errors during conversion to document tree.
         errortext = errstream.getvalue().decode('UTF-8')
 
         messages = self.__process(unid, filename, digest,
-                                  contents_utf8, doctree, None,
+                                  contents, encoding, doctree, None,
                                   errortext,
                                   report_level)
 
         return errortext, messages
 
     def process_doctree(self, unid, filename, digest,
-                        contents_bin, doctree_bin, errortext,
+                        contents_bin, encoding, doctree_bin, errortext,
                         report_level):
         """
         Process a single file.  We assume that the file and document tree comes
-        wrapped in a Binary, encoded in UTF-8.
+        wrapped in a Binary.
         """
-        contents_utf8 = contents_bin.data
+        contents = contents_bin.data
 
         # Note: errors unpickling are caught gracefully and reported to the
         # client (but they should not occur anyway).
@@ -238,13 +239,14 @@ class PublishServerHandler:
         doctree = pickle.loads(docpickled)
 
         messages = self.__process(unid, filename, digest,
-                                  contents_utf8, doctree, docpickled,
+                                  contents, encoding,
+                                  doctree, docpickled,
                                   errortext.decode('UTF-8'),
                                   report_level)
 
         return '', messages
 
-    def __process(self, unid, filename, digest, contents_utf8,
+    def __process(self, unid, filename, digest, contents, encoding,
                   doctree, docpickled, errortext, report_level):
         """
         Process the given tree, extracting the information entries from it and
@@ -295,7 +297,8 @@ class PublishServerHandler:
         # Add the transformed tree as a new uploaded source
         self.sources.add(self.username, unid, filename.replace('\\', '/'),
                          digest, datetime.datetime.now(),
-                         contents_utf8.decode('utf-8'),
+                         contents,
+                         encoding,
                          doctree, errortext,
                          docpickled)
         

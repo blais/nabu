@@ -1,0 +1,38 @@
+============================
+   Encoding Normalization
+============================
+:Author: Martin Blais <blais@furius.ca>
+:Date: 2006-06-29
+:Abstract:
+
+    We are having problems with normalization of encodings.
+
+.. contents::
+..
+    1  Input Cases
+    2  Places where conversion occurs
+
+
+Input Cases
+===========
+
+If we only consider two encodings different than ascii (latin-1 and UTF-8), we
+have the four possible cases occurring with Nabu and what happens then:
+
+1. File does not specify “coding”, is encoded in latin-1
+
+2. File does not specify “coding”, is encoded in UTF-8
+
+3. File specifies “coding” latin-1
+
+4. File specifies “coding” UTF-8
+
+
+
+Places where conversion occurs
+==============================
+
+- When you upload to docutils, docutils attempts to guess the input encoding.
+  It does a pretty good job at it, i.e. looks for the coding directive, tries to
+  convert from many different encodings.
+

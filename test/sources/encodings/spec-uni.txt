@@ -1,0 +1,12 @@
+.. -*- coding: utf-8 -*-
+
+==============
+   spec-uni
+==============
+:Id: test-encoding-spec-uni
+:Tags: TestEncodings
+
+Ce fichier contient quelques accents: École dûe pour garçons.
+Il est encodé en UTF-8, avec une directive "coding".
+
+

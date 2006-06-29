@@ -5,6 +5,11 @@
 Current Devel
 =============
 
+- Removed the buggy automatic guessing of the encoding and we're not letting
+  docutils take care of that.  In addition, the original contents of the source
+  file, in its original encoding, is stored in the database, as well as the name
+  of the encoding that docutils selected.
+
 - Removed ``--print-messages`` option to client, just use verbose now.
 
 - Fixed some error reporting.

@@ -1,0 +1,10 @@
+==============
+   un-latin
+==============
+:Id: test-encoding-un-latin
+:Tags: TestEncodings
+
+Ce fichier contient quelques accents: École dûe pour garçons.
+Il est encodé en latin-1, mais sans directive "coding".
+
+

@@ -1,0 +1,12 @@
+.. -*- coding: iso-8859-1 -*-
+
+================
+   spec-latin
+================
+:Id: test-encoding-spec-latin
+:Tags: TestEncodings
+
+Ce fichier contient quelques accents: École dûe pour garçons.
+Il est encodé en latin-1, avec une directive "coding".
+
+

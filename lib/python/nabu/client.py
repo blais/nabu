@@ -86,6 +86,7 @@ if sys.version_info[:2] < (2, 3):
 if sys.version_info[:2] < (2, 4):
     from sets import Set as set
 
+
 #-------------------------------------------------------------------------------
 # Publish
 #-------------------------------------------------------------------------------
@@ -238,27 +239,15 @@ def publish(candidates, opts, args):
             #
             print '======= processing file locally:  %s' % pfile.fn
 
-            try:
-                import docutils.core
-                docutils.core.publish_doctree
-
-            except ImportError:
+            publish_doctree = get_publisher()
+            if publish_doctree is None:
                 raise SystemExit(
                     "Error: you must have installed docutils in order to "
                     "process files locally.")
 
-            except AttributeError:
-                raise SystemExit(
-                    "Error: for local processing "
-                    "you need a more recent checkout of docutils \n"
-                    "or the author's special branch (will be merged soon, "
-                    "for now you can fetch it from:\n"
-                    "svn://svn.berlios.de/docutils/branches/"
-                    "blais_interrupt_render/docutils\n")
-
             import StringIO
             errstream = StringIO.StringIO()
-            doctree = docutils.core.publish_doctree(
+            doctree, encoding = publish_doctree(
                 source=pfile.contents, source_path=pfile.fn,
                 settings_overrides={
                 'input_encoding': 'UTF-8',
@@ -278,11 +267,12 @@ def publish(candidates, opts, args):
                 docpickled = pickle.dumps(doctree)
 
                 if opts.dont_upload_source:
-                    pfile.contents = '' #utf8
+                    pfile.contents = ''
 
                 errors, messages = server.process_doctree(
                     pfile.unid, pfile.fn, pfile.digest,
                     xmlrpclib.Binary(pfile.contents),
+                    pfile.encoding,
                     xmlrpclib.Binary(docpickled),
                     errors)
                 if errors:
@@ -308,6 +298,61 @@ def publish(candidates, opts, args):
             print '======= clearing {%s}' % iid
         server.clearids(idlist)
 
+#-------------------------------------------------------------------------------
+#
+_publisher = None
+
+def get_publisher():
+    """
+    Return the docutils publisher function.  If this fails to import docutils,
+    return None.
+    """
+    # Return singleton instance if already set.
+    global _publisher
+    if _publisher is not None:
+        return _publisher
+
+    # Try to import docutils.
+    try:
+        from docutils import core, io
+    except ImportError:
+        return None
+
+    # Copy of the publisher from docutils, slightly modified.
+    def publish_doctree(source, source_path=None,
+                        source_class=io.StringInput,
+                        reader=None, reader_name='standalone',
+                        parser=None, parser_name='restructuredtext',
+                        settings=None, settings_spec=None,
+                        settings_overrides=None, config_section=None,
+                        enable_exit_status=None):
+        """
+        A copy of docutils.core.publish_doctree(), that also returns other useful
+        stuff.  In this case, return
+
+        - the document
+        - the encoding detected and selected by docutils
+        """
+        pub = core.Publisher(reader=reader, parser=parser, writer=None,
+                             settings=settings,
+                             source_class=source_class,
+                             destination_class=io.NullOutput)
+        pub.set_components(reader_name, parser_name, 'null')
+        pub.process_programmatic_settings(
+            settings_spec, settings_overrides, config_section)
+        pub.set_source(source, source_path)
+        pub.set_destination(None, None)
+        output = pub.publish(enable_exit_status=enable_exit_status)
+
+        return pub.document, pub.source.successful_encoding
+
+    # Set the singleton and return it.
+    _publisher = publish_doctree
+
+    return _publisher
+
+
+
 #-------------------------------------------------------------------------------
 # Other Actions
 #-------------------------------------------------------------------------------
@@ -430,6 +475,7 @@ def help_transforms(opts):
     print get_server(opts).get_transforms_config().encode('UTF-8')
 
 
+
 #-------------------------------------------------------------------------------
 # Finder
 #-------------------------------------------------------------------------------
@@ -484,7 +530,7 @@ class File:
         self.fn = fn
         self.unid = unid
         self.digest = digest
-        self.contents = contents # always a UTF-8 encoded string
+        self.contents = contents # Encoded in its original encoding.
 
 def find_candidates(opts, args):
     """
@@ -577,31 +623,12 @@ def find_to_publish(fnordns, opts):
             print '======= publish id: {%s}' % unid
 
         # read the rest of the file and compute md5 contents
-        contents_enc = header + f.read()
+        contents = header + f.read()
         f.close()
 
-        # decode into Unicode, try to guess which format, if we cannot guess,
-        # assume Latin-1
-        mo = codingre.match(contents_enc)
-        if mo:
-            encoding = mo.group(1)
-        else:
-            encoding = 'latin-1'
-
-        if encoding.lower() in ('utf-8', 'utf8'):
-            contents = contents_enc
-        else:
-            try:
-                contents_uni = contents_enc.decode(encoding)
-                contents = contents_uni.encode('UTF-8')
-            except UnicodeDecodeError, e:
-                raise SystemExit( ("Decoding error in file '%s' "
-                                   "(trying to decode with encoding '%s'): %s") %
-                                  (fn, encoding, e))
-            except UnicodeEncodeError, e:
-                raise SystemExit( ("Encoding error in file '%s' "
-                                   "(trying to encode with encoding '%s'): %s") %
-                                  (fn, 'UTF-8', e))
+        # Important note: we do not attempt to guess the input encoding and to
+        # convert the file.  We let docutils take care of that, because it
+        # includes pretty nice encoding guessing code already.
 
         m = md5.new(contents)
         digest = m.hexdigest()
@@ -617,6 +644,7 @@ def find_to_publish(fnordns, opts):
     return candidates
 
 
+
 #-------------------------------------------------------------------------------
 # Utils
 #-------------------------------------------------------------------------------
@@ -671,6 +699,7 @@ def process_dirs_or_files(args, exclude=[], recurse=True, ignore_error=False):
                 continue
             yield arg
 
+
 #-------------------------------------------------------------------------------
 # Config / Global Options
 #-------------------------------------------------------------------------------
@@ -839,6 +868,7 @@ def read_config(opts, args):
         raise SystemExit(1)
     return defvars
 
+
 #-------------------------------------------------------------------------------
 # Main Program
 #-------------------------------------------------------------------------------
