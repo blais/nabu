@@ -22,6 +22,10 @@ from docutils.parsers.rst import directives
 from nabu import extract
 
 
+#===============================================================================
+# DIRECTIVES
+#===============================================================================
+
 #-------------------------------------------------------------------------------
 #
 align_values = ('left', 'center', 'right')
@@ -92,8 +96,11 @@ photogroup_directive.options = {'alt': directives.unchanged}
 photogroup_directive.content = True
 
 
-#-------------------------------------------------------------------------------
-#
+
+#===============================================================================
+# EXTRACTORS
+#===============================================================================
+
 class Extractor(extract.Extractor):
     
     default_priority = 900
@@ -103,17 +110,42 @@ class Extractor(extract.Extractor):
         directives.register_directive('photo', photo_directive)
         directives.register_directive('photogroup', photogroup_directive)
 
-    def apply(self, **kwargs):
+    def apply(self, unid=None, storage=None, pickle_receiver=None):
         # Note: For now, this changes the document tree via the directives but
         # does not store anything.
-        return
 
+        v = self.Visitor(self.document)
+        self.document.walk(v)
 
+        for name, proto, order in v.photos:
+            storage.store(unid, name, proto, order)
 
-##         def visit_image(self, node):
-##             if node.has_key('photo'):
-##                 self.document.reporter.info(node['uri'])
+    class Visitor(nodes.SparseNodeVisitor):
 
+        def __init__(self, *args, **kwds):
+            nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
+
+            self.order = 0
+            self.photos = []
+            
+        def visit_image(self, node):
+
+            if node.has_key('photo'):
+                uri = node['uri']
+
+                # Find the protocol.
+                words = uri.split(':')
+                if len(words) == 1:
+                    proto, name = None, words[0]
+                elif len(words) == 2:
+                    proto, name = words
+                else:
+                    self.document.reporter.error(
+                        'Invalid photo name contains more than one colon.')
+                    return
+
+                self.photos.append( (name, proto, self.order) )
+                self.order += 1
 
 
 #-------------------------------------------------------------------------------
@@ -122,7 +154,33 @@ class Storage(extract.SQLExtractorStorage):
     """
     Photo storage.
     """
-    # Note: For now, this changes the document but does not store anything.
+    sql_tables = {
+        'photo': '''
 
+            CREATE TABLE photo
+            (
+               -- source document unique id
+               unid     TEXT NOT NULL,
+
+               -- unique identifier for photo
+               name     TEXT,     
+
+               -- local, flickr, fotki, etc.
+               proto    TEXT,   
+
+               -- order in which the photo appears in the document, for sorting
+               "order"  INTEGER  
+                              
+            )
+
+        '''}
+
+    def store(self, unid, name, proto, order):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+          INSERT INTO photo (unid, name, proto, "order")
+            VALUES (%s, %s, %s, %s)
+        ''', (unid, name, proto, order))
+        self.connection.commit()
 
 

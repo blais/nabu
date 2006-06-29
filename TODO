@@ -2,6 +2,10 @@
     TODO: nabu
 ==================
 
+- Make the source storage objects use a acquire/release pattern compatible with
+  antipool, so that we could create them once in a mod_python handler rather
+  than every time.
+
 - When we change a document's unique Id, the old document remains in the
   database… is there anything we can do about that?
 
