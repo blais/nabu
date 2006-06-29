@@ -109,6 +109,13 @@ class Extractor(extract.Extractor):
         return
 
 
+
+##         def visit_image(self, node):
+##             if node.has_key('photo'):
+##                 self.document.reporter.info(node['uri'])
+
+
+
 #-------------------------------------------------------------------------------
 #
 class Storage(extract.SQLExtractorStorage):
@@ -116,4 +123,6 @@ class Storage(extract.SQLExtractorStorage):
     Photo storage.
     """
     # Note: For now, this changes the document but does not store anything.
+
+
 

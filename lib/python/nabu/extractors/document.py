@@ -101,7 +101,7 @@ class Extractor(extract.Extractor):
             if mo:
                 self.extracted['date'] = datetime.date(*map(int,mo.groups()))
 
-
+            
 class Storage(extract.SQLExtractorStorage):
     """
     Document storage.

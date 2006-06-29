@@ -84,8 +84,9 @@ class Extractor(extract.Extractor):
         v = self.Visitor(self.document, unid, storage)
         self.document.walkabout(v)
 
-        self.document.reporter.info(
-            'Event extractor: %s' % pformat(v.extracted))
+        if v.extracted:
+            self.document.reporter.info(
+                'Event extractor: %s' % pformat(v.extracted))
 
     class Visitor(nodes.SparseNodeVisitor):
 
