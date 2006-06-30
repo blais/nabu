@@ -102,7 +102,7 @@ photogroup_directive.content = True
 #===============================================================================
 
 class Extractor(extract.Extractor):
-    
+
     default_priority = 900
 
     @classmethod
@@ -117,8 +117,8 @@ class Extractor(extract.Extractor):
         v = self.Visitor(self.document)
         self.document.walk(v)
 
-        for name, proto, order in v.photos:
-            storage.store(unid, name, proto, order)
+        for photoid, proto, order in v.photos:
+            storage.store(unid, photoid, proto, order)
 
     class Visitor(nodes.SparseNodeVisitor):
 
@@ -127,7 +127,7 @@ class Extractor(extract.Extractor):
 
             self.order = 0
             self.photos = []
-            
+
         def visit_image(self, node):
 
             if node.has_key('photo'):
@@ -136,15 +136,15 @@ class Extractor(extract.Extractor):
                 # Find the protocol.
                 words = uri.split(':')
                 if len(words) == 1:
-                    proto, name = None, words[0]
+                    proto, photoid = None, words[0]
                 elif len(words) == 2:
-                    proto, name = words
+                    proto, photoid = words
                 else:
                     self.document.reporter.error(
-                        'Invalid photo name contains more than one colon.')
+                        'Invalid photo id contains more than one colon.')
                     return
 
-                self.photos.append( (name, proto, self.order) )
+                self.photos.append( (photoid, proto, self.order) )
                 self.order += 1
 
 
@@ -160,27 +160,29 @@ class Storage(extract.SQLExtractorStorage):
             CREATE TABLE photo
             (
                -- source document unique id
-               unid     TEXT NOT NULL,
+               unid TEXT NOT NULL,
 
                -- unique identifier for photo
-               name     TEXT,     
+               photoid TEXT,
 
                -- local, flickr, fotki, etc.
-               proto    TEXT,   
+               proto TEXT,
 
                -- order in which the photo appears in the document, for sorting
-               "order"  INTEGER  
-                              
+               docorder INTEGER
+
             )
 
+            CREATE UNIQUE INDEX photo_idx ON photo (unid, photoid);
+            
         '''}
 
-    def store(self, unid, name, proto, order):
+    def store(self, unid, photoid, proto, docorder):
         cursor = self.connection.cursor()
         cursor.execute('''
-          INSERT INTO photo (unid, name, proto, "order")
+          INSERT INTO photo (unid, photoid, proto, docorder)
             VALUES (%s, %s, %s, %s)
-        ''', (unid, name, proto, order))
+        ''', (unid, photoid, proto, docorder))
         self.connection.commit()
 
 
