@@ -2,6 +2,12 @@
     TODO: nabu
 ==================
 
+- We need to process the transforms within a single transaction, and to roll it
+  back if there is an error, including rolling back the original deletions from
+  all the table.  The point is that we want to maintain database consistency
+  even if there is an error while processing the document.  This is very
+  important!
+
 - Make the source storage objects use a acquire/release pattern compatible with
   antipool, so that we could create them once in a mod_python handler rather
   than every time.
