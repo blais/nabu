@@ -72,10 +72,7 @@ def photogroup_directive(name, arguments, options, content, lineno,
     if not references:
         return []
 
-    sopts = {
-        'class': 'photogroup',
-        }
-    pnode = nodes.bullet_list(**sopts)
+    pnode = nodes.container(classes=['photogroup'])
     for reference in references:
         if reference.find(' ') != -1:
             error = state_machine.reporter.error(
@@ -171,7 +168,7 @@ class Storage(extract.SQLExtractorStorage):
                -- order in which the photo appears in the document, for sorting
                docorder INTEGER
 
-            )
+            );
 
             CREATE UNIQUE INDEX photo_idx ON photo (unid, photoid);
             
