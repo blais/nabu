@@ -73,9 +73,3 @@
   as the description string
 
 
-:presentation:
-- add my own HTML writer to remove comment nodes completely, so they don't show
-  up in the HTML as comments;
-
-- Add comparison to Desktop Search on web page and presentation
-

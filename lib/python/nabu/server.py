@@ -208,6 +208,8 @@ class PublishServerHandler:
             parser_name='restructuredtext',
             settings_overrides={
             'error_encoding': 'UTF-8',
+            # Remove the comments by default.  This could become an option.
+            'strip_comments': 1,
             'warning_stream': errstream,
             'halt_level': 100, # never halt
             'report_level': 1,
