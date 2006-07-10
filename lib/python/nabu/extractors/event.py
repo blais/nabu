@@ -69,6 +69,12 @@ class Extractor(extract.Extractor):
         2006-01-05 20h
             - Abbreviated time.
 
+    Also, each list item can have a time:
+
+        2006-01-05 
+            - 20h00 -- Dinner
+            - 21h30 -- Movie
+
     Remember not to leave a blank line between the date/time spec and the event
     definition, because that does not create a docutils term/definition
     structure.
@@ -117,15 +123,23 @@ class Extractor(extract.Extractor):
 
         def visit_list_item(self, node):
             if self.desc is not None:
-                self.desc.append(node.astext())
+                text = node.astext()
+                mo = time_re.match(text)
+                if mo:
+                    item = parse_time(mo), text[mo.end():]
+                else:
+                    item = None, text
+                self.desc.append(item)
             raise nodes.SkipChildren
 
         def depart_definition_list_item(self, node):
-            for d, t1, t2 in self.dates:
-                for child in self.desc:
+            for d, it1, it2 in self.dates:
+                for t, child in self.desc:
+                    if t is not None: # Override item's time.
+                        t1, t2 = t, None
+                    else:
+                        t1, t2 = it1, it2
                     self.storage.store(self.unid, d, t1, t2, child)
-
-
 
 #-------------------------------------------------------------------------------
 #
@@ -195,6 +209,7 @@ months.update((y, x+1) for x, y in enumerate(
 
 
 timespec = '(\d\d)h(\d\d)?'
+time_re = re.compile(timespec)
 hlre = re.compile('(.*)\s+(?:%s)(?:\s*--?\s*%s)?' % (timespec, timespec))
 ## print hlre.match(' 20h').groups()
 ## print hlre.match(' 20h12').groups()
@@ -220,6 +235,23 @@ evre_dotw = re.compile('([a-z][a-z][a-z])'
                        '(?:\s+(\d\dh)(\d\d)?)?$')
 
 
+def parse_time(mo):
+    """
+    Parse the result of matching a time_re.
+    """
+    h = int(mo.group(1))
+    if mo.group(2):
+        m = int(mo.group(2))
+    else:
+        m = None
+    assert h is not None
+    if m is not None:
+        t = datetime.time(h, m)
+    else:
+        t = datetime.time(h)
+    return t
+
+
 def parse_dtspec(s):
     """
     Parse a date/time spec and return a list of (date, time1, time2) tuples.
@@ -232,6 +264,7 @@ def parse_dtspec(s):
     mo = hlre.match(s)
     if mo:
         s = mo.group(1)
+## FIXME: todo '00' will not work with the shortcut-eval here, this is a bug
         h1, m1, h2, m2 = [(x and int(x) or None) for x in mo.group(2, 3, 4, 5)]
 
         assert h1 is not None
