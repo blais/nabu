@@ -2,6 +2,10 @@
     TODO: nabu
 ==================
 
+- When an error occurs during upload, we should log the trace of the exception
+  to the logging module, in order to be able to debug problems easily. (see
+  gijsbert's email).
+
 - We need to process the transforms within a single transaction, and to roll it
   back if there is an error, including rolling back the original deletions from
   all the table.  The point is that we want to maintain database consistency

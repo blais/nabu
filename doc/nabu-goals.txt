@@ -446,6 +446,48 @@ Publishing
   existing publishing system;
 
 
+Trading-off Mutability of Data for Easy Extraction
+--------------------------------------------------
+An important note about Nabu's design, from an email thread::
+
+  On 7/11/06, rouadec wrote:
+  > >From: "Martin Blais":
+  > >
+  > >Hehe, me too!  I think Nabu could be of great help for you then, if
+  > >you can edit text files carefully.
+  > >
+  >
+  > See that's the thing I'm not so keen on, not the editing part but the fact
+  > that eventually you want to be able to interact with the final result : add
+  > comments on a blog, click somewhere on the agenda and add an entry, change
+  > the tag of an image. I'm having the same problem with ibrouteur right now.
+  >
+  > Nabu as I understood it doesn't have this feedback loop either yet and if I
+  > start manipulating the database withtout passing through the text files then
+  > it's data I'll have to care about too which I don't want.
+
+  Yes, that is very much true.  The database in my system is a
+  redundant, disposable copy of the data which lives in the text files.
+  The disadvantage is that unless the data to be added can be separated
+  easily, it becomes useless to add or modify the extracted data in the
+  database.  That can be seen as an advantage however, because all of
+  the valuable data lies in the text files, which are easy to replicate,
+  modify, edit, etc.   It is a shortcoming which I have considered
+  reasonable, but which may not be for other users.  For me text files
+  are really easy to access and the extractors that take the data out
+  very easy to write, while having to create specialized interfaces for
+  data living in a database is a lot of error-prone work.  Nabu is very
+  much an experiment in that sense, capitalizing on the flexibility of
+  the data extraction capabilities it provides, traded off against the
+  immutability of the extracted data.
+
+  Note that blog comments can be added to the system in a reasonable
+  way: all you have to do for those is to create them in a separate
+  table, which is never cleared.  They can be key'ed by the unique id of
+  the associated documents.
+
+
+
 Conclusion
 ----------
 
