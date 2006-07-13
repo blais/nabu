@@ -128,6 +128,7 @@ class Storage(extract.SQLExtractorStorage):
                --  1: shared
                --  2: private
                disclosure INT DEFAULT 2
+
             )
 
         ''',
