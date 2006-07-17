@@ -56,6 +56,9 @@ class PublishServerHandler:
 
         self.username = None
 
+        self.affected = set()
+        "Affected unids."
+
     def reload(self, username):
         """
         Use this it the server is reused between different requests.
@@ -79,6 +82,8 @@ class PublishServerHandler:
         Clear the entire database.
         This is requested from the client interface.
         """
+        self.affected.update(self.getallids())
+
         # Clear the extracted chunks of data that are associated with all
         # documents.
         for extractor, extractstore in self.transforms:
@@ -92,6 +97,8 @@ class PublishServerHandler:
         """
         Clear all entries for a set of ids.
         """
+        self.affected.update(idlist)
+
         assert len(idlist) > 0
 
         # clear the extracted chunks of data that are associated with these
@@ -181,6 +188,8 @@ class PublishServerHandler:
         encoding.  This function returns a pair of (docutils conversion errors,
         transform messages).
         """
+        self.affected.add(unid)
+        
         # Convert XML-RPC Binary into string.  The string is encoded in its
         # original encoding.
         contents = contents_bin.data
@@ -233,6 +242,8 @@ class PublishServerHandler:
         Process a single file.  We assume that the file and document tree comes
         wrapped in a Binary.
         """
+        self.affected.add(unid)
+
         contents = contents_bin.data
 
         # Note: errors unpickling are caught gracefully and reported to the
@@ -328,6 +339,15 @@ class PublishServerHandler:
         helptext = sep.join(helps)
         return helptext
 
+    def affected_unids(self):
+        """
+        Return a list of the affected document unids during the lifetime of this
+        publish handler.  This is used to provide feedback to applications which
+        may independently cache data assocaited with the documents, other than
+        Nabu, such as a memory cached rendered data.
+        """
+        return self.affected
+
 
 #-------------------------------------------------------------------------------
 #
@@ -356,7 +376,8 @@ def xmlrpc_handler_cgi(srcstore, transforms, username,
 def xmlrpc_handler_mp(srcstore, transforms, request_text, username,
                       allow_reset=0):
     """
-    Same as xmlrpc_handler_cgi() but within a mod_python environment.
+    Same as xmlrpc_handler_cgi() but within a mod_python environment.  Return a
+    pair of the response and a list of affected unids.
     """
     # create a publish handler
     server_handler = PublishServerHandler(
@@ -374,5 +395,6 @@ def xmlrpc_handler_mp(srcstore, transforms, request_text, username,
     # create an XMLRPC server handler and bind interface
     handler = SimpleXMLRPCDispatcher()
     handler.register_instance(server_handler)
-    return handler._marshaled_dispatch(request_text)
+    response = handler._marshaled_dispatch(request_text)
+    return response, list(server_handler.affected_unids())
 
