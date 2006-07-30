@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -11,10 +12,12 @@
 Extract book entries.
 """
 
-
 # nabu imports
 from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
+
+# docutils imports
+from docutils.nodes import paragraph, Text, container
 
 
 class Extractor(extract.Extractor):
@@ -50,11 +53,9 @@ class Extractor(extract.Extractor):
         # to simplify visiting generic field lists.  You could use any of
         # the docutils visitors here instead.
         v = FieldListVisitor(self.document)
-        v.initialize()
-        self.document.walk(v)
-        v.finalize()
+        v.apply()
 
-        for flist in v.getfieldlists():
+        for fnode, flist in v.getfieldlists():
             book = 0
             # if there is an empty book field, this is explicitly a book.
             if 'book' in flist and not flist['book'].strip():
@@ -67,6 +68,24 @@ class Extractor(extract.Extractor):
 
             if book:
                 self.store(flist)
+
+                # Remove the field list and render something nicer for a book.
+                fields = []
+                for field in 'title', 'author':
+                    f = flist.get(field)
+                    if f:
+                        f = f.astext()
+                    else:
+                        f = u'<unknown %s>' % field
+                    fields.append(f)
+
+                newbook = container(
+                    '',
+                    paragraph(text=u'"%s", %s' % tuple(fields)),
+                    classes=['book'])
+
+                fnode.parent.replace(fnode, newbook)
+
 
     def store(self, flist):
         emap = {}
@@ -89,27 +108,29 @@ class Storage(extract.SQLExtractorStorage):
         CREATE TABLE book
         (
            unid TEXT NOT NULL,
+           isbn CHAR(16),
            title TEXT,
            author TEXT,
            year TEXT,
            url TEXT,
            review TEXT
-        )
+        );
 
-        '''
+        CREATE INDEX book_isbn_idx ON book (isbn);
+        ''',
         }
 
     def store(self, unid, *args):
         data, = args
-        
-        cols = ('unid', 'title', 'author', 'year', 'url', 'review')
+
+        cols = ('unid', 'isbn', 'title', 'author', 'year', 'url', 'review')
         values = [unid]
         for n in cols[1:]:
             values.append( data.get(n, '') )
-            
+
         cursor = self.connection.cursor()
         cursor.execute("""
-          INSERT INTO book (%s) VALUES (%%s, %%s, %%s, %%s, %%s, %%s)
+          INSERT INTO book (%s) VALUES (%%s, %%s, %%s, %%s, %%s, %%s, %%s)
           """ % ', '.join(cols), values)
 
         self.connection.commit()

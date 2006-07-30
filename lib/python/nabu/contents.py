@@ -294,6 +294,13 @@ def render_extracted(unid, stored_unid, uri, username, conn, tables):
         print >> os, navig(uri, unid)
     print >> os, '<h1>Extracted Information</h1>'
 
+    print >> os, '<h4>Contents</h4>'
+    print >> os, '<ul id="#toc">'
+    for tablename in tables:
+        print >> os, ('<li><a href="#table-%s">%s</a></li>' %
+                      (tablename, tablename))
+    print >> os, '</ul>'
+
     for tablename in tables:
         os.write(dump_table(conn, tablename, uri, unid, stored_unid))
 
@@ -310,7 +317,7 @@ def dump_table(conn, tablename, uri, unid=None, stored_unid=None):
     If 'user' is specified, filter by that user.
     """
     os = StringIO.StringIO()
-    print >> os, '<h2>Schema: %s</h2>' % tablename
+    print >> os, '<h2 id="table-%s">Schema: %s</h2>' % (tablename, tablename)
 
     curs = conn.cursor()
     query, conds = "SELECT * FROM %s" % tablename, []
