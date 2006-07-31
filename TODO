@@ -2,6 +2,18 @@
     TODO: nabu
 ==================
 
+.. contents::
+..
+    1  Misc
+    2  Server Setup
+    3  Directives
+    4  Extractors
+
+Misc
+====
+- You need to define a syntax for multiple links sharing the same description
+  and keywords
+
 - When an error occurs during upload, we should log the trace of the exception
   to the logging module, in order to be able to debug problems easily. (see
   gijsbert's email).
@@ -57,13 +69,21 @@
 - shares some of the advantages of XML, structured hirarchical tree of nodes
 
 
-:server setup:
+Server Setup
+============
 - implement asynchronous document processing on the server
 
 - check database locking issues in more detail?
 
 
-:extractors:
+Directives
+==========
+
+- Do something about the locator directive
+
+Extractors
+==========
+
 - warn on files that have no titles (add minimum requirements extractor)
 
 - there should be and .. end directive to stop the processing from that point on.
@@ -75,5 +95,4 @@
 
 - url extractor: when right after a title, a list of URLs should use the title
   as the description string
-
 
