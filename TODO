@@ -11,6 +11,9 @@
 
 Misc
 ====
+- We need to provide a way for the extractors to reliably report errors, some
+  sort of function.
+
 - You need to define a syntax for multiple links sharing the same description
   and keywords
 

@@ -12,6 +12,9 @@
 Extract book entries.
 """
 
+# stdlib imports
+import sys
+
 # nabu imports
 from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
@@ -122,6 +125,12 @@ class Storage(extract.SQLExtractorStorage):
 
     def store(self, unid, *args):
         data, = args
+        
+        # Validate ISBN
+        isbn = data.get('isbn', '')
+        if len(isbn) > 16:
+            print >> sys.stderr, ("Warning: ISBN '%s' seems invalid." % isbn)
+            data['isbn'] = isbn[:16]
 
         cols = ('unid', 'isbn', 'title', 'author', 'year', 'url', 'review')
         values = [unid]
