@@ -11,6 +11,16 @@
 
 Misc
 ====
+
+- Can I use views to hide the disclosure requirement in my queries entirely? e.g.::
+
+    CREATE VIEW documents_public AS SELECT * FROM document;
+    CREATE VIEW documents_shared AS SELECT * FROM document WHERE disclosure > 1;
+    CREATE VIEW documents_private AS SELECT * FROM document WHERE disclosure > 2;
+
+  And the same for all the remaining tables?  All the queries would then have to
+  append the correct names from the tables they fetch from.
+
 - We need to provide a way for the extractors to reliably report errors, some
   sort of function.
 
