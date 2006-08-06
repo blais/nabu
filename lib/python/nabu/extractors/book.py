@@ -14,15 +14,27 @@ Extract book entries.
 
 # stdlib imports
 import sys
+from urllib import quote_plus
+from xml.sax.saxutils import escape
 
 # nabu imports
 from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
 
 # docutils imports
-from docutils.nodes import paragraph, Text, container
+from docutils.nodes import                                      \
+  paragraph, Text, container, block_quote, reference, Text
 
 
+#-------------------------------------------------------------------------------
+#
+book_isbn_template = 'http://amazon.com/o/ASIN/%s/'
+book_search_template = ('http://books.google.com/books?q=%s'
+                        '&btnG=Search+Books&as_brr=0')
+
+
+#-------------------------------------------------------------------------------
+#
 class Extractor(extract.Extractor):
     """
     Transform that looks at field lists and that heuristically attempts
@@ -72,19 +84,66 @@ class Extractor(extract.Extractor):
             if book:
                 self.store(flist)
 
+                # FIXME: we should remove all the formatting and rendering that
+                # is being done here and move it to the rendering phase instead.
+
                 # Remove the field list and render something nicer for a book.
-                fields = []
+                ifields = []
                 for field in 'title', 'author':
                     f = flist.get(field)
                     if f:
                         f = f.astext()
                     else:
                         f = u'<unknown %s>' % field
-                    fields.append(f)
+                    ifields.append(f)
 
+                isbn = flist.pop('isbn', None)
+                if isbn:
+                    url = book_isbn_template % isbn.astext()
+                else:
+                    booktitle = flist.get('title', '')
+                    url = (book_search_template %
+                           quote_plus(booktitle.astext().encode('utf-8')))
+
+                title = paragraph('', '',
+                    Text(u'Book: '),
+                    reference(refuri=url,
+                              classes=['external'],
+                              text=u'“%s”, %s' % tuple(ifields)),
+                    )
+
+                # details
+                details = []
+
+                tfields = []
+                for name, value in flist.iteritems():
+                    if name not in ('title', 'author', 'comments'):
+                        text = value.astext()
+                        if text:
+                            tfields.append(text)
+                if tfields:
+                    p = paragraph(text=u','.join(tfields),
+                                  classes=['book-fields'])
+                    details.append(p)
+
+                for name in 'comments', 'comment', 'notes':
+                    comments = flist.get('comments')
+                    if comments:
+                        break
+                if comments:
+                    if isinstance(comments, (tuple, list)):
+                        comments = u'\n'.join(x.astext() for x in comments)
+                    else:
+                        comments = comments.astext()
+
+                    p = paragraph(text=comments,
+                                  classes=['book-comments'])
+                    details.append(p)
+                
                 newbook = container(
                     '',
-                    paragraph(text=u'"%s", %s' % tuple(fields)),
+                    title,
+                    block_quote('', *details),
                     classes=['book'])
 
                 fnode.parent.replace(fnode, newbook)

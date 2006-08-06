@@ -12,7 +12,8 @@ Server-side handlers for requests.
 """
 
 # stdlib imports
-import xmlrpclib
+import sys, xmlrpclib
+import traceback
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 import md5
 import datetime
@@ -395,6 +396,36 @@ def xmlrpc_handler_mp(srcstore, transforms, request_text, username,
     # create an XMLRPC server handler and bind interface
     handler = SimpleXMLRPCDispatcher()
     handler.register_instance(server_handler)
-    response = handler._marshaled_dispatch(request_text)
-    return response, list(server_handler.affected_unids())
+    response, error = exc_marshaled_dispatch(handler, request_text)
+    return response, error, list(server_handler.affected_unids())
+
+
+def exc_marshaled_dispatch(self, data, dispatch_method = None):
+    """handler _marshaled_dispatch() method from xmlrpclib modified to intercept
+    and return an exception if it occurs.
+    """
+    params, method = xmlrpclib.loads(data)
+
+    error = None
+    
+    # generate response
+    try:
+        if dispatch_method is not None:
+            response = dispatch_method(method, params)
+        else:
+            response = self._dispatch(method, params)
+        # wrap response in a singleton tuple
+        response = (response,)
+        response = xmlrpclib.dumps(response, methodresponse=1)
+    except xmlrpclib.Fault, fault:
+        response = xmlrpclib.dumps(fault)
+        error = traceback.format_exc()
+    except Exception, fault:
+        # report exception back to server
+        response = xmlrpclib.dumps(
+            xmlrpclib.Fault(1, "%s:%s" % (sys.exc_type, sys.exc_value))
+            )
+        error = traceback.format_exc()
+
+    return response, error
 

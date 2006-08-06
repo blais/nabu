@@ -12,6 +12,9 @@
 Misc
 ====
 
+- Fix Nabu in that if there is an error, the client script should keep going
+  to try to publish the other documents.
+
 - Can I use views to hide the disclosure requirement in my queries entirely? e.g.::
 
     CREATE VIEW documents_public AS SELECT * FROM document;
