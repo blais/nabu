@@ -12,6 +12,8 @@
 Misc
 ====
 
+- Skip symbolic links by default.
+
 - Fix Nabu in that if there is an error, the client script should keep going
   to try to publish the other documents.
 
