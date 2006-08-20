@@ -352,33 +352,9 @@ class PublishServerHandler:
 
 #-------------------------------------------------------------------------------
 #
-def xmlrpc_handler_cgi(srcstore, transforms, username,
-                       allow_reset=0):
+def create_server(srcstore, transforms, username, allow_reset=0):
     """
-    Given a source storage instance and a list of (transform class, transform
-    storage) pairs, implement a basic XMLRPC handler loop.
-
-    Note: this is an example, you might want to handle the XMLRPC loop
-    differently, whatever you like.  This is being used by the example CGI
-    handler.
-    """
-    # create a publish handler
-    server_handler = PublishServerHandler(
-        srcstore, transforms, allow_reset=allow_reset)
-
-    # prepare (reload) with the current user
-    server_handler.reload(username)
-    
-    # create an XMLRPC server handler and bind interface
-    handler = ExceptionXMLRPCRequestHandler()
-    handler.register_instance(server_handler)
-    handler.handle_request()
-
-def xmlrpc_handler_mp(srcstore, transforms, request_text, username,
-                      allow_reset=0):
-    """
-    Same as xmlrpc_handler_cgi() but within a mod_python environment.  Return a
-    pair of the response and a list of affected unids.
+    Create a server handler object and return it.
     """
     # create a publish handler
     server_handler = PublishServerHandler(
@@ -392,15 +368,36 @@ def xmlrpc_handler_mp(srcstore, transforms, request_text, username,
     # they should use for building web applications is a debate we *really* do
     # not want to get involved in...).
     server_handler.reload(username)
-    
+
+    return server_handler
+
+def xmlrpc_handle_cgi(server_handler):
+    """
+    Given a source storage instance and a list of (transform class, transform
+    storage) pairs, implement a basic XMLRPC handler loop.
+
+    Note: this is an example, you might want to handle the XMLRPC loop
+    differently, whatever you like.  This is being used by the example CGI
+    handler.
+    """
+    # create an XMLRPC server handler and bind interface
+    handler = ExceptionXMLRPCRequestHandler()
+    handler.register_instance(server_handler)
+    handler.handle_request()
+
+def xmlrpc_handle_mp(server_handler, request_text):
+    """
+    Same as xmlrpc_handler_cgi() but within a mod_python environment.  Return a
+    pair of the response and a list of affected unids.
+    """
     # create an XMLRPC server handler and bind interface
     handler = SimpleXMLRPCDispatcher()
     handler.register_instance(server_handler)
-    response, error = exc_marshaled_dispatch(handler, request_text)
+    response, error = _exc_marshaled_dispatch(handler, request_text)
     return response, error, list(server_handler.affected_unids())
 
 
-def exc_marshaled_dispatch(self, data, dispatch_method = None):
+def _exc_marshaled_dispatch(self, data, dispatch_method = None):
     """handler _marshaled_dispatch() method from xmlrpclib modified to intercept
     and return an exception if it occurs.
     """
