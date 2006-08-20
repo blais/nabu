@@ -27,6 +27,91 @@ from docutils import core, io
 from nabu import process, client
 from nabu.utils import ExceptionXMLRPCRequestHandler
 
+
+__all__ = ('create_server', 'xmlrpc_handle_cgi', 'xmlrpc_handle_mp',)
+
+
+#-------------------------------------------------------------------------------
+#
+def create_server(srcstore, transforms, username, allow_reset=0):
+    """
+    Create a server handler object and return it.
+    """
+    # create a publish handler
+    server_handler = PublishServerHandler(
+        srcstore, transforms, allow_reset=allow_reset)
+
+    # prepare (reload) with the current user
+    #
+    # Note: this is designed this way to allow integration with mod_python,
+    # where we would not recreate the objects on every request.  This allows the
+    # handler to work with any web application framework (to tell people what
+    # they should use for building web applications is a debate we *really* do
+    # not want to get involved in...).
+    server_handler.reload(username)
+
+    return server_handler
+
+def xmlrpc_handle_cgi(server_handler):
+    """
+    Given a source storage instance and a list of (transform class, transform
+    storage) pairs, implement a basic XMLRPC handler loop.
+
+    Note: this is an example, you might want to handle the XMLRPC loop
+    differently, whatever you like.  This is being used by the example CGI
+    handler.
+    """
+    # create an XMLRPC server handler and bind interface
+    handler = ExceptionXMLRPCRequestHandler()
+    handler.register_instance(server_handler)
+    handler.handle_request()
+
+def xmlrpc_handle_mp(server_handler, request_text):
+    """
+    Same as xmlrpc_handle_cgi() but within a mod_python environment.  Return a
+    pair of the response and a list of affected unids.
+    """
+    # create an XMLRPC server handler and bind interface
+    handler = SimpleXMLRPCDispatcher()
+    handler.register_instance(server_handler)
+    response, error = _exc_marshaled_dispatch(handler, request_text)
+    return response, error, list(server_handler.affected_unids())
+
+
+#-------------------------------------------------------------------------------
+#
+def _exc_marshaled_dispatch(self, data, dispatch_method = None):
+    """handler _marshaled_dispatch() method from xmlrpclib modified to intercept
+    and return an exception if it occurs.
+    """
+    params, method = xmlrpclib.loads(data)
+
+    error = None
+    
+    # generate response
+    try:
+        if dispatch_method is not None:
+            response = dispatch_method(method, params)
+        else:
+            response = self._dispatch(method, params)
+        # wrap response in a singleton tuple
+        response = (response,)
+        response = xmlrpclib.dumps(response, methodresponse=1)
+    except xmlrpclib.Fault, fault:
+        response = xmlrpclib.dumps(fault)
+        error = traceback.format_exc()
+    except Exception, fault:
+        # report exception back to server
+        response = xmlrpclib.dumps(
+            xmlrpclib.Fault(1, "%s:%s" % (sys.exc_type, sys.exc_value))
+            )
+        error = traceback.format_exc()
+
+    return response, error
+
+
+#-------------------------------------------------------------------------------
+#
 class SimpleAccumulator:
     """
     Simple accumulator object that can only grow a list one item at a time.
@@ -349,80 +434,4 @@ class PublishServerHandler:
         """
         return self.affected
 
-
-#-------------------------------------------------------------------------------
-#
-def create_server(srcstore, transforms, username, allow_reset=0):
-    """
-    Create a server handler object and return it.
-    """
-    # create a publish handler
-    server_handler = PublishServerHandler(
-        srcstore, transforms, allow_reset=allow_reset)
-
-    # prepare (reload) with the current user
-    #
-    # Note: this is designed this way to allow integration with mod_python,
-    # where we would not recreate the objects on every request.  This allows the
-    # handler to work with any web application framework (to tell people what
-    # they should use for building web applications is a debate we *really* do
-    # not want to get involved in...).
-    server_handler.reload(username)
-
-    return server_handler
-
-def xmlrpc_handle_cgi(server_handler):
-    """
-    Given a source storage instance and a list of (transform class, transform
-    storage) pairs, implement a basic XMLRPC handler loop.
-
-    Note: this is an example, you might want to handle the XMLRPC loop
-    differently, whatever you like.  This is being used by the example CGI
-    handler.
-    """
-    # create an XMLRPC server handler and bind interface
-    handler = ExceptionXMLRPCRequestHandler()
-    handler.register_instance(server_handler)
-    handler.handle_request()
-
-def xmlrpc_handle_mp(server_handler, request_text):
-    """
-    Same as xmlrpc_handler_cgi() but within a mod_python environment.  Return a
-    pair of the response and a list of affected unids.
-    """
-    # create an XMLRPC server handler and bind interface
-    handler = SimpleXMLRPCDispatcher()
-    handler.register_instance(server_handler)
-    response, error = _exc_marshaled_dispatch(handler, request_text)
-    return response, error, list(server_handler.affected_unids())
-
-
-def _exc_marshaled_dispatch(self, data, dispatch_method = None):
-    """handler _marshaled_dispatch() method from xmlrpclib modified to intercept
-    and return an exception if it occurs.
-    """
-    params, method = xmlrpclib.loads(data)
-
-    error = None
-    
-    # generate response
-    try:
-        if dispatch_method is not None:
-            response = dispatch_method(method, params)
-        else:
-            response = self._dispatch(method, params)
-        # wrap response in a singleton tuple
-        response = (response,)
-        response = xmlrpclib.dumps(response, methodresponse=1)
-    except xmlrpclib.Fault, fault:
-        response = xmlrpclib.dumps(fault)
-        error = traceback.format_exc()
-    except Exception, fault:
-        # report exception back to server
-        response = xmlrpclib.dumps(
-            xmlrpclib.Fault(1, "%s:%s" % (sys.exc_type, sys.exc_value))
-            )
-        error = traceback.format_exc()
-
-    return response, error
 
