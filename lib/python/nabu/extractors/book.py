@@ -78,7 +78,7 @@ class Extractor(extract.Extractor):
             # if there is an ISBN number, then it is *definitely* a book.
             elif 'isbn' in flist:
                 book = 1
-            elif 'author' in flist and 'title' in flist:
+            elif ('author' in flist or 'authors' in flist) and 'title' in flist:
                 book = 1
 
             if book:
@@ -89,8 +89,15 @@ class Extractor(extract.Extractor):
 
                 # Remove the field list and render something nicer for a book.
                 ifields = []
-                for field in 'title', 'author':
-                    f = flist.get(field)
+                for field, fieldnames in (
+                    ('title', ('title',)),
+                    ('author', ('author', 'authors')),
+                    ):
+
+                    for fname in fieldnames:
+                        f = flist.get(fname)
+                        if f:
+                            break
                     if f:
                         f = f.astext()
                     else:

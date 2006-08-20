@@ -520,6 +520,9 @@ def opts_finder(parser):
                      "for the marker at the top of each file "
                      "(the default is roughly 20 lines).")
 
+    group.add_option('-L', '--process-links', action='store_true',
+                     help="Process symbolic links.")
+
     parser.add_option_group(group)
 
 class File:
@@ -570,7 +573,9 @@ def find_to_publish(fnordns, opts):
     candidates = []
     fileids = set()
     files = set()
-    for fn in process_dirs_or_files(fnordns, opts.exclude, opts.recursive):
+    for fn in process_dirs_or_files(fnordns, opts.exclude,
+                                    opts.recursive,
+                                    ignore_links=not opts.process_links):
         fn = abspath(fn).replace('\\', '/') # platform independent.
         if fn in files:
             print >> sys.stderr, \
@@ -663,7 +668,10 @@ def exclude_list(names, exclude):
             newnames.append(n)
     return newnames
 
-def process_dirs_or_files(args, exclude=[], recurse=True, ignore_error=False):
+def process_dirs_or_files(args, exclude=[],
+                          recurse=True,
+                          ignore_error=False,
+                          ignore_links=True):
     """
     From a list of directories or filenames, yield filenames.
     (This is a generic function and you can reuse it in other places.)
@@ -693,11 +701,15 @@ def process_dirs_or_files(args, exclude=[], recurse=True, ignore_error=False):
                     dirs[:] = exclude_list(dirs, exclude)
                     files[:] = exclude_list(files, exclude)
                 for fn in files:
+                    if ignore_links and islink(join(root, fn)):
+                        continue
                     yield join(root, fn)
-        elif isfile(arg) or islink(arg):
+
+        elif isfile(arg) and (not (ignore_links and islink(arg))):
             if exclude and not exclude_list([arg], exclude):
                 continue
             yield arg
+
 
 
 #-------------------------------------------------------------------------------
