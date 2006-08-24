@@ -56,7 +56,9 @@ class Extractor(extract.Extractor):
         """
         # Split the tags.
         try:
-            extracted['tags'] = map(unicode.strip, extracted['tags'].split(','))
+            if extracted['tags']:
+                extracted['tags'] = map(unicode.strip,
+                                        extracted['tags'].split(','))
         except KeyError:
             extracted['tags'] = []
 
