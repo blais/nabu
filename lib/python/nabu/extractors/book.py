@@ -73,7 +73,7 @@ class Extractor(extract.Extractor):
         for fnode, flist in v.getfieldlists():
             book = 0
             # if there is an empty book field, this is explicitly a book.
-            if 'book' in flist and not flist['book'].strip():
+            if 'book' in flist:
                 book = 1
             # if there is an ISBN number, then it is *definitely* a book.
             elif 'isbn' in flist:
