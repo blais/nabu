@@ -215,8 +215,8 @@ def render_source(unid, uri, username, srcstore):
     print >> os, '<dt>Digest</dt><dd>%s</dd>' % escape(src['digest'])
     print >> os, '</dl>'
     if src['errors']:
-        print >> os, '<a href="#errors">Errors</a> '
-    print >> os, '<a href="#doctree">Document Tree</a> '
+        print >> os, '<a href="#errors">Errors</a> | '
+    print >> os, '<a href="#doctree">Document Tree</a> | '
     print >> os, '<a href="#source">Source</a> '
     print >> os, '<hr/>'
     if src['errors']:
