@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2006  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -26,13 +27,22 @@ optimization is the root of... well, you know, RELAX!).
 # stdlib imports
 import sys, re, datetime
 import pickle
-##import cPickle as pickle
 
 # docutils imports
 from docutils import nodes
 
 # nabu imports
 from nabu import extract
+
+
+
+bogus_kwds = frozenset("""
+
+   all and are but can for have i'm it like more not one some that the there
+   they this was what with you your when just our will from would much has very
+   could been had those than don't me how them he she her
+
+   """.split())
 
 
 #-------------------------------------------------------------------------------
@@ -48,72 +58,25 @@ class Extractor(extract.Extractor):
         self.unid = unid
         self.storage = storage
 
-        v = self.Visitor(self.document)
+        v = _Visitor(self.document)
         v.xform = self
-        self.document.walkabout(v)
+        self.document.walk(v)
 
-        from pprint import pformat
-        self.document.reporter.info(
-            'Document extractor: %s' % pformat(v.extracted))
-
-        self.post_process(v.extracted)
-
-        self.storage.store(self.unid, v.extracted)
-
-    def post_process(self, extracted):
-        """
-        Post process gathered data.
-        """
-        # Split the tags.
-        try:
-            if extracted['tags']:
-                extracted['tags'] = map(unicode.strip,
-                                        extracted['tags'].split(','))
-        except KeyError:
-            extracted['tags'] = []
+        self.storage.store(self.unid, v.dico)
 
 
-    class Visitor(nodes.SparseNodeVisitor):
+class _Visitor(nodes.SparseNodeVisitor):
 
-        def __init__(self, *args, **kwds):
-            nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
-            self.extracted = {}
-            self.catchname = None
+    def __init__(self, *args, **kwds):
+        nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
 
-        def visit_docinfo(self, node):
-            self.in_docinfo = 1
+        self.dico = {}
 
-        def depart_docinfo(self, node):
-            self.in_docinfo = 0
+    def visit_Text(self, node):
+        parse_words(node.rawsource, self.dico)
 
-            # Remove the bibliographic fields after processing.
-            node.clear()
-
-        def visit_field_name(self, node):
-            fname = node.astext().lower()
-            if fname in self.xform.biblifields:
-                self.catchname = fname.encode('ascii')
-
-        def visit_field_body(self, node):
-            if self.catchname:
-                self.extracted[self.catchname] = node.astext()
-                self.catchname = None
-
-        def visit_title(self, node):
-            if 'title' not in self.extracted:
-                self.extracted['title'] = node.astext()
-
-        def visit_author(self, node):
-            if 'author' not in self.extracted:
-                self.extracted['author'] = node.astext()
-
-        def visit_date(self, node):
-            tdate = node.astext()
-            mo = re.match('(\d\d\d\d)-(\d\d)-(\d\d)', tdate)
-            if mo:
-                self.extracted['date'] = datetime.date(*map(int,mo.groups()))
-
-
+#-------------------------------------------------------------------------------
+#
 class Storage(extract.SQLExtractorStorage):
     """
     Document storage.
@@ -124,72 +87,81 @@ class Storage(extract.SQLExtractorStorage):
     """
 
     sql_tables = {
-        'document': '''
+        'search_index': '''
 
-            CREATE TABLE document
+            CREATE TABLE search_index
             (
-               unid TEXT NOT NULL,
-               title TEXT,
-               author TEXT,
-               date DATE,
-               abstract TEXT,
-               location TEXT,
+               keyword VARCHAR(128) NOT NULL,
+               unid VARCHAR(128) NOT NULL,
+               count INTEGER
+            );
 
-               -- Disclosure is
-               --  0: public
-               --  1: shared
-               --  2: private
-               disclosure INT DEFAULT 2
-
-            )
-
-        ''',
-        'tags': '''
-
-            CREATE TABLE tags
-            (
-               unid TEXT NOT NULL,
-               tagname TEXT
-            )
+            CREATE INDEX keyword_idx ON search_index (keyword);
+            CREATE INDEX unid_idx ON search_index (unid);
 
         ''',
         }
 
-    # Mapping strings to disclosure levels.
-    discmap = {None: 2, # default
-               'public': 0,
-               'shared': 1,
-               'private': 2}
-
-    def store(self, unid, data):
-        data['unid'] = unid
-
-        cols = ['unid', 'title', 'author', 'date',
-                'abstract', 'location',
-                'disclosure']
-        for cname in cols:
-            data.setdefault(cname, None)
-
-        disc = data.get('disclosure')
-        if disc:
-            disc = disc.split()[0] # Get only first word.
-        data['disclosure'] = self.discmap[disc]
+    def store(self, unid, dico):
+        """
+        Expect a unid and a dictionary of words-to-counts.
+        """
+        # Expand the dictionary into a sequence of tuples.
+        seqs = [(unid, word, count) for word, count in dico.iteritems()]
 
         cursor = self.connection.cursor()
-        a = ', '.join(['%%(%s)s' % x for x in cols])
-        query = """
-          INSERT INTO document (%s) VALUES (%s)
-          """ % (', '.join(cols), a)
-        cursor.execute(query, data)
-
-        # Insert tags.
-        for tagname in data['tags']:
-            cursor.execute('''
-              INSERT INTO tags (unid, tagname) VALUES (%s, %s)
-            ''', (unid, tagname))
-
+        cursor.executemany("""
+           INSERT INTO search_index (unid, keyword, count)
+             VALUES (%s, %s, %s)
+           """, seqs)
         self.connection.commit()
 
 
+#-------------------------------------------------------------------------------
+#
+def parse_words(terms, dico, neg_dico=None):
+    """
+    Transform the text into a list of words, and store them into the dict
+    'dico', adding the counts for the words.
+    """
+    wsplit = terms.split()
+    for word in map(unicode.lower, wsplit):
+        if len(word) <= 2:
+            continue
+        neg = word.startswith('-')
+        word = word.strip(u',.[]()“"”\’\‘\'\`:;-—?!')
+        if word.isdigit():
+            continue
+        if word.endswith(u"'s"):
+            word = word[:-2]
+        if word in bogus_kwds:
+            continue
+        if neg and neg_dico is not None:
+            neg_dico[word] = neg_dico.get(word, 0) + 1
+            continue
+        dico[word] = dico.get(word, 0) + 1
 
-FIXME complete this
+def search(conn, search_str):
+    """
+    Perform a search on the given search string.  If there are multiple
+    keywords, we split them and assume AND semantics.  If you insert - before a
+    keyword, we reverse the meaning of the keyword.
+    """
+    assert isinstance(search_str, unicode)
+
+    dico, negdico = {}, {}
+    parse_words(search_str, dico, negdico)
+
+    clause = '\n INTERSECT \n'.join(
+        ['SELECT unid FROM search_index WHERE keyword = %s'
+         for x in xrange(len(dico))])
+    if negdico:
+        neg_clause = '\n UNION \n'.join(
+            ['SELECT unid FROM search_index WHERE keyword = %s'
+             for x in xrange(len(negdico))])
+        clause = '(%s) EXCEPT (%s)' % (clause, neg_clause)
+    cursor = conn.cursor()
+    cursor.execute(clause, dico.keys() + negdico.keys())
+    return [x[0] for x in cursor.fetchall()]
+
+
