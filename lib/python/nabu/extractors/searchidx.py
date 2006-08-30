@@ -73,7 +73,7 @@ class _Visitor(nodes.SparseNodeVisitor):
         self.dico = {}
 
     def visit_Text(self, node):
-        parse_words(node.rawsource, self.dico)
+        parse_words(node.astext(), self.dico)
 
 #-------------------------------------------------------------------------------
 #
