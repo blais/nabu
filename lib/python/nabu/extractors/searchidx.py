@@ -125,7 +125,7 @@ def parse_words(terms, dico, neg_dico=None):
     'dico', adding the counts for the words.
     """
     wsplit = terms.split()
-    for word in map(unicode.lower, wsplit):
+    for word in [x.lower() for x in wsplit]:
         if len(word) <= 2:
             continue
         neg = word.startswith('-')
