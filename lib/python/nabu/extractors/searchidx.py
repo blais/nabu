@@ -107,7 +107,9 @@ class Storage(extract.SQLExtractorStorage):
         Expect a unid and a dictionary of words-to-counts.
         """
         # Expand the dictionary into a sequence of tuples.
-        seqs = [(unid, word, count) for word, count in dico.iteritems()]
+        seqs = [(unid, word, count)
+                for word, count in dico.iteritems()
+                if len(word) <= 128]
 
         cursor = self.connection.cursor()
         cursor.executemany("""
@@ -162,12 +164,7 @@ def search(conn, search_str):
         clause = '(%s) EXCEPT (%s)' % (clause, neg_clause)
     cursor = conn.cursor()
     
-    words = []
-    for k in dico.keys() + negdico.keys():
-        if len(k) > 128:
-            k = k[:128]
-        words.append(k)
-
+    words = dico.keys() + negdico.keys()
     cursor.execute(clause, words)
     return [x[0] for x in cursor.fetchall()]
 
