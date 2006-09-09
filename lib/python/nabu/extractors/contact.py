@@ -74,8 +74,14 @@ _translations = {
     'e': 'email',
     'w': 'web',
     'c': 'comment',
+    'p': 'phone',
+    't': 'phone',
+    'f': 'fax',
+    'b': 'birthday',
+    'u': 'update',
+    'x': 'important',
+    'o': 'organization',
     'comment': 'comments',
-    'p': 'phone'
     }
 
 class FieldListVisitor(nodes.SparseNodeVisitor):
@@ -147,6 +153,10 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
 class Storage(extract.SQLExtractorStorage):
     """
     Contact storage.
+
+    Fields are all strings.  Note that it would not be advantageous to store
+    birthdays as dates because we want to allow the user to embed question marks
+    in those dates, e.g. 19??-02-04
     """
     sql_tables = {
         'contact': '''
@@ -174,7 +184,8 @@ class Storage(extract.SQLExtractorStorage):
         """
         'unid' -> str: the unique id
         'name' -> unicode: person or org name
-        'tfields' -> list of (type, subtype, value) tuples: list of other entries.
+        'tfields' -> list of (type, subtype, value) tuples: list of other
+                     entries.
         """
         cursor = self.connection.cursor()
         cols = ('unid', 'name')
