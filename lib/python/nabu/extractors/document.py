@@ -69,6 +69,7 @@ class Extractor(extract.Extractor):
             nodes.SparseNodeVisitor.__init__(self, *args, **kwds)
             self.extracted = {}
             self.catchname = None
+            self.in_docinfo = 0
 
         def visit_docinfo(self, node):
             self.in_docinfo = 1
@@ -79,12 +80,20 @@ class Extractor(extract.Extractor):
             # Remove the bibliographic fields after processing.
             node.clear()
 
+            raise nodes.StopTraversal
+
         def visit_field_name(self, node):
+            if not self.in_docinfo:
+                raise nodes.StopTraversal
+                
             fname = node.astext().lower()
             if fname in self.xform.biblifields:
                 self.catchname = fname.encode('ascii')
 
         def visit_field_body(self, node):
+            if not self.in_docinfo:
+                raise nodes.StopTraversal
+
             if self.catchname:
                 self.extracted[self.catchname] = node.astext()
                 self.catchname = None
