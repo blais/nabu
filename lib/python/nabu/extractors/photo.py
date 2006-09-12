@@ -151,8 +151,9 @@ class Storage(extract.SQLExtractorStorage):
     """
     Photo storage.
     """
-    sql_tables = {
-        'photo': '''
+    sql_relations_unid = [
+        ('photo', 'TABLE',
+         """
 
             CREATE TABLE photo
             (
@@ -170,9 +171,17 @@ class Storage(extract.SQLExtractorStorage):
 
             );
 
+        """),
+        ]
+
+    sql_relations = [
+        ('photo_idx', 'INDEX',
+         """
+
             CREATE UNIQUE INDEX photo_idx ON photo (unid, photoid);
-            
-        '''}
+
+         """),
+        ]
 
     def store(self, unid, photoid, proto, docorder):
         cursor = self.connection.cursor()

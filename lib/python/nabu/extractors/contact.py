@@ -158,18 +158,24 @@ class Storage(extract.SQLExtractorStorage):
     birthdays as dates because we want to allow the user to embed question marks
     in those dates, e.g. 19??-02-04
     """
-    sql_tables = {
-        'contact': '''
+    sql_relations_unid = [
+        ('contact', 'TABLE',
+         """
+
           CREATE TABLE contact
           (
              id SERIAL PRIMARY KEY,
              unid TEXT NOT NULL,
              name TEXT
           )
-        '''}
 
-    sql_tables_other = {
-        'contact_field': '''
+        """)
+        ]
+
+    sql_relations = [
+        ('contact_field', 'TABLE',
+         """
+
           CREATE TABLE contact_field
           (
              contact_id TEXT REFERENCES contact (id) ON DELETE CASCADE,
@@ -177,8 +183,9 @@ class Storage(extract.SQLExtractorStorage):
              subtype TEXT,
              value TEXT
           )
-          ''',
-        }
+
+          """),
+        ]
 
     def store(self, unid, name, tfields):
         """

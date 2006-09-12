@@ -43,16 +43,17 @@ class Storage(extract.SQLExtractorStorage):
     """
     Reference storage.
     """
-    sql_tables = { 'reference': '''
+    sql_relations_unid = [
+        ('reference', 'TABLE', '''
 
-        CREATE TABLE reference
-        (
-           unid TEXT NOT NULL,
-           url TEXT
-        )
+          CREATE TABLE reference
+          (
+             unid TEXT NOT NULL,
+             url TEXT
+          )
 
-        '''
-        }
+        '''),
+        ]
 
     def store(self, unid, url):
         cursor = self.connection.cursor()

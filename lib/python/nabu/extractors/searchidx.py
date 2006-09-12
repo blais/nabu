@@ -86,8 +86,8 @@ class Storage(extract.SQLExtractorStorage):
     uploaded sources storage to render the entire document as HTML, this is ok.
     """
 
-    sql_tables = {
-        'search_index': '''
+    sql_relations_unid = [
+        ('search_index', 'TABLE', '''
 
             CREATE TABLE search_index
             (
@@ -96,11 +96,16 @@ class Storage(extract.SQLExtractorStorage):
                count INTEGER
             );
 
-            CREATE INDEX keyword_idx ON search_index (keyword);
-            CREATE INDEX unid_idx ON search_index (unid);
+        '''),
+        ]
 
-        ''',
-        }
+    sql_relations = [
+        ('keyword_idx', 'INDEX',
+         "CREATE INDEX keyword_idx ON search_index (keyword)"),
+
+        ('unid_idx', 'INDEX', 
+         "CREATE INDEX unid_idx ON search_index (unid)"),
+        ]
 
     def store(self, unid, dico):
         """

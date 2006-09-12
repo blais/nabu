@@ -172,22 +172,31 @@ class Storage(extract.SQLExtractorStorage):
     """
     Book storage.
     """
-    sql_tables = { 'book': '''
+    sql_relations_unid = [
+        ('book', 'TABLE',
+         """
 
-        CREATE TABLE book
-        (
-           unid TEXT NOT NULL,
-           isbn CHAR(16),
-           title TEXT,
-           author TEXT,
-           year TEXT,
-           url TEXT,
-           review TEXT
-        );
+          CREATE TABLE book
+          (
+             unid TEXT NOT NULL,
+             isbn CHAR(16),
+             title TEXT,
+             author TEXT,
+             year TEXT,
+             url TEXT,
+             review TEXT
+          );
 
-        CREATE INDEX book_isbn_idx ON book (isbn);
-        ''',
-        }
+        """),
+        ]
+
+    sql_relations = [
+        ('book_isbn_idx', 'INDEX', """
+
+          CREATE INDEX book_isbn_idx ON book (isbn);
+
+         """)
+        ]
 
     def store(self, unid, *args):
         data, = args

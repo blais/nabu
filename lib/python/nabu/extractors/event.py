@@ -147,20 +147,21 @@ class Storage(extract.SQLExtractorStorage):
     """
     Event storage.
     """
-    sql_tables = { 'event': '''
+    sql_relations_unid = [
+        ('event', 'TABLE', '''
 
-        CREATE TABLE event
-        (
-           id SERIAL PRIMARY KEY,
-           unid TEXT NOT NULL,
-           date DATE,
-           time1 TIME,
-           time2 TIME,
-           description TEXT
-        )
+          CREATE TABLE event
+          (
+             id SERIAL PRIMARY KEY,
+             unid TEXT NOT NULL,
+             date DATE,
+             time1 TIME,
+             time2 TIME,
+             description TEXT
+          )
 
-        '''
-        }
+        '''),
+        ]
 
     def store(self, unid, date, time1, time2, description):
         cursor = self.connection.cursor()

@@ -106,18 +106,19 @@ class Storage(extract.SQLExtractorStorage):
     """
     Link storage.
     """
-    sql_tables = { 'link': '''
+    sql_relations_unid = [
+        ('link', 'TABLE', '''
 
-        CREATE TABLE link
-        (
-           unid TEXT NOT NULL,
-           url TEXT,
-           description TEXT,
-           keywords TEXT
-        )
+          CREATE TABLE link
+          (
+             unid TEXT NOT NULL,
+             url TEXT,
+             description TEXT,
+             keywords TEXT
+          )
 
-        '''
-        }
+        '''),
+        ]
 
     def store(self, unid, url, description, keywords):
 

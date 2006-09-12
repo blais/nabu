@@ -47,17 +47,18 @@ class Storage(extract.SQLExtractorStorage):
     """
     Document tree storage.
     """
-    sql_tables = { 'doctree': '''
+    sql_relations_unid = [
+        ('doctree', 'TABLE', '''
 
-        CREATE TABLE doctree
-        (
-           unid TEXT NOT NULL,
-           doctree BYTEA
-        )
+          CREATE TABLE doctree
+          (
+             unid TEXT PRIMARY KEY,
+             doctree BYTEA
+          )
 
-        '''
-        }
-
+        '''),
+        ]
+    
     def store(self, unid, doctree):
 
         # Temporarily remove the reporter and transformer, just for pickling.

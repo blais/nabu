@@ -91,10 +91,10 @@ class SQLExtractorStorage(ExtractorStorage):
 
     # Tables that have a unid mapping.  The data associated with the document's
     # unid are cleared automatically.
-    sql_tables = {}
+    sql_relations_unid = []
 
     # Accessory tables that do not have a unid mapping.
-    sql_tables_other = {}
+    sql_relations = []
 
     def __init__(self, module, connection):
         self.module, self.connection = module, connection
@@ -102,14 +102,14 @@ class SQLExtractorStorage(ExtractorStorage):
         cursor = self.connection.cursor()
 
         # Check that the database tables exist and if they don't, create them.
-        for tname, tschema in chain(self.sql_tables.iteritems(),
-                                    self.sql_tables_other.iteritems()):
+        for tname, rtype, schema in chain(self.sql_relations_unid,
+                                          self.sql_relations):
             cursor.execute("""
-               SELECT table_name FROM information_schema.tables
-                 WHERE table_name = %s
+               SELECT relname FROM pg_catalog.pg_class
+                 WHERE relname = %s
                """, (tname,))
             if cursor.rowcount == 0:
-                cursor.execute(tschema)
+                cursor.execute(schema)
 
         self.connection.commit()
 
@@ -119,7 +119,7 @@ class SQLExtractorStorage(ExtractorStorage):
         """
         cursor = self.connection.cursor()
 
-        for tname, tschema in self.sql_tables.iteritems():
+        for tname, rtype, schema in self.sql_relations_unid:
             query = "DELETE FROM %s" % tname
             if unid is not None:
                 query += " WHERE unid = '%s'" % unid
@@ -133,15 +133,21 @@ class SQLExtractorStorage(ExtractorStorage):
         """
         cursor = self.connection.cursor()
 
-        for tname, tschema in chain(self.sql_tables.iteritems(),
-                                    self.sql_tables_other.iteritems()):
+        for tname, rtype, schema in chain(self.sql_relations_unid,
+                                          self.sql_relations):
+            
+            # Indexes are automatically destroyed with their attached tables,
+            # don't do it explicitly.
+            if rtype.upper() == 'INDEX':
+                continue
+
             cursor.execute("""
-               SELECT table_name FROM information_schema.tables
-                 WHERE table_name = %s
+               SELECT relname FROM pg_catalog.pg_class
+                 WHERE relname = %s
                """, (tname,))
             if cursor.rowcount > 0:
-                cursor.execute("DROP TABLE %s CASCADE" % tname)
-            cursor.execute(tschema)
+                cursor.execute("DROP %s %s CASCADE" % (rtype, tname))
+            cursor.execute(schema)
 
         self.connection.commit()
 

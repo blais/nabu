@@ -148,7 +148,7 @@ Extract location info.
 ##     """
 ##     Storage for location orderings.
 ##     """
-##     sql_tables = {
+##     sql_relations_unid = {
 ##         'location_ordering': '''
 
 ##           CREATE TABLE location_ordering

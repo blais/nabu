@@ -22,6 +22,9 @@ from docutils import nodes
 # nabu imports
 from nabu import extract
 
+# walus imports
+from walus import locresolv  ## FIXME: todo move it from walus
+
 
 #-------------------------------------------------------------------------------
 #
@@ -32,7 +35,7 @@ class Extractor(extract.Extractor):
     """
     default_priority = 900
 
-    biblifields = ['tags', 'location', 'disclosure']
+    biblifields = ['tags', 'location', 'disclosure', 'tagindex']
 
     def apply(self, unid=None, storage=None, pickle_receiver=None):
         self.unid = unid
@@ -122,12 +125,12 @@ class Storage(extract.SQLExtractorStorage):
     uploaded sources storage to render the entire document as HTML, this is ok.
     """
 
-    sql_tables = {
-        'document': '''
+    sql_relations_unid = [
+        ('document', 'TABLE', '''
 
             CREATE TABLE document
             (
-               unid TEXT NOT NULL,
+               unid TEXT PRIMARY KEY,
                title TEXT,
                author TEXT,
                date DATE,
@@ -138,12 +141,16 @@ class Storage(extract.SQLExtractorStorage):
                --  0: public
                --  1: shared
                --  2: private
-               disclosure INT DEFAULT 2
+               disclosure INT DEFAULT 2,
+
+               -- If this document is a tag index, the tag for which it is.
+               tagindex TEXT DEFAULT NULL
 
             )
 
-        ''',
-        'tags': '''
+        '''),
+
+        ('tags', 'TABLE', '''
 
             CREATE TABLE tags
             (
@@ -151,8 +158,13 @@ class Storage(extract.SQLExtractorStorage):
                tagname TEXT
             )
 
-        ''',
-        }
+        '''),
+        ]
+
+    sql_relations = list(locresolv.schemas) + [
+        ('tagindex_idx', 'INDEX',
+         """CREATE INDEX tagindex_idx ON document (tagindex)""")
+        ]
 
     # Mapping strings to disclosure levels.
     discmap = {None: 2, # default
@@ -165,7 +177,7 @@ class Storage(extract.SQLExtractorStorage):
         
         cols = ['unid', 'title', 'author', 'date',
                 'abstract', 'location',
-                'disclosure']
+                'disclosure', 'tagindex']
         for cname in cols:
             data.setdefault(cname, None)
         
@@ -186,6 +198,11 @@ class Storage(extract.SQLExtractorStorage):
             cursor.execute('''
               INSERT INTO tags (unid, tagname) VALUES (%s, %s)
             ''', (unid, tagname))
-        
+
         self.connection.commit()
+
+        # Deal with locations.
+        location = data.get('location')
+        if location:
+            locresolv.Locations.add(location)
 
