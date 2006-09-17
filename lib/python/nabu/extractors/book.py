@@ -123,6 +123,7 @@ class Extractor(extract.Extractor):
                 details = []
 
                 tfields = []
+## FIXME: check for list in astext() that follows, bug with reading-2002.txt
                 for name, value in flist.iteritems():
                     if name not in ('title', 'author', 'comments'):
                         text = value.astext()
