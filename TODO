@@ -12,6 +12,9 @@
 Misc
 ====
 
+- We need to document the different input syntax extensions, in a single, very
+  simple, document.
+
 - All the astext() functions from the extractors should be replaced by a
   function that checks for the presence of lists, and concatenate if the arg is
   a list.  See book() for example.
