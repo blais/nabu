@@ -30,6 +30,9 @@ Misc
   And the same for all the remaining tables?  All the queries would then have to
   append the correct names from the tables they fetch from.
 
+- Complete the movie extractor to actually store the list of movies, and to
+  render the link using the catalog if there is a catalog number. 
+
 - We need to provide a way for the extractors to reliably report errors, some
   sort of function.
 
