@@ -130,8 +130,342 @@ Extractors
 Jeff's Suggestions
 ==================
 
-FIXME add email here
+Some things to be taken care of in here:
+
+  > Hi Martin!  I've been playing with Nabu for the past couple of days, writing
+  > my own extractors.  I'm looking at using it for the Python Advocacy effort,
+  > where difference people can write documents on certain topics and Nabu links
+  > them together in a way more structured than a wiki.  You can see a preliminary
+  > page at advocacy.dfwpython.org, where the various drop-down links will go to
+  > documents processed by Nabu.
+
+  Oopsy I get an error.
+
+  Bad Gateway
+  The proxy server received an invalid response from an upstream server.
 
 
 
+  > I thought I'd send along some feedback on the things I learned along the way.
+  >   I was using the Dec 2005 release, not the intermediate SVN versions,
+  > figuring the formal release is more stable.
+
+  Actually, the latest is the most stable.  I fixed a lot of bugs since
+  then.  Always use the snapshots.  I want to setup a public SVN server
+  but I cant' right now because the SSL on my machine is hogged for my
+  commercial application.
+
+
+
+  > - First off, I added SQL indices over various columns, as there seemed not
+  >    to be any and it speeded things up.  Nabu still seems slow but I'm checking
+  >    into whether it is my mod_python setup, such as a fresh instance/database
+  >    connection is being created each time I run.  I can't believe it would
+  >    take 10 seconds to extract one small document (over a DSL line to the DB).
+
+  Hmm that's strange, I thought I had put indices over all of the 'unid'
+  columns, by virtue of making them PRIMARY KEY columns;  or maybe I
+  added those later.
+
+
+
+  > - The doctree extractor is using Pickle, not cPickle, so it runs slower
+  >    than it should.  Is there a problem w/cPickle?
+
+  Nah, the latest svn uses cPickle all over.
+
+
+  > - All the tutorials are unclear about transforms.  Does simply "extracting"
+  >    information from the tree necessarily alter it?  I didn't see much on why
+  >    and how you'd actually _modify_ the tree.  Some expanded material on when
+  >    and how to actually transform the tree would be cool.
+
+  I've written a book extractor that modifies the tree recently.
+  Basically, every time you want a list of things expressed as field
+  lists the HTML rendering looks pretty bad (render a list of field
+  lists with the HTML renderer and you'll see what I mean, it renders
+  horrible, I think this is because of the way the HTML renderer works
+  in most browsers).  My books get converted into DIVs now, it looks
+  much better.
+
+  Note that you may be able to make this change at render time rather
+  than at extraction time.  Both are possible.
+
+
+  > - In the extractor sources, I would add a comment warning people that only
+  >    the first instance of a field in a block gets taken.
+
+  You mean "in a field list".  That depends on the extractor.  The
+  extractors are still changing a fair bit, and I'm not sure I consider
+  them to be a part of Nabu just yet.  The ones I provide are the ones I
+  use, but they really are just examples.  I'm thinking of separating
+  them at some point.  Not sure it matters, there are so few users yet
+  anyway.
+
+
+  > - I wish there were a way for a date created/modified.  I can store _a date_
+  >    in the store() method, but there is no distinction between create and modify
+  >    at this level since Nabu entirely removes a record before adding/modifying
+  >    it.  Admittedly this simplifies things, omitting the need for SQL MODIFY
+  >    directive, but it loses the create/modify distinction.  Perhaps Nabu could
+  >    stash the record from the __sources__ table and pass it to store(), so that
+  >    store could know if this was the first or Nth time this document has been
+  >    seen and have access to the date column in __sources__.
+
+  Even that would not be sufficient: things extracted from the document
+  themselves can be added, deleted or modified.  Unless there is a way
+  to uniquely identify those "things" (whatever they are, bookmark,
+  contact info, etc.), there is no way to figure that out.  IMO the
+  problem is ill-defined.  However I think it would be possible to
+  implement this for the documents themselves, as a special exception.
+  I'm not sure I need it though.
+
+
+  > - I'd like to see some discussion in the docs about using the command-line
+  >    switches.  For example, if I add an extractor on the server, but none of
+  >    my documents have changed, how do I force a rerun of all my documents?
+
+  Yes, I will add that in the docstring for the nabu client.  "nabu
+  --help" has so many options that it isn't very clear how to use it.  A
+  more human-readable document is in order.
+
+
+  >    Or if I change the schema in my extractors, how do I recreate the tables?
+
+  nabu -XX
+  (same as above, I will add that info).
+
+  >    I know how to do this now, but it wasn't spelled out in the docs.
+
+  thanks! :-)
+
+
+  > - It would be useful for the extractors to have a method invoked at the
+  >    start and end of processing a series of documents, for the purpose of
+  >    generating summary views across a set of documents that might have changed.
+
+  Great idea!
+
+
+  > - It was unclear how the order in which extractors appear in the transforms
+  >    list relate to the 'default_priority' field within each extractor.  They
+  >    each control different aspects of processing but I don't quite get it.
+
+  The default_priority defines the ordering.  This is more of a docutils
+  issue that needs to be documented in the Nabu extractors developers
+  guide.
+
+
+  > I was at one point using multiple tables per extractor, for a many-to-many
+  > relationship and hit the following:
+  >
+  > - In extract.py, class SQLExtractorStorage, the __init__ logic iterates over
+  >    the sql_tables dictionary, creating them.  However if there are dependencies
+  >    between the tables, such as one table for values and a second table for a
+  >    many <-> many relationship, the second table may get created first,
+  >    depending upon the vagueries of dictionary hashes.  I changed __sql_tables__
+  >    to use an 'ordered dictionary' from the Python Cookbook so that the tables
+  >    were created in the order listed.
+
+  Hehe I also hit this problem not too long ago.  I changed the list to
+  be a list of tuples instead, which now also includes the type of the
+  object, e.g.
+
+     sql_relations_unid = [
+         ('document', 'TABLE', '''
+
+             CREATE TABLE document
+             (
+                unid TEXT PRIMARY KEY,
+                title TEXT,
+                author TEXT,
+                date DATE,
+                abstract TEXT,
+                location TEXT,
+
+                -- Disclosure is
+                --  0: public
+                --  1: shared
+                --  2: private
+                disclosure INT DEFAULT 2,
+
+                -- If this document is a tag index, the tag for which it is.
+                tagindex TEXT DEFAULT NULL
+
+             )
+
+         '''),
+
+         ('tags', 'TABLE', '''
+
+             CREATE TABLE tags
+             (
+                unid TEXT NOT NULL,
+                tagname TEXT
+             )
+
+         '''),
+         ]
+
+     sql_relations = list(locresolv.schemas) + [
+         ('tagindex_idx', 'INDEX',
+          """CREATE INDEX tagindex_idx ON document (tagindex)""")
+         ]
+
+
+
+
+  > I also use table/column constraints in my database and had trouble controlling
+  > the order in which tables were created/dropped, to satisfy those dependencies.
+  >   I use 'CASCADE ON DELETE' on my tables to automate most of it.  I used the
+  > 'ordered dictionary' trick to handle some more of it, and then wrestled with
+  > the default_priority/transforms[] ordering.  However I still had these problems:
+
+  (same as above.)
+
+
+  > - I wanted my new tables to have their 'unid' dependent upon the Nabu master
+  >    table which, I thought at first, was the doctree table (later I saw that
+  >    it really is __sources__).  The problem is that I had to add a FinalDocTree
+
+  yes, __sources__ is the single master resource.
+
+
+  >    and InitialDocTree, to initially INSERT the unid into the doctree table
+  >    at the start of processing, so that other table's later external references
+  >    would work.  The FinalDocTree recorded the pickle of the document after all
+  >    transforms have run.
+
+  Personally I just store the final doctree and get rid of the initial
+  doctree.  I don't have a constraint indeed, and I really should do
+  that.
+
+
+
+  > - When I switched to __sources__ I saw that you don't insert the document's
+  >    info until the end of processing, breaking referential constraints.
+  >    However because the various extractors each do their own database commits,
+  >    this means the database is in an indeterminate state during processing.
+  >    I'd like to see Nabu insert the info entry at the start of extractor
+  >    processing and avoid doing any database commits until the end of all
+  >    extractor processing.
+
+  Yes (this is related to the above, I should fix it, great observation).
+
+
+  > - In the docs, the section that talks about ~/.naburc or nabu.conf is unclear
+  >    whether the client, server or both uses it.  I now know that only the
+  >    client uses those files, and that the server uses settings in the cgi-bin
+  >    files.
+
+  Will clarify, thx.
+
+
+
+  > - The database security info is in the cgi-bin file connect.py.  I had to
+  >    make sure that directory was execute-only re Apache.
+
+  Bah, Apache stuff.  Always a PIA that stuff.
+
+
+  > - The docs need a bit more Apache setup info, re cgi-bin, HTTP auth and
+  >    perhaps even how to use HTTPS/SSL for non-public portions of the
+  >    interaction.
+
+  sure.
+
+
+
+  > - For some reason, the cgi-bin program nabu-contents.cgi always displays
+  >    a 404 Not Found message at _the bottom_ of the content.
+
+  Oopsy. I think I fixed that a while ago.  Could you fetch the snapshot
+  and confirm?
+
+
+  > - If a 'user=' is not specified in the nabu.conf file, and one is not passed
+  >    in on the command-line, nabu connects as user 'None'.  Perhaps it ought to
+  >    print an error message.
+
+  Ooppsy indeed.  Sounds like a bug.
+
+
+  > - At first I couldn't get nabu-contents.cgi to work, until I realized that
+  >    it is tied to the specific set of tables used elsewhere.  I had book and
+  >    link disabled as I wasn't using them, and was puzzled by the errors.
+
+  Yes, those scripts are meant to be used as examples.
+  In my current presentation layer, all that stuff is done wihtin
+  resource handlers with my Ranvier framework.  I don't even use the CGI
+  scripts.  They are just there for demo.  I should indicate that more
+  clearly.
+
+
+  > - When there is an error in the CGI, the traces show the database login info.
+  >    This may be a problem with the xmlrpclib, but it was disconcerning.
+
+  Hmmm.  Sounds more like a CGI problem, not sure what I can do about that one.
+
+  Note that I did a lot of work on the error reporting since your
+  snapshot (dec 2005).  That used to be one of the weak areas, and
+  sometimes still is when an extractor crashes.  One thing I'd like to
+  do is handle xmlrpclib errors more gracefully.
+
+
+  > - The docs need an expanded section on the "marker_regexp" and how document
+  >    ids work.  First, the wording is unclear on whether _each_ document needs
+  >    a unique id or whether a _set_ of documents need a group id.  As it turns
+  >    out, the answer is both.  The docs give an example of a unicode spec
+  >    preceding the :Id: field, but I didn't realize that you had to adjust your
+  >    marker_regexp to _match_ that unicode spec.   So with the marker_regexp
+
+  Hmm do you have to?  The client.py is doing re.search(), so you should
+  not have to change it.  My .naburc does not customize the regexp.  I
+  just tested with
+
+  .. -*- coding: utf-8 -*-  :Id: testttt
+
+  and it worked for me.
+
+
+  >    field you can select, via a proper pattern, _which_ documents are examined
+  >    and then you also set the pattern to extract the particular id you want.
+  >    Some examples would help in the docs.  This also needs to clearly state
+
+  Will do.
+
+
+  >    the purpose of the (group) portion, and also what part of the pattern
+  >    will be removed from the document before transmission.  I'm still getting
+  >    :Id: transmitted but with a blank value and I'm not sure why.  I'm sure
+  >    its to do with the pattern match.
+
+  I'm not sure what you mean with the "group" portion.  What is this?
+
+
+
+  > All in all, Nabu is a lot of fun.  I've got all my extractors written and now
+  > I'm off to actually present some of that data, to close the loop.  I'll
+  > probably give a presentation to the Dallas Python group this Saturday on Nabu.
+  >   After PyCon they talked about it a lot but don't seem to really understand it.
+
+  This is very cool!  I'm excited! :-) :-)
+
+
+  > I'm attaching my extractors, in case they are of use.  Feel free to add this
+  > to your project source.  My need was for multivalued fields, like :author: but
+  > with multiple people getting separate database records.  I imagine this is
+  > generally useful.
+
+  I have created a directory
+  nabu/lib/python/nabu/extractors/contrib/jeffrush to contain them.
+  Thanks!  I think I'll normalize that soon and place mine at a similar
+  level.
+
+  Thanks again!  I'll try to work on these items when I have a minute.
+  This new job is taking so much of my time, but it's a lot of fun.  I
+  get to work with R. Hettinger, R. Emslie, D. Mertz and a few other
+  Python hackers.  It is pretty cool, I'm learning a lot of new things.
+
+  cheers,
 
