@@ -13,8 +13,6 @@ Extract document tree and bibliographic fields.
 
 # stdlib imports
 import sys, re, datetime
-import pickle
-##import cPickle as pickle
 
 # docutils imports
 from docutils import nodes

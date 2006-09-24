@@ -11,15 +11,16 @@
 Extract document tree and bibliographic fields.
 """
 
-# stdlib imports
-import cPickle as pickle
+import re, datetime, copy
+import pickle
 
-# nabu imports
+from docutils import nodes
+
 from nabu import extract
 
 #-------------------------------------------------------------------------------
 #
-class Extractor(extract.Extractor):
+class InitialExtractor(extract.Extractor):
     """
     Document tree storage. This is used to store the document tree at the point
     of a transform.  Typically, we would not necessarily want the document tree
@@ -31,9 +32,9 @@ class Extractor(extract.Extractor):
     storage.
     """
 
-    default_priority = 999
+    default_priority = 1
 
-    def apply(self, unid=None, storage=None, pickle_receiver=None):
+    def apply( self, unid=None, storage=None, pickle_receiver=None ):
         self.unid = unid
         self.storage = storage
         # Store the document at this point.
@@ -42,23 +43,22 @@ class Extractor(extract.Extractor):
             pickle_receiver.append(pickled)
 
 
-class Storage(extract.SQLExtractorStorage):
+class DoctreeStorage(extract.SQLExtractorStorage):
     """
     Document tree storage.
     """
-    sql_relations_unid = [
-        ('doctree', 'TABLE', '''
+    sql_tables = { 'doctree': '''
 
-          CREATE TABLE doctree
-          (
-             unid TEXT PRIMARY KEY,
-             doctree BYTEA
-          )
+        CREATE TABLE doctree
+        (
+           unid TEXT PRIMARY KEY,
+           doctree BYTEA
+        )
 
-        '''),
-        ]
-    
-    def store(self, unid, doctree):
+        '''
+        }
+
+    def store( self, unid, doctree ):
 
         # Temporarily remove the reporter and transformer, just for pickling.
         saved_reporter = doctree.reporter
@@ -72,7 +72,7 @@ class Storage(extract.SQLExtractorStorage):
             doctree.transformer = saved_transformer
 
         bindoc = self.module.Binary(doctree_pickled)
-        
+
         cursor = self.connection.cursor()
         cursor.execute("""
           INSERT INTO doctree (unid, doctree) VALUES (%s, %s)
@@ -80,4 +80,3 @@ class Storage(extract.SQLExtractorStorage):
         self.connection.commit()
 
         return doctree_pickled
-

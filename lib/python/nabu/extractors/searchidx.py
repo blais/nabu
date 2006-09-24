@@ -26,7 +26,6 @@ optimization is the root of... well, you know, RELAX!).
 
 # stdlib imports
 import sys, re, datetime
-import pickle
 
 # docutils imports
 from docutils import nodes

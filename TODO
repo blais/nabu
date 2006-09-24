@@ -8,6 +8,7 @@
     2  Server Setup
     3  Directives
     4  Extractors
+    5  Jeff's Suggestions
 
 Misc
 ====
@@ -123,4 +124,14 @@ Extractors
 
 - url extractor: when right after a title, a list of URLs should use the title
   as the description string
+
+
+
+Jeff's Suggestions
+==================
+
+FIXME add email here
+
+
+
 
