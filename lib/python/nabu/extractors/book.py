@@ -33,6 +33,15 @@ book_search_template = ('http://books.google.com/books?q=%s'
                         '&btnG=Search+Books&as_brr=0')
 
 
+def astext(el):
+    """
+    Convert a docutils node or a list of nodes to text.  Deals with a list as
+    well as a single node.
+    """
+    if isinstance(el, (tuple, list)):
+        return '\n'.join(x.astext() for x in el)
+    return el.astext()
+
 #-------------------------------------------------------------------------------
 #
 class Extractor(extract.Extractor):
@@ -123,10 +132,9 @@ class Extractor(extract.Extractor):
                 details = []
 
                 tfields = []
-## FIXME: check for list in astext() that follows, bug with reading-2002.txt
                 for name, value in flist.iteritems():
                     if name not in ('title', 'author', 'comments'):
-                        text = value.astext()
+                        text = astext(value)
                         if text:
                             tfields.append(text)
                 if tfields:
