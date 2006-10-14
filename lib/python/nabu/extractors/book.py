@@ -40,7 +40,12 @@ def astext(el):
     """
     if isinstance(el, (tuple, list)):
         return '\n'.join(x.astext() for x in el)
-    return el.astext()
+    elif isinstance(el, unicode):
+        return el
+    elif isinstance(el, str):
+        return el.decode('utf-8')
+    else:
+        return el.astext()
 
 #-------------------------------------------------------------------------------
 #
@@ -82,12 +87,15 @@ class Extractor(extract.Extractor):
         for fnode, flist in v.getfieldlists():
             book = 0
             # if there is an empty book field, this is explicitly a book.
-            if 'book' in flist:
+            if 'book' in flist or 'article' in flist:
                 book = 1
             # if there is an ISBN number, then it is *definitely* a book.
             elif 'isbn' in flist:
                 book = 1
-            elif ('author' in flist or 'authors' in flist) and 'title' in flist:
+            elif ('title' in flist and
+                  ('author' in flist or
+                   'authors' in flist or
+                   'publication' in flist)):
                 book = 1
 
             if book:
@@ -108,18 +116,18 @@ class Extractor(extract.Extractor):
                         if f:
                             break
                     if f:
-                        f = f.astext()
+                        f = astext(f)
                     else:
                         f = u'<unknown %s>' % field
                     ifields.append(f)
 
                 isbn = flist.pop('isbn', None)
                 if isbn:
-                    url = book_isbn_template % isbn.astext()
+                    url = book_isbn_template % astext(isbn)
                 else:
                     booktitle = flist.get('title', '')
                     url = (book_search_template %
-                           quote_plus(booktitle.astext().encode('utf-8')))
+                           quote_plus(astext(booktitle).encode('utf-8')))
 
                 title = paragraph('', '',
                     Text(u'Book: '),
@@ -147,11 +155,7 @@ class Extractor(extract.Extractor):
                     if comments:
                         break
                 if comments:
-                    if isinstance(comments, (tuple, list)):
-                        comments = u'\n'.join(x.astext() for x in comments)
-                    else:
-                        comments = comments.astext()
-
+                    comments = astext(comments)
                     p = paragraph(text=comments,
                                   classes=['book-comments'])
                     details.append(p)
@@ -168,11 +172,7 @@ class Extractor(extract.Extractor):
     def store(self, flist):
         emap = {}
         for k, v in flist.iteritems():
-            if isinstance(v, (list, tuple)):
-                s = '\n'.join(map(lambda x: x.astext(), v))
-            else:
-                s = v.astext()
-            emap[k] = s
+            emap[k] = astext(v)
 
         self.storage.store(self.unid, emap)
 
