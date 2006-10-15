@@ -9,6 +9,7 @@
 
 .. contents::
 
+
 Introduction
 ============
 
@@ -24,6 +25,7 @@ Note that we will be storing data with an SQL DBAPI-2.0 interface. You may want
 to read `PEP 249`__ if you're not familiar with Python DBAPI-2.0.
 
 __ http://www.python.org/peps/pep-0249.html
+
 
 Example Application: Extracting Books from Field Lists
 ======================================================
@@ -549,6 +551,23 @@ convenience::
           self.connection.commit()
 
 
+Modfying the Document Tree
+==========================
+
+Your extractors do not have to modify the document tree, their goal is to find
+information from the document tree and save it somewhere else (e.g. in the
+database), and to leave the document tree alone (the information from the
+document tree gets rendered if you then render the document itself).
+
+However, if you like, you can make modifications to the document tree.  For
+example, if your extractor discovers some pattern of nodes for storage, you may
+also want to add a custom class to the parent node so that you can later render
+those parts of the document specially marked with CSS rules.  You can also
+remove nodes from the tree if you like.  
+
+When Nabu processes the extractors on the server, the document tree gets stored
+*after* your extractors have run.  Your modified tree will be stored in the
+sources table in the database.
 
 
 Final Notes

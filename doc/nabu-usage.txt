@@ -130,19 +130,23 @@ a Python interpreter on it.  Its only dependencies are the Python interpreter
 (version >=2.3).
 
 You can fetch the `Nabu Publisher Client`__ and save it under the name ``nabu``.
+Its configuration file is located as ``~/.naburc`` on your client host.  (This
+file is only used by the client to find the publisher URL—not by the server; The
+server does not have a configuration file, rather, its configuration is the bit
+of Python script that you have to write that calls the Nabu server within your
+favourite web app framework).
 
 __ /nabu/bin/nabu
+
 
 Pointing to a Server
 --------------------
 
-You publish files to a Nabu publishing handler URL, you need to tell nabu what
-are the connection parameters, the server, and the user and password.  This can
-be setup in your publisher/client configuration file.  The publisher will not
-run without this information.
-
-This file is found under your home directory as ``~/.naburc``.  You need to
-create it to setup your connection parameters [#]_.
+To publish files to a Nabu publishing handler URL, you need to tell the nabu
+client what the connection parameters are; The server, the user and the
+password.  This can be setup in your client configuration file.  This file is
+found under your home directory as ``~/.naburc``.  You need to create it to
+setup your connection parameters [#]_.
 
 A typical ``~/.naburc`` file will look something like this::
 

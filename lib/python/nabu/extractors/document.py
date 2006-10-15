@@ -21,7 +21,8 @@ from docutils import nodes
 from nabu import extract
 
 # walus imports
-from walus import locresolv  ## FIXME: todo move it from walus
+## from nabu.extractors import locresolv
+locresolv = None ## Disable for now, until we finish the cache.
 
 
 #-------------------------------------------------------------------------------
@@ -77,16 +78,12 @@ class Extractor(extract.Extractor):
             
         def depart_docinfo(self, node):
             self.in_docinfo = 0
-
-            # Remove the bibliographic fields after processing.
-            node.clear()
-
             raise nodes.StopTraversal
 
         def visit_field_name(self, node):
             if not self.in_docinfo:
                 raise nodes.StopTraversal
-                
+            
             fname = node.astext().lower()
             if fname in self.xform.biblifields:
                 self.catchname = fname.encode('ascii')
@@ -159,10 +156,13 @@ class Storage(extract.SQLExtractorStorage):
         '''),
         ]
 
-    sql_relations = list(locresolv.schemas) + [
+    sql_relations = [
         ('tagindex_idx', 'INDEX',
          """CREATE INDEX tagindex_idx ON document (tagindex)""")
         ]
+
+    if locresolv:
+        sql_relations = list(locresolv.schemas) + sql_relations
 
     # Mapping strings to disclosure levels.
     discmap = {None: 2, # default
@@ -200,7 +200,8 @@ class Storage(extract.SQLExtractorStorage):
         self.connection.commit()
 
         # Deal with locations.
-        location = data.get('location')
-        if location:
-            locresolv.Locations.add(location)
+        if locresolv:
+            location = data.get('location')
+            if location:
+                locresolv.Locations.add(location)
 

@@ -102,10 +102,11 @@ def _exc_marshaled_dispatch(self, data, dispatch_method = None):
         error = traceback.format_exc()
     except Exception, fault:
         # report exception back to server
-        response = xmlrpclib.dumps(
-            xmlrpclib.Fault(1, "%s:%s" % (sys.exc_type, sys.exc_value))
-            )
         error = traceback.format_exc()
+        response = xmlrpclib.dumps(
+            xmlrpclib.Fault(1, "%s:%s\n%s" % (sys.exc_type,
+                                              sys.exc_value,
+                                              error)))
 
     return response, error
 

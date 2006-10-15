@@ -31,31 +31,29 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
 
     def apply(self):
         self.initialize()
-        self.document.walk(self)
-        self.finalize()
-        
+        self.document.walkabout(self)
+
     def initialize(self):
         self.fieldlists = []
-        self.curlist = None
-        self.curmap = {}
-
-    def finalize(self):
-        if self.curlist is not None:
-            self.fieldlists.append( (self.curlist, self.curmap) )
-            self.curlist = None
-            self.curmap = {}
+        self.curlist = self.curmap = None
 
     def getfieldlists(self):
-        assert self.curlist is None # you need to finalize
-        assert self.curmap == {} # you need to finalize
+        assert self.curlist is None
+        assert not self.curmap
         return self.fieldlists
 
     def visit_field_list(self, node):
-        if self.curlist:
-            self.fieldlists.append( (self.curlist, self.curmap) )
-            self.curlist = None
-            self.curmap = {}
+        assert not self.curlist
         self.curlist = node
+        self.curmap = {}
+
+    def depart_field_list(self, node):
+        assert self.curlist
+        self.fieldlists.append( (self.curlist, self.curmap) )
+        self.curlist = self.curmap = None
+
+    visit_docinfo = visit_field_list
+    depart_docinfo = depart_field_list
 
     def visit_field(self, node):
         assert len(node.children) == 2

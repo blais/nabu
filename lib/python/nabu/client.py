@@ -18,7 +18,7 @@
 #
 
 """
-Nabu Publisher Client.
+Nabu Publisher Client.  Use this to send files to a Nabu publisher server.
 
 Usage::
    nabu [<options>] [<file-or-dir> ...]
@@ -42,6 +42,45 @@ To remove files, see the clear options.  To get the processing errors stored on
 the server, or to get a contents dump, see the other actions options.  For more
 details, see the design document that comes with Nabu, or use the `--help`
 switch.
+
+Examples
+--------
+
+To process all files in the current directory and recursively, just run the
+client::
+
+   nabu
+
+The version switch (-v) prints information on all details of what it is
+attempting to do.  To force sending all the found documents again, use the
+--force option, for example::
+
+   nabu -v --force
+
+If you want to delete the entire contents of the database on the server, use::
+
+   nabu -X
+
+or::
+
+   nabu -XX
+
+(The latter will also drop the database tables, the former only empties them).
+The server may or may not be conifigured to allow this.
+
+If you want to perform the reStructuredText conversion locally, you can use the
+-l option::
+
+   nabu -l
+
+This sends the document tree to the server.  Note that you will need a local
+installation of docutils.  Using this option twice only performs the conversion
+locally and does NOT send the file to the server (this can be used for testing
+that your document is valid reStructuredText).
+
+Note that you need to configure your server URL in your .naburc file (see
+below).
+
 
 Configuration
 -------------
@@ -130,7 +169,7 @@ def opts_publish(parser):
         "These options specify where/how to upload or"
         "process the files on the server.")
 
-    group.add_option('-F', '--force', action='store_true',
+    group.add_option('-F', '-f', '--force', action='store_true',
                       help="Force sending/processing all files regardless "
                       "of history.")
 
@@ -143,8 +182,8 @@ def opts_publish(parser):
         "to the server;  twice is for validation, the "
         "documents get processed locally but do not get sent to "
         "the server;  three times is for debugging only: local "
-        "extraction of Nabu entries is attempted by the local "
-        "installation of Nabu.")
+        "extraction of Nabu entries is attempted by a local "
+        "installation of Nabu, if you have one.")
 
     group.add_option('--dont-remove-marker', '--leave-marker',
         action='store_true',
@@ -921,8 +960,9 @@ def main():
             else:
                 publish(candidates, opts, args)
     except xmlrpclib.Fault, e:
-        raise SystemExit("Error: an error occurred on the server:\n %s\n" % e +
-                         "Contact the server administrator for support.")
+        sys.stderr.write("Error: an error occurred on the server: %s\n" % e.faultCode)
+        sys.stderr.write(e.faultString)
+        raise SystemExit("Contact the server administrator for support.")
 
 if __name__ == '__main__':
     main()
