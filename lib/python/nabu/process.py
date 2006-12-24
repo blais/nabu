@@ -12,7 +12,7 @@ Process the document tree with a set of custom transforms.
 """
 
 # stdlib imports
-import sys, StringIO
+import sys, StringIO, traceback
 
 # docutils imports
 import docutils.utils
@@ -58,7 +58,10 @@ def transform_doctree(unid, doctree, transforms, pickle_receiver=None,
     doctree.reporter = docutils.utils.new_reporter('', settings)
 
     # Apply the transforms.
-    doctree.transformer.apply_transforms()
+    try:
+        doctree.transformer.apply_transforms()
+    except Exception, e:
+        traceback.print_exc(sys.stderr)
     
     # Fix back the doctree to allow to be pickled.
     doctree.transformer = doctree.reporter = None
