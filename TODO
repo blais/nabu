@@ -13,6 +13,9 @@
 Misc
 ====
 
+- You **REALLY** need to support multiple profiles for running nabu manually.
+  It's really annoying to delete the entire server database by accident.
+
 - We really need to detect a syntax for “Question”.  e.g. Q:
 
 - We need to document the different input syntax extensions, in a single, very

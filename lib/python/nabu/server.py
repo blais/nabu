@@ -72,7 +72,7 @@ def xmlrpc_handle_mp(server_handler, request_text):
     pair of the response and a list of affected unids.
     """
     # create an XMLRPC server handler and bind interface
-    handler = SimpleXMLRPCDispatcher()
+    handler = SimpleXMLRPCDispatcher(allow_none=False, encoding=None)
     handler.register_instance(server_handler)
     response, error = _exc_marshaled_dispatch(handler, request_text)
     return response, error, list(server_handler.affected_unids())
