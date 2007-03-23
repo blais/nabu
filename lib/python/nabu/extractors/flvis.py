@@ -55,10 +55,11 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
     def visit_field(self, node):
         assert len(node.children) == 2
         name = node.children[0].astext().lower()
-        if name in self.curmap:
-            if not isinstance(self.curmap[name], types.ListType):
-                self.curmap[name] = [self.curmap[name]]
-            self.curmap[name].append(node.children[1])
+        curnode, curmap = self.curlist[-1]
+        if name in curmap:
+            if not isinstance(curmap[name], types.ListType):
+                curmap[name] = [curmap[name]]
+            curmap[name].append(node.children[1])
         else:
-            self.curmap[name] = node.children[1]
+            curmap[name] = node.children[1]
 
