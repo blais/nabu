@@ -35,22 +35,19 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
 
     def initialize(self):
         self.fieldlists = []
-        self.curlist = self.curmap = None
+        self.curlist = []
 
     def getfieldlists(self):
-        assert self.curlist is None
-        assert not self.curmap
+        assert not self.curlist
         return self.fieldlists
 
     def visit_field_list(self, node):
         assert not self.curlist
-        self.curlist = node
-        self.curmap = {}
+        self.curlist.append( (node, {}) )
 
     def depart_field_list(self, node):
         assert self.curlist
-        self.fieldlists.append( (self.curlist, self.curmap) )
-        self.curlist = self.curmap = None
+        self.fieldlists.append(self.curlist.pop(-1))
 
     visit_docinfo = visit_field_list
     depart_docinfo = depart_field_list
