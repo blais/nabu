@@ -38,15 +38,12 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
         self.curlist = []
 
     def getfieldlists(self):
-        assert not self.curlist
         return self.fieldlists
 
     def visit_field_list(self, node):
-        assert not self.curlist
         self.curlist.append( (node, {}) )
 
     def depart_field_list(self, node):
-        assert self.curlist
         self.fieldlists.append(self.curlist.pop(-1))
 
     visit_docinfo = visit_field_list
