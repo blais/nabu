@@ -8,6 +8,8 @@
     2  Server Setup
     3  Directives
     4  Extractors
+      4.1  Definitions
+      4.2  Questions
     5  Jeff's Suggestions
 
 Misc
@@ -131,6 +133,47 @@ Extractors
 
 - url extractor: when right after a title, a list of URLs should use the title
   as the description string
+
+Definitions
+-----------
+
+Support this:
+
+  :paramour
+    • noun archaic or derogatory a lover, especially the illicit partner of a
+      married person.
+    — ORIGIN from Old French par amour ‘by love’.
+
+  :“la monstre tune”
+    expr: beaucoup de fric.
+
+- the first is a word definition
+- the second, with either “, ", or ” is an expression
+
+
+
+Questions
+---------
+
+Support the following syntax for questions:
+
+    :Q: dhs dhs dhshd shdsd hsds as Emperor (Tsar) of Bulgaria from 1331 to 1371,
+        during the Second Bulgarian Empire. The date of his birth is unknown. He died
+        on February 17, 1371. The long reign of Ivan Alexander is considered a
+        transitional period in Bulgarian medieval history. Ivan Alexander began his
+        rule by dealing with internal problems and external threats from Bulgaria's
+        neighbours, the Byzantine Empire and Serbia, as well as leading his empire
+        into a period of economic recovery and cultural and religious
+        renaissance. However, the emperor was later unable to cope with the mounting
+        incursions of Ottoman forces, Hungarian invasions from the northwest and the
+        Black Death. In an ill-fated attempt to combat these problems, he divided the
+        country
+
+           ...that competitions for the design of José Martí Memorial (pictured) in
+           Havana, Cuba started in 1939, but the design that was finally constructed
+           in 1953 was a variation on a design that had come in third .in the fourth
+           competition?
+
 
 
 
