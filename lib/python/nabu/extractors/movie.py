@@ -103,7 +103,7 @@ class Extractor(extract.Extractor):
             self.desc = None
 
         def visit_reference(self, node):
-            trace(node.astext())
+## FIXME: todo
             pass
 
 ##     def store(self, flist):
