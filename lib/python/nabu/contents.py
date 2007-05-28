@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -89,8 +88,7 @@ pages_footer = '''
 </html>
 '''
 
-#-------------------------------------------------------------------------------
-#
+
 def navig_index(uri):
     """
     Render a simple navigation header div in the document pages.
@@ -123,8 +121,7 @@ def navig(uri, unid):
           '%s?id=%s&view=html' % (uri, unid))
 
 
-#-------------------------------------------------------------------------------
-#
+
 def render_notfound():
     """
     Return a resource-not-found error to the client.
@@ -136,8 +133,7 @@ def render_notfound():
     print >> os, 'Document Not Found.'
     return os.getvalue()
 
-#-------------------------------------------------------------------------------
-#
+
 def render_index(uri, username, srcstore):
     """
     Generate an index of documents.
@@ -176,8 +172,7 @@ def render_index(uri, username, srcstore):
     print >> os, pages_footer
     return os.getvalue()
 
-#-------------------------------------------------------------------------------
-#
+
 def render_source(unid, uri, username, srcstore):
     """
     Render a basic page that dumps all the information available for a source
@@ -238,8 +233,7 @@ def render_source(unid, uri, username, srcstore):
     return os.getvalue().decode('utf-8')
 
 
-#-------------------------------------------------------------------------------
-#
+
 def render_html(unid, uri, username, srcstore):
     """
     Render the document tree naively, as HTML.
@@ -276,8 +270,7 @@ def render_html(unid, uri, username, srcstore):
     print >> os, pages_footer
     return os.getvalue()
 
-#-------------------------------------------------------------------------------
-#
+
 def render_extracted(unid, stored_unid, uri, username, conn, tables):
     """
     Render information that was extracted from this document.
@@ -307,8 +300,7 @@ def render_extracted(unid, stored_unid, uri, username, conn, tables):
     print >> os, pages_footer
     return os.getvalue()
 
-#-------------------------------------------------------------------------------
-#
+
 def dump_table(conn, tablename, uri, unid=None, stored_unid=None):
     """
     Print extracted information (again, for fun, this is not necessary).

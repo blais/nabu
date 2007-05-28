@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2006  Jeff Rush <jeff@taupro.com>
 # This file is distributed under the terms of the GNU GPL license.
@@ -18,8 +17,7 @@ from docutils import nodes
 # nabu imports
 from nabu import extract
 
-#-------------------------------------------------------------------------------
-#
+
 class AudienceExtractor(extract.Extractor):
     """ A document transform that extracts the 'audience' field, reflecting
         one or more targets to whom the document is directed.  The targets

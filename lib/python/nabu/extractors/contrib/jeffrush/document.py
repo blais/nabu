@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -22,8 +21,7 @@ from docutils import nodes
 # nabu imports
 from nabu import extract
 
-#-------------------------------------------------------------------------------
-#
+
 class InitialDoctreeExtractor(extract.Extractor):
     """
     Document tree storage. This is used to store the document tree at the point
@@ -150,8 +148,7 @@ class FinalDoctreeStorage(extract.SQLExtractorStorage):
 
         return doctree_pickled
 
-#-------------------------------------------------------------------------------
-#
+
 class DocumentExtractor(extract.Extractor):
     """
     Transform that extracts some basic information about the document as a

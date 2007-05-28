@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 """
 Storage and resolver for partial location names + orderings.
@@ -29,8 +28,7 @@ from antipool import dbpool, ConnOp
 
 
 
-#-------------------------------------------------------------------------------
-#
+
 schemas = (
 
     #-----------------------------------------
@@ -100,8 +98,7 @@ schemas = (
     )
 
 
-#-------------------------------------------------------------------------------
-#
+
 class Locations(MormTable):
     table = 'location_ordering'
     converters = {}
@@ -345,8 +342,7 @@ class Locations(MormTable):
 
 
 
-#-------------------------------------------------------------------------------
-#
+
 class PrettyLocations(MormTable):
     """
     This table contains a mapping from keys to the full names
@@ -423,8 +419,7 @@ def field2both(location_field):
             for w in [x.strip() for x in location_field.split(',')]]
 
 
-#-------------------------------------------------------------------------------
-#
+
 class LocationCache(MormTable):
     """
     This table contains a cache of location ids to rendered
@@ -459,8 +454,7 @@ class LocationCache(MormTable):
 
 
 
-#-------------------------------------------------------------------------------
-#
+
 def keyname(srcname):
     """
     Convert a source location name to the a name that is normalized for better
@@ -477,9 +471,6 @@ def keyname(srcname):
 
 
 
-#===============================================================================
-# TESTS
-#===============================================================================
 
 if __name__ == '__main__':
 

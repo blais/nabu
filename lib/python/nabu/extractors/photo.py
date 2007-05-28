@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -26,8 +25,7 @@ from nabu import extract
 # DIRECTIVES
 #===============================================================================
 
-#-------------------------------------------------------------------------------
-#
+
 align_values = ('left', 'center', 'right')
 
 def align(argument):
@@ -62,8 +60,7 @@ photo_directive.arguments = (1, 0, 0)
 photo_directive.options = {'alt': directives.unchanged,
                            'align': align}
 
-#-------------------------------------------------------------------------------
-#
+
 def photogroup_directive(name, arguments, options, content, lineno,
                          content_offset, block_text, state, state_machine):
 
@@ -145,8 +142,7 @@ class Extractor(extract.Extractor):
                 self.order += 1
 
 
-#-------------------------------------------------------------------------------
-#
+
 class Storage(extract.SQLExtractorStorage):
     """
     Photo storage.

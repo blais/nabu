@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -31,8 +30,7 @@ from nabu.utils import ExceptionXMLRPCRequestHandler
 __all__ = ('create_server', 'xmlrpc_handle_cgi', 'xmlrpc_handle_mp',)
 
 
-#-------------------------------------------------------------------------------
-#
+
 def create_server(srcstore, transforms, username, allow_reset=0):
     """
     Create a server handler object and return it.
@@ -78,8 +76,7 @@ def xmlrpc_handle_mp(server_handler, request_text):
     return response, error, list(server_handler.affected_unids())
 
 
-#-------------------------------------------------------------------------------
-#
+
 def _exc_marshaled_dispatch(self, data, dispatch_method = None):
     """handler _marshaled_dispatch() method from xmlrpclib modified to intercept
     and return an exception if it occurs.
@@ -111,8 +108,7 @@ def _exc_marshaled_dispatch(self, data, dispatch_method = None):
     return response, error
 
 
-#-------------------------------------------------------------------------------
-#
+
 class SimpleAccumulator:
     """
     Simple accumulator object that can only grow a list one item at a time.

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -25,8 +24,7 @@ from nabu import extract
 locresolv = None ## Disable for now, until we finish the cache.
 
 
-#-------------------------------------------------------------------------------
-#
+
 class Extractor(extract.Extractor):
     """
     Transform that extracts some basic information about the document as a

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -48,8 +47,7 @@ movie_catalog_template = 'http://imdb.com/title/%s/'
 movie_search_template = 'http://imdb.com/find?q=%s;s=all'
 
 
-#-------------------------------------------------------------------------------
-#
+
 def mtext_quote(s):
     return quote_plus(s.encode('latin-1'))
 ## FIXME: we need to solve nicely the problem of generating URLs with search
@@ -73,8 +71,7 @@ def movie_role(role, rawtext, text, lineno, inliner,
 roles.register_local_role('movie', movie_role)
 
 
-#-------------------------------------------------------------------------------
-#
+
 class Extractor(extract.Extractor):
     """
     Extractor for movies.

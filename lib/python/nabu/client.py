@@ -337,8 +337,7 @@ def publish(candidates, opts, args):
             print '======= clearing {%s}' % iid
         server.clearids(idlist)
 
-#-------------------------------------------------------------------------------
-#
+
 _publisher = None
 
 def get_publisher():

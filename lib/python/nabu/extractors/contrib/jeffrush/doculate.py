@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Jeff Rush <jeff@taupro.com>
 # This file is distributed under the terms of the GNU GPL license.
@@ -58,8 +57,7 @@ from docutils import nodes
 # nabu imports
 from nabu import extract
 
-#-------------------------------------------------------------------------------
-#
+
 class DoculateExtractor(extract.Extractor):
     """
     Transform that extracts some basic information about the doculate as a

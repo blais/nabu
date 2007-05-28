@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -66,8 +65,7 @@ class Extractor(extract.Extractor):
         v = FieldListVisitor(self, self.document)
         self.document.walkabout(v)
 
-#-------------------------------------------------------------------------------
-#
+
 _translations = {
     'n': 'name',
     'a': 'address',
@@ -148,8 +146,7 @@ class FieldListVisitor(nodes.SparseNodeVisitor):
         self.extractor.store(cname, tlist)
 
 
-#-------------------------------------------------------------------------------
-#
+
 class Storage(extract.SQLExtractorStorage):
     """
     Contact storage.

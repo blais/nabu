@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -17,8 +16,7 @@ import cPickle as pickle
 # nabu imports
 from nabu import extract
 
-#-------------------------------------------------------------------------------
-#
+
 class Extractor(extract.Extractor):
     """
     Document tree storage. This is used to store the document tree at the point

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 # This file is distributed under the terms of the GNU GPL license.
@@ -22,8 +21,7 @@ from docutils import nodes
 from nabu import extract
 
 
-#-------------------------------------------------------------------------------
-#
+
 class Extractor(extract.Extractor):
     """
     Extract events happening at date/time specs + description, which are input
@@ -141,8 +139,7 @@ class Extractor(extract.Extractor):
                         t1, t2 = it1, it2
                     self.storage.store(self.unid, d, t1, t2, child)
 
-#-------------------------------------------------------------------------------
-#
+
 class Storage(extract.SQLExtractorStorage):
     """
     Event storage.
@@ -174,8 +171,7 @@ class Storage(extract.SQLExtractorStorage):
 
 
 
-#-------------------------------------------------------------------------------
-#
+
 wkdays = {}
 wkdays.update((y, x) for x, y in enumerate(
     ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')) )
@@ -399,8 +395,7 @@ def parse_dtspec(s):
     return [(x, t1, t2) for x in dates]
 
 
-#-------------------------------------------------------------------------------
-#
+
 def test():
     """
     Test all date/time spec input formats.

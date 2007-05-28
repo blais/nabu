@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
@@ -26,8 +25,7 @@ from docutils.nodes import                                      \
   paragraph, Text, container, block_quote, reference, Text
 
 
-#-------------------------------------------------------------------------------
-#
+
 book_isbn_template = 'http://amazon.com/o/ASIN/%s/'
 book_search_template = ('http://books.google.com/books?q=%s'
                         '&btnG=Search+Books&as_brr=0')
@@ -47,8 +45,7 @@ def astext(el):
     else:
         return el.astext()
 
-#-------------------------------------------------------------------------------
-#
+
 class Extractor(extract.Extractor):
     """
     Transform that looks at field lists and that heuristically attempts

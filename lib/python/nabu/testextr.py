@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2005  Martin Blais <blais@furius.ca>
 #
@@ -96,9 +95,9 @@ class GabberStorage(extract.ExtractorStorage):
             print >> self.s, pformat( (k, v) ).encode(self.console_encoding)
 
 
-#-------------------------------------------------------------------------------
+
 # Main Program
-#-------------------------------------------------------------------------------
+
 
 def main():
     """

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2006  Martin Blais <blais@furius.ca>
@@ -44,8 +43,7 @@ bogus_kwds = frozenset("""
    """.split())
 
 
-#-------------------------------------------------------------------------------
-#
+
 class Extractor(extract.Extractor):
     """
     Transform that extracts some basic information about the document as a
@@ -74,8 +72,7 @@ class _Visitor(nodes.SparseNodeVisitor):
     def visit_Text(self, node):
         parse_words(node.astext(), self.dico)
 
-#-------------------------------------------------------------------------------
-#
+
 class Storage(extract.SQLExtractorStorage):
     """
     Document storage.
@@ -123,8 +120,7 @@ class Storage(extract.SQLExtractorStorage):
         self.connection.commit()
 
 
-#-------------------------------------------------------------------------------
-#
+
 def parse_words(terms, dico, neg_dico=None):
     """
     Transform the text into a list of words, and store them into the dict
