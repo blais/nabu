@@ -15,6 +15,10 @@
 Misc
 ====
 
+- Add a field for some kinds of entries that allows us to store the order within
+  a document in which the entry occurs. We should be able, for example, to extract
+  the five first entries showing up in a source file.
+
 - Produce a photo for my main website page, a series of photo-booth photographs
   stacked next to each other, vertically, for the main page.
 
