@@ -15,6 +15,9 @@
 Misc
 ====
 
+- Add a feature to directly email a brand-new peephole from the
+  website (just enter the email addresses and send it from there).
+
 - Add a field for some kinds of entries that allows us to store the order within
   a document in which the entry occurs. We should be able, for example, to extract
   the five first entries showing up in a source file.
