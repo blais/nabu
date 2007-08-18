@@ -300,6 +300,11 @@ class DBSourceStorage(SourceStorage):
         bindoc = self.module.Binary(docpickled)
         binsource = self.module.Binary(source)
 
+##         print >> sys.stderr, (map(type, (unid, filename, digest, user, time,
+##                                          binsource, encoding, errors, bindoc)))
+##         print >> sys.stderr, (x.encode('latin1', 'replace')
+##                               for x in (unid, filename, digest, user, time,
+##                                         binsource, encoding, errors, bindoc))
         cursor = self.connection.cursor()
         cursor.execute("""
            INSERT INTO %s

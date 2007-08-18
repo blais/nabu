@@ -203,3 +203,5 @@ class Storage(extract.SQLExtractorStorage):
             if location:
                 locresolv.Locations.add(location)
 
+
+
