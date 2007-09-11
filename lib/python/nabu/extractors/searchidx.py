@@ -126,7 +126,7 @@ def parse_words(terms, dico, neg_dico=None):
     """
     wsplit = terms.split()
     for word in [x.lower() for x in wsplit]:
-        if len(word) <= 2:
+        if len(word) <= 1:
             continue
         neg = word.startswith('-')
         word = word.strip(u',.[]()“"”\’\‘\'\`:;-—?!')
