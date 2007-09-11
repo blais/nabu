@@ -161,11 +161,11 @@ def search(conn, search_str):
              for x in xrange(len(negdico))])
         clause = '(%s) EXCEPT (%s)' % (clause, neg_clause)
 
+    words = dico.keys() + negdico.keys()
     if not clause or not words:
         return []
 
     cursor = conn.cursor()
-    words = dico.keys() + negdico.keys()
     cursor.execute(clause, words)
     return [x[0] for x in cursor.fetchall()]
 
