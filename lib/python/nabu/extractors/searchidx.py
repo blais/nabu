@@ -4,8 +4,6 @@
 # This file is distributed under the terms of the GNU GPL license.
 # For more information: http://furius.ca/nabu.
 #
-# $Id$
-#
 
 """
 Extract search terms and creates a simple search index.
@@ -163,7 +161,7 @@ def search(conn, search_str):
              for x in xrange(len(negdico))])
         clause = '(%s) EXCEPT (%s)' % (clause, neg_clause)
     cursor = conn.cursor()
-    trace(clause)
+    trace('clause', clause)
     
     words = dico.keys() + negdico.keys()
     cursor.execute(clause, words)
