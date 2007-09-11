@@ -97,7 +97,7 @@ class Storage(extract.SQLExtractorStorage):
         ('keyword_idx', 'INDEX',
          "CREATE INDEX keyword_idx ON search_index (keyword)"),
 
-        ('unid_idx', 'INDEX', 
+        ('unid_idx', 'INDEX',
          "CREATE INDEX unid_idx ON search_index (unid)"),
         ]
 
@@ -160,9 +160,11 @@ def search(conn, search_str):
             ['SELECT unid FROM search_index WHERE keyword = %s'
              for x in xrange(len(negdico))])
         clause = '(%s) EXCEPT (%s)' % (clause, neg_clause)
+
+    if not clause or not words:
+        return []
+
     cursor = conn.cursor()
-    trace('clause', clause)
-    
     words = dico.keys() + negdico.keys()
     cursor.execute(clause, words)
     return [x[0] for x in cursor.fetchall()]
