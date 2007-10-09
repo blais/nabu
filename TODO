@@ -15,6 +15,25 @@
 Misc
 ====
 
+- I want, like a wiki, to be able to serve documents from a local
+  checkout. IMHO this whole thing would be simpler if the file came
+  out of a Subversion repository and were accessible as such, e.g.
+  references to local documents from the file would be translated to
+  filenames from the subversion repository. I want to do this::
+
+    .. image:: myfigure.png
+
+  in a directory::
+
+      /path/to/blog/losangeles/entry.txt
+      /path/to/blog/losangeles/myfigure.png
+
+  and for all the paths to be found automatically. This means that
+  Nabu would have to become tied to a Subversion checkout. I think
+  that might even be reasonable at some point, if it allows me to be
+  able to access the files. I don't know.
+
+
 - Implement a swish-e index on the database and link it up to walus.
 
 - Check out links:
@@ -65,7 +84,7 @@ Misc
   append the correct names from the tables they fetch from.
 
 - Complete the movie extractor to actually store the list of movies, and to
-  render the link using the catalog if there is a catalog number. 
+  render the link using the catalog if there is a catalog number.
 
 - We need to provide a way for the extractors to reliably report errors, some
   sort of function.
