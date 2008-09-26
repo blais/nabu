@@ -15,6 +15,12 @@
 Misc
 ====
 
+- nabu/docutils: Create a web page on nabu for docutils proposals for
+  establishing conventions for microformats, use my initial Nabu stuff
+  and send an email to the mailing-list asking for feedback.
+  Eventually we want to move some of Nabu's functionality directly
+  into docutils.
+
 - I want, like a wiki, to be able to serve documents from a local
   checkout. IMHO this whole thing would be simpler if the file came
   out of a Subversion repository and were accessible as such, e.g.
