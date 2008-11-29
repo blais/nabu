@@ -281,7 +281,10 @@ class DBSourceStorage(SourceStorage):
                 for unid in idlist:
                     conds.append(" unid = %s")
                     cursor.execute(_combine(query, conds), (unid,))
-        finally:
+        except self.module.Error, e:
+            self.connection.rollback()
+            raise e
+        else:
             self.connection.commit()
 
     def add(self, user, unid, filename, digest, time,
@@ -306,16 +309,21 @@ class DBSourceStorage(SourceStorage):
 ##                               for x in (unid, filename, digest, user, time,
 ##                                         binsource, encoding, errors, bindoc))
         cursor = self.connection.cursor()
-        cursor.execute("""
-           INSERT INTO %s
-             (unid, filename, digest, username, time,
-             source, encoding, errors, doctree)
-           VALUES
-             (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)
-             """ % DBSourceStorage.__table_name,
-           (unid, filename, digest, user, time,
-            binsource, encoding, errors, bindoc))
-        self.connection.commit()
+        try:
+            cursor.execute("""
+               INSERT INTO %s
+                 (unid, filename, digest, username, time,
+                 source, encoding, errors, doctree)
+               VALUES
+                 (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)
+                 """ % DBSourceStorage.__table_name,
+               (unid, filename, digest, user, time,
+                binsource, encoding, errors, bindoc))
+        except self.module.Error, e:
+            self.connection.rollback()
+            raise e
+        else:
+            self.connection.commit()
 
     def get(self, user, idlist=None, attributes=[]):
         cursor = self.connection.cursor()
@@ -365,8 +373,14 @@ class DBSourceStorage(SourceStorage):
 
     def reset_schema(self, drop=True):
         cursor = self.connection.cursor()
-        if drop:
-            cursor.execute("DROP TABLE %s" % DBSourceStorage.__table_name)
-        cursor.execute(DBSourceStorage.__table_schema)
-        self.connection.commit()
+        try:
+            if drop:
+                cursor.execute("DROP TABLE %s" % DBSourceStorage.__table_name)
+            cursor.execute(DBSourceStorage.__table_schema)
+        except self.module.Error, e:
+            self.connection.rollback()
+            raise e
+        else:
+            self.connection.commit()
+
 
