@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<meta name="generator" content="Docutils 0.3.10: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>Nabu: Writing an Extractor</title>
 <link rel="stylesheet" href="../style.css" type="text/css" />
 </head>
@@ -16,32 +16,34 @@
 
 <div class="document" id="nabu-writing-an-extractor">
 <h1 class="title">Nabu: Writing an Extractor</h1>
+
 <div class="abstract topic">
 <p class="topic-title first">Abstract</p>
 <p>This document shows an example of writing an extractor for identifying and
 saving parts of documents from within a Nabu server.</p>
 </div>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#introduction" id="id6" name="id6">Introduction</a></li>
-<li><a class="reference" href="#example-application-extracting-books-from-field-lists" id="id7" name="id7">Example Application: Extracting Books from Field Lists</a></li>
-<li><a class="reference" href="#looking-at-the-document-structure" id="id8" name="id8">Looking at the Document Structure</a></li>
-<li><a class="reference" href="#the-extractor-and-the-extractorstorage" id="id9" name="id9">The Extractor and the ExtractorStorage</a></li>
-<li><a class="reference" href="#example-code" id="id10" name="id10">Example code</a><ul>
-<li><a class="reference" href="#imports" id="id11" name="id11">Imports</a></li>
-<li><a class="reference" href="#the-extractor-class" id="id12" name="id12">The Extractor Class</a></li>
-<li><a class="reference" href="#the-extractorstorage-class" id="id13" name="id13">The ExtractorStorage Class</a></li>
+<li><a class="reference internal" href="#introduction" id="id6">Introduction</a></li>
+<li><a class="reference internal" href="#example-application-extracting-books-from-field-lists" id="id7">Example Application: Extracting Books from Field Lists</a></li>
+<li><a class="reference internal" href="#looking-at-the-document-structure" id="id8">Looking at the Document Structure</a></li>
+<li><a class="reference internal" href="#the-extractor-and-the-extractorstorage" id="id9">The Extractor and the ExtractorStorage</a></li>
+<li><a class="reference internal" href="#example-code" id="id10">Example code</a><ul>
+<li><a class="reference internal" href="#imports" id="id11">Imports</a></li>
+<li><a class="reference internal" href="#the-extractor-class" id="id12">The Extractor Class</a></li>
+<li><a class="reference internal" href="#the-extractorstorage-class" id="id13">The ExtractorStorage Class</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#testing-your-extractor" id="id14" name="id14">Testing Your Extractor</a></li>
-<li><a class="reference" href="#publisher-handler-configuration-code" id="id15" name="id15">Publisher Handler Configuration Code</a></li>
-<li><a class="reference" href="#complete-source-code" id="id16" name="id16">Complete Source Code</a></li>
-<li><a class="reference" href="#final-notes" id="id17" name="id17">Final Notes</a></li>
+<li><a class="reference internal" href="#testing-your-extractor" id="id14">Testing Your Extractor</a></li>
+<li><a class="reference internal" href="#publisher-handler-configuration-code" id="id15">Publisher Handler Configuration Code</a></li>
+<li><a class="reference internal" href="#complete-source-code" id="id16">Complete Source Code</a></li>
+<li><a class="reference internal" href="#modfying-the-document-tree" id="id17">Modfying the Document Tree</a></li>
+<li><a class="reference internal" href="#final-notes" id="id18">Final Notes</a></li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id6" id="introduction" name="introduction">Introduction</a></h1>
+<div class="section" id="introduction">
+<h1><a class="toc-backref" href="#id6">Introduction</a></h1>
 <p>Nabu offers a framework for the extraction of meaningful portions of documents
 into structured storage (e.g. database tables).  This extraction will generally
 be customized for each end application and therefore we anticipate that people
@@ -49,10 +51,10 @@ will write their own extractors.</p>
 <p>This document provides an example of that.  It aims at demonstrating the
 simplicity of the task.</p>
 <p>Note that we will be storing data with an SQL DBAPI-2.0 interface. You may want
-to read <a class="reference" href="http://www.python.org/peps/pep-0249.html">PEP 249</a> if you're not familiar with Python DBAPI-2.0.</p>
+to read <a class="reference external" href="http://www.python.org/peps/pep-0249.html">PEP 249</a> if you're not familiar with Python DBAPI-2.0.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id7" id="example-application-extracting-books-from-field-lists" name="example-application-extracting-books-from-field-lists">Example Application: Extracting Books from Field Lists</a></h1>
+<div class="section" id="example-application-extracting-books-from-field-lists">
+<h1><a class="toc-backref" href="#id7">Example Application: Extracting Books from Field Lists</a></h1>
 <p>For our example, we will examine the task of extracting information for book
 references.  Imagine that we want to be able to put field lists that are book
 references, scattered all over our documents, something that looks more or less
@@ -74,7 +76,7 @@ like BibTeX entries, for example:</p>
   the best general book about photography that I've read.
 </pre>
 <p>Since the docutils parser works recursively, those field lists can be located
-anywhere within the document <a class="footnote-reference" href="#id4" id="id2" name="id2">[1]</a>, for example, in an item list, e.g.:</p>
+anywhere within the document <a class="footnote-reference" href="#id4" id="id2">[1]</a>, for example, in an item list, e.g.:</p>
 <pre class="literal-block">
 Recent books read:
 
@@ -114,7 +116,7 @@ that:</p>
 </pre>
 <p>is a single field list.  This means that you cannot separate field lists with
 just whitespace.  I'm using an itemized list in the previous example, but
-other document structures could be used as well (see the <a class="reference" href="http://docutils.sourceforge.net/docs/ref/doctree.html">docutils document
+other document structures could be used as well (see the <a class="reference external" href="http://docutils.sourceforge.net/docs/ref/doctree.html">docutils document
 tree</a> a list of constructs that get recognized in reStructuredText).  This
 example exhibits a subtlety that may arise when you choose which structures
 will be parsed: you have to think about how the docutils parser will
@@ -131,8 +133,8 @@ not work because it gets parsed as a single field list:</p>
 </pre>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id8" id="looking-at-the-document-structure" name="looking-at-the-document-structure">Looking at the Document Structure</a></h1>
+<div class="section" id="looking-at-the-document-structure">
+<h1><a class="toc-backref" href="#id8">Looking at the Document Structure</a></h1>
 <p>Here is a pseudo-xml rendering of how the above example gets parsed by docutils
 into a tree of nodes.  This is the tree that we will have to visit to extract
 the references from.  You can use docutils' <tt class="docutils literal"><span class="pre">rst2pseudoxml.py</span></tt> tool to
@@ -213,8 +215,8 @@ design and write your extractor/visitor:</p>
                             0679736654
 </pre>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id9" id="the-extractor-and-the-extractorstorage" name="the-extractor-and-the-extractorstorage">The Extractor and the ExtractorStorage</a></h1>
+<div class="section" id="the-extractor-and-the-extractorstorage">
+<h1><a class="toc-backref" href="#id9">The Extractor and the ExtractorStorage</a></h1>
 <p>In order to extract some stuff from our documents, we need to provide at least
 two classes:</p>
 <ol class="arabic">
@@ -234,12 +236,12 @@ BibTeX format and store them sequentially in a file for later use.</p>
 </li>
 </ol>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id10" id="example-code" name="example-code">Example code</a></h1>
+<div class="section" id="example-code">
+<h1><a class="toc-backref" href="#id10">Example code</a></h1>
 <p>All the code for implementing the book algorithm above fits neatly in a short
 file.  Let's name it <tt class="docutils literal"><span class="pre">book.py</span></tt>.</p>
-<div class="section">
-<h2><a class="toc-backref" href="#id11" id="imports" name="imports">Imports</a></h2>
+<div class="section" id="imports">
+<h2><a class="toc-backref" href="#id11">Imports</a></h2>
 <p>We start our Python script with a brief description and some imports:</p>
 <pre class="literal-block">
 #!/usr/bin/env python
@@ -253,10 +255,10 @@ from nabu.extractors.flvis import FieldListVisitor
 </pre>
 <p>We import the <tt class="docutils literal"><span class="pre">nabu.extract</span></tt> module which contains the base class that we
 need.  We also import a utility class that knows how to visit docutils field
-lists <a class="footnote-reference" href="#id5" id="id3" name="id3">[2]</a>.</p>
+lists <a class="footnote-reference" href="#id5" id="id3">[2]</a>.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id12" id="the-extractor-class" name="the-extractor-class">The Extractor Class</a></h2>
+<div class="section" id="the-extractor-class">
+<h2><a class="toc-backref" href="#id12">The Extractor Class</a></h2>
 <p>We then define the extractor class, which is a docutils <tt class="docutils literal"><span class="pre">Transform</span></tt>:</p>
 <pre class="literal-block">
 class BookExtractor(extract.Extractor):
@@ -349,8 +351,8 @@ object to actually put the data somewhere:</p>
 </pre>
 <p>That's it for the extractor class!</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id13" id="the-extractorstorage-class" name="the-extractorstorage-class">The ExtractorStorage Class</a></h2>
+<div class="section" id="the-extractorstorage-class">
+<h2><a class="toc-backref" href="#id13">The ExtractorStorage Class</a></h2>
 <p>This class is in charge of storing the information identified by the extractor
 and is called by it when it finds a new instance to store.  Different storage
 classes can be created for different backends.</p>
@@ -411,8 +413,8 @@ storage object).</p>
 <p>This completes the source code for our example.</p>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id14" id="testing-your-extractor" name="testing-your-extractor">Testing Your Extractor</a></h1>
+<div class="section" id="testing-your-extractor">
+<h1><a class="toc-backref" href="#id14">Testing Your Extractor</a></h1>
 <p>Before setting up your Nabu publisher handler with the new extractor, you can
 test it using the <tt class="docutils literal"><span class="pre">nabu-test-extractor</span></tt> code provided with Nabu (installed
 under <tt class="docutils literal"><span class="pre">nabu/lib/python/nabu/testextr.py</span></tt>).</p>
@@ -423,8 +425,8 @@ your favourite books):</p>
 $ ./testextr.py book.py ~/reading.txt
 </pre>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id15" id="publisher-handler-configuration-code" name="publisher-handler-configuration-code">Publisher Handler Configuration Code</a></h1>
+<div class="section" id="publisher-handler-configuration-code">
+<h1><a class="toc-backref" href="#id15">Publisher Handler Configuration Code</a></h1>
 <p>The only part that remains to be done in order to feed a database with book
 references is to configure your Nabu publisher handler with the new extractor.
 The Nabu publisher handler is the script that you should install on your web
@@ -446,8 +448,8 @@ transforms = (
     )
 </pre>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id16" id="complete-source-code" name="complete-source-code">Complete Source Code</a></h1>
+<div class="section" id="complete-source-code">
+<h1><a class="toc-backref" href="#id16">Complete Source Code</a></h1>
 <p>The complete source code for the book example is reproduced here for
 convenience:</p>
 <pre class="literal-block">
@@ -553,8 +555,23 @@ class BookStorage(extract.SQLExtractorStorage):
         self.connection.commit()
 </pre>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id17" id="final-notes" name="final-notes">Final Notes</a></h1>
+<div class="section" id="modfying-the-document-tree">
+<h1><a class="toc-backref" href="#id17">Modfying the Document Tree</a></h1>
+<p>Your extractors do not have to modify the document tree, their goal is to find
+information from the document tree and save it somewhere else (e.g. in the
+database), and to leave the document tree alone (the information from the
+document tree gets rendered if you then render the document itself).</p>
+<p>However, if you like, you can make modifications to the document tree.  For
+example, if your extractor discovers some pattern of nodes for storage, you may
+also want to add a custom class to the parent node so that you can later render
+those parts of the document specially marked with CSS rules.  You can also
+remove nodes from the tree if you like.</p>
+<p>When Nabu processes the extractors on the server, the document tree gets stored
+<em>after</em> your extractors have run.  Your modified tree will be stored in the
+sources table in the database.</p>
+</div>
+<div class="section" id="final-notes">
+<h1><a class="toc-backref" href="#id18">Final Notes</a></h1>
 <p>Certainly, some improvements could be applied to the example we provide.  The
 extractor could use a more sophisticated heuristic to determine if the field
 list represents a book, parse various formats for the ISBN value so that it is
@@ -575,7 +592,7 @@ contact the author with questions.</p>
 <table class="docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2" name="id4">[1]</a></td><td>If the field list appears at the top of the document, it will have been
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>If the field list appears at the top of the document, it will have been
 parsed by the bibliographic fields parser and thus the <tt class="docutils literal"><span class="pre">:author:</span></tt> field
 will have been converted into an author node, and a tiny little bit more
 work would have to be done to look into those fields if we want a book
@@ -586,9 +603,9 @@ bibliographic field.</td></tr>
 <table class="docutils footnote" frame="void" id="id5" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3" name="id5">[2]</a></td><td>The code for this class is very simple and you could write similar
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>The code for this class is very simple and you could write similar
 utilities to enhance code reuse for detecting different generic patterns
-of document structure.  See the <a class="reference" href="http://docutils.sourceforge.net/docs/ref/doctree.html">docutils document tree</a> document for
+of document structure.  See the <a class="reference external" href="http://docutils.sourceforge.net/docs/ref/doctree.html">docutils document tree</a> document for
 information about what kinds of nodes the document tree is made of.</td></tr>
 </tbody>
 </table>

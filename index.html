@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>nabu: a Publishing System using Text Files</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -18,6 +18,7 @@
 
 <div class="document" id="nabu-a-publishing-system-using-text-files">
 <h1 class="title">nabu: a Publishing System using Text Files</h1>
+
 <blockquote>
 <p>&quot;Nabu is the Babylonian god of wisdom and writing [...]  Nabu is accorded the
 office of patron of the scribes, taking over from the Sumerian goddess
@@ -25,39 +26,39 @@ Nisaba. His consort is Tashmetum. His symbols are the clay writing tablet
 with the writing stylus. [...]  His power over human existence is immense,
 because Nabu engraves the destiny of each person, as the Gods have decided,
 on the tablets of sacred record.&quot;</p>
-<p class="attribution">&mdash;(From <a class="reference" href="http://en.wikipedia.org/wiki/Nabu">Wikipedia</a>)</p>
+<p class="attribution">&mdash;(From <a class="reference external" href="http://en.wikipedia.org/wiki/Nabu">Wikipedia</a>)</p>
 </blockquote>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#description" id="id4" name="id4">Description</a><ul>
-<li><a class="reference" href="#example-extracting-contact-info" id="id5" name="id5">Example: Extracting Contact Info</a></li>
-<li><a class="reference" href="#example-blogging-system" id="id6" name="id6">Example: Blogging System</a></li>
-<li><a class="reference" href="#example-automatic-bookmarks-list" id="id7" name="id7">Example: Automatic Bookmarks List</a></li>
-<li><a class="reference" href="#example-shared-events-calendar" id="id8" name="id8">Example: Shared Events Calendar</a></li>
-<li><a class="reference" href="#customizability-writing-extractors" id="id9" name="id9">Customizability: Writing Extractors</a></li>
-<li><a class="reference" href="#target-audience" id="id10" name="id10">Target Audience</a></li>
+<li><a class="reference internal" href="#description" id="id4">Description</a><ul>
+<li><a class="reference internal" href="#example-extracting-contact-info" id="id5">Example: Extracting Contact Info</a></li>
+<li><a class="reference internal" href="#example-blogging-system" id="id6">Example: Blogging System</a></li>
+<li><a class="reference internal" href="#example-automatic-bookmarks-list" id="id7">Example: Automatic Bookmarks List</a></li>
+<li><a class="reference internal" href="#example-shared-events-calendar" id="id8">Example: Shared Events Calendar</a></li>
+<li><a class="reference internal" href="#customizability-writing-extractors" id="id9">Customizability: Writing Extractors</a></li>
+<li><a class="reference internal" href="#target-audience" id="id10">Target Audience</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#features" id="id11" name="id11">Features</a><ul>
-<li><a class="reference" href="#nabu-is-not" id="id12" name="id12">Nabu is not ...</a></li>
+<li><a class="reference internal" href="#features" id="id11">Features</a><ul>
+<li><a class="reference internal" href="#nabu-is-not" id="id12">Nabu is not ...</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#documentation" id="id13" name="id13">Documentation</a><ul>
-<li><a class="reference" href="#for-content-writers" id="id14" name="id14">For Content Writers</a></li>
-<li><a class="reference" href="#technical" id="id15" name="id15">Technical</a></li>
-<li><a class="reference" href="#design" id="id16" name="id16">Design</a></li>
-<li><a class="reference" href="#talks" id="id17" name="id17">Talks</a></li>
-<li><a class="reference" href="#test-drive-nabu" id="id18" name="id18">Test Drive Nabu</a></li>
+<li><a class="reference internal" href="#documentation" id="id13">Documentation</a><ul>
+<li><a class="reference internal" href="#for-content-writers" id="id14">For Content Writers</a></li>
+<li><a class="reference internal" href="#technical" id="id15">Technical</a></li>
+<li><a class="reference internal" href="#design" id="id16">Design</a></li>
+<li><a class="reference internal" href="#talks" id="id17">Talks</a></li>
+<li><a class="reference internal" href="#test-drive-nabu" id="id18">Test Drive Nabu</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#download" id="id19" name="id19">Download</a></li>
-<li><a class="reference" href="#reporting-bugs" id="id20" name="id20">Reporting Bugs</a></li>
-<li><a class="reference" href="#links" id="id21" name="id21">Links</a></li>
-<li><a class="reference" href="#installation-and-dependencies" id="id22" name="id22">Installation and Dependencies</a></li>
-<li><a class="reference" href="#copyright-and-license" id="id23" name="id23">Copyright and License</a></li>
-<li><a class="reference" href="#acknowledgements" id="id24" name="id24">Acknowledgements</a></li>
-<li><a class="reference" href="#author" id="id25" name="id25">Author</a></li>
+<li><a class="reference internal" href="#download" id="id19">Download</a></li>
+<li><a class="reference internal" href="#reporting-bugs" id="id20">Reporting Bugs</a></li>
+<li><a class="reference internal" href="#links" id="id21">Links</a></li>
+<li><a class="reference internal" href="#installation-and-dependencies" id="id22">Installation and Dependencies</a></li>
+<li><a class="reference internal" href="#copyright-and-license" id="id23">Copyright and License</a></li>
+<li><a class="reference internal" href="#acknowledgements" id="id24">Acknowledgements</a></li>
+<li><a class="reference internal" href="#author" id="id25">Author</a></li>
 </ul>
 </div>
 <!-- 1   Description
@@ -82,8 +83,8 @@ on the tablets of sacred record.&quot;</p>
 8   Copyright and License
 9   Acknowledgements
 10  Author -->
-<div class="section">
-<h1><a class="toc-backref" href="#id4" id="description" name="description">Description</a></h1>
+<div class="section" id="description">
+<h1><a class="toc-backref" href="#id4">Description</a></h1>
 <p>Assuming that a user can easily create text documents --this is the case for
 most programmers and techies, we do this all day, and we all have our favourite
 text editors-- this system allows you to store various kinds of data <em>across</em>
@@ -91,7 +92,7 @@ multiple documents.  You can create and maintain a body of text files from which
 various elements automatically could get stored in an organized manner in a
 database.</p>
 <p>Nabu is a simple framework that extracts chunks of various types of information
-from documents written in simple text files (written with <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>
+from documents written in simple text files (written with <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>
 conventions) and that stores this information (including the document) in a
 remote database for later retrieval.  The processing and extraction of the
 document is handled on a server, and there is a small and simple client that is
@@ -104,8 +105,8 @@ present the extracted data in the way that you prefer.</p>
 <p class="caption">Dataflow diagram of Nabu framework.</p>
 </div>
 <p>It is probably best illustrated by some examples...</p>
-<div class="section">
-<h2><a class="toc-backref" href="#id5" id="example-extracting-contact-info" name="example-extracting-contact-info">Example: Extracting Contact Info</a></h2>
+<div class="section" id="example-extracting-contact-info">
+<h2><a class="toc-backref" href="#id5">Example: Extracting Contact Info</a></h2>
 <p>For example, imagine that you write several files about your travels, say, one
 for each destination.  Most likely they contain various contact information.
 You could insert them like this in any of your text files and they would
@@ -119,8 +120,8 @@ automatically be extracted to a global list of contact info:</p>
 <p>You could use this to feed into an online address book system, or create a
 birthday notification system for yourself by adding your birth date.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id6" id="example-blogging-system" name="example-blogging-system">Example: Blogging System</a></h2>
+<div class="section" id="example-blogging-system">
+<h2><a class="toc-backref" href="#id6">Example: Blogging System</a></h2>
 <p>Another example: you could easily build a blogging system by detecting documents
 with certain bibliographic fields and a date at the top of document, for
 example:</p>
@@ -143,16 +144,16 @@ can be used to feed data into databases for presentations similar as the ones
 mentioned above.</p>
 </div>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id7" id="example-automatic-bookmarks-list" name="example-automatic-bookmarks-list">Example: Automatic Bookmarks List</a></h2>
+<div class="section" id="example-automatic-bookmarks-list">
+<h2><a class="toc-backref" href="#id7">Example: Automatic Bookmarks List</a></h2>
 <p>Another idea: you could automatically extract all the URLs from the documents
 pushed to the server (across <em>all</em> the files) and automatically build an online
 RSS bookmarks feeder, where your bookmarks would be organized by keywords, maybe
 even fetching the keywords in the respective documents from which they were
 extracted.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id8" id="example-shared-events-calendar" name="example-shared-events-calendar">Example: Shared Events Calendar</a></h2>
+<div class="section" id="example-shared-events-calendar">
+<h2><a class="toc-backref" href="#id8">Example: Shared Events Calendar</a></h2>
 <p>How about this one: I maintain a todo file in a text file, simply.  With a
 simple convention, like:</p>
 <pre class="literal-block">
@@ -174,16 +175,16 @@ this system as well, which is why I built it in a generic manner.</p>
 <p class="first admonition-title">Important</p>
 <p class="last">If you have a commercial use need for a system similar to this one, the
 author is generally available for consulting to implement customizations or
-build a system on top of Nabu.  See <a class="reference" href="/home/consulting.html">contact information for consulting</a>.  I'm very interested in new ways to publish and
+build a system on top of Nabu.  See <a class="reference external" href="/home/consulting.html">contact information for consulting</a>.  I'm very interested in new ways to publish and
 organize information online.</p>
 </div>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id9" id="customizability-writing-extractors" name="customizability-writing-extractors">Customizability: Writing Extractors</a></h2>
+<div class="section" id="customizability-writing-extractors">
+<h2><a class="toc-backref" href="#id9">Customizability: Writing Extractors</a></h2>
 <p>Various simple extractors will come with the Nabu package itself, but we suspect
 you will very soon want to write your own.  Writing extractors is very easy.</p>
-<p>All of this is built using the very powerful <a class="reference" href="http://docutils.sourceforge.net">docutils</a> tools, which includes the
-<a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> parser and provides the data structures that represent your
+<p>All of this is built using the very powerful <a class="reference external" href="http://docutils.sourceforge.net">docutils</a> tools, which includes the
+<a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> parser and provides the data structures that represent your
 source documents.  Extractors are simply docutils transforms that visit the
 document structure (which is provided and saved by the Nabu system).  To add a
 new type of entry, all you need to do is write code that visits the tree, finds
@@ -200,12 +201,12 @@ contributions of extractor codes in the distribution if anyone cares to
 provide them.</p>
 </div>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id10" id="target-audience" name="target-audience">Target Audience</a></h2>
+<div class="section" id="target-audience">
+<h2><a class="toc-backref" href="#id10">Target Audience</a></h2>
 <p>This system is made to be a simple as possible to use.  However, it is not
 designed for your mother.  In order to be able to use this efficiently, you must</p>
 <ol class="arabic simple">
-<li>understand the conventions and simple no-markup syntax of <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>;</li>
+<li>understand the conventions and simple no-markup syntax of <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>;</li>
 <li>be able to edit simple text files.</li>
 </ol>
 <p>I suspect that this will cater to people who are already familiar with
@@ -214,8 +215,8 @@ computers.</p>
 <tt class="docutils literal"><span class="pre">doc</span></tt> subdirectory.</p>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id11" id="features" name="features">Features</a></h1>
+<div class="section" id="features">
+<h1><a class="toc-backref" href="#id11">Features</a></h1>
 <p>Nabu is cool, because:</p>
 <ul>
 <li><p class="first">it is flexible: you can use</p>
@@ -234,7 +235,7 @@ will appreciate the value of this), in your favourite editor environment;</p>
 <li><p class="first">the organization of the source files in subdirectories has <em>nothing</em> to do
 with how the content is presented.  We use a unique ID system (similar to
 arch) where your document to be published must contain a unique string to mark
-it with that id.  You can put that string in a <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> comment or a
+it with that id.  You can put that string in a <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> comment or a
 bibliographic field.  Unlike Wikis, this allows you to change the title of
 your documents while keeping the possibility of a permanent link to them.</p>
 <p>It effectively offers you a sandbox for creating content, and then how you
@@ -264,8 +265,8 @@ the potential that you will be able to use Nabu anywhere, on any platform.
 The client only requires Python to work;</p>
 </li>
 </ul>
-<div class="section">
-<h2><a class="toc-backref" href="#id12" id="nabu-is-not" name="nabu-is-not">Nabu is not ...</a></h2>
+<div class="section" id="nabu-is-not">
+<h2><a class="toc-backref" href="#id12">Nabu is not ...</a></h2>
 <dl class="docutils">
 <dt>Not a Wiki</dt>
 <dd>Although we upload documents (like Wiki pages) to a server, it may
@@ -287,7 +288,7 @@ blogging system using Nabu.</p>
 can use it to publish just the information that is found within documents,
 used to contain that information.</p>
 <p class="last">Also, you write your documents locally, but they have the limitations of
-<a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>, so it is not really like a Word processing system.  You
+<a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>, so it is not really like a Word processing system.  You
 must use a simple text editor.</p>
 </dd>
 <dt>Not a generic data entry format</dt>
@@ -296,7 +297,7 @@ enter larges lists of similarly structured data, the overhead of document
 processing does not make it the most efficient way to do this.  If you have
 <em>lots</em> of similarly structured bits of human-editable data, it would probably
 be better to write custom code to parse a known format rather than leverage
-Nabu for this.  The <a class="reference" href="http://docutils.sourceforge.net">docutils</a> processing on the server is not extremely fast,
+Nabu for this.  The <a class="reference external" href="http://docutils.sourceforge.net">docutils</a> processing on the server is not extremely fast,
 and if you need speed for lots of data (say, thousands of files), you will
 probably find this too slow.</p>
 <p class="last">However, for smaller sets of files, Nabu could be used this way.  Or if you
@@ -308,57 +309,57 @@ be grouped in files.</p>
 call it &quot;Nabu&quot;.</p>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id13" id="documentation" name="documentation">Documentation</a></h1>
-<div class="section">
-<h2><a class="toc-backref" href="#id14" id="for-content-writers" name="for-content-writers">For Content Writers</a></h2>
+<div class="section" id="documentation">
+<h1><a class="toc-backref" href="#id13">Documentation</a></h1>
+<div class="section" id="for-content-writers">
+<h2><a class="toc-backref" href="#id14">For Content Writers</a></h2>
 <ul class="simple">
-<li><a class="reference" href="doc/nabu-usage.html">Usage</a>: usage instructions for content pushers;</li>
+<li><a class="reference external" href="doc/nabu-usage.html">Usage</a>: usage instructions for content pushers;</li>
 </ul>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id15" id="technical" name="technical">Technical</a></h2>
+<div class="section" id="technical">
+<h2><a class="toc-backref" href="#id15">Technical</a></h2>
 <ul class="simple">
-<li><a class="reference" href="doc/nabu-server.html">Server Setup</a>: instructions for installing and
+<li><a class="reference external" href="doc/nabu-server.html">Server Setup</a>: instructions for installing and
 configuring a Nabu server;</li>
-<li><a class="reference" href="doc/nabu-extractor.html">Writing an Extractor</a>: an example extractor source
+<li><a class="reference external" href="doc/nabu-extractor.html">Writing an Extractor</a>: an example extractor source
 code, with details and commentary.  Since you are expected to provide or at
 least configure your own extractors for your application, this will be useful
 if you intend to put Nabu to good use.  This could also help you understand
 more precisely the nature of what Nabu actually provides and what it does not
 provide;</li>
-<li><a class="reference" href="TODO">TODO list</a>: list of future changes, broken things, etc.;</li>
-<li><a class="reference" href="CHANGES">Change Log</a>: recent changes, history;</li>
+<li><a class="reference external" href="TODO">TODO list</a>: list of future changes, broken things, etc.;</li>
+<li><a class="reference external" href="CHANGES">Change Log</a>: recent changes, history;</li>
 </ul>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id16" id="design" name="design">Design</a></h2>
+<div class="section" id="design">
+<h2><a class="toc-backref" href="#id16">Design</a></h2>
 <ul class="simple">
-<li><a class="reference" href="doc/nabu-goals.html">Goals</a>: motivation behind this project, history of
+<li><a class="reference external" href="doc/nabu-goals.html">Goals</a>: motivation behind this project, history of
 what led me to implement this;</li>
-<li><a class="reference" href="doc/nabu-design.html">Design</a>: conceptual design and software architecture;</li>
-<li><a class="reference" href="doc/nabu-ideas.html">Future</a>: future, postponed or rejected ideas. Stuff
+<li><a class="reference external" href="doc/nabu-design.html">Design</a>: conceptual design and software architecture;</li>
+<li><a class="reference external" href="doc/nabu-ideas.html">Future</a>: future, postponed or rejected ideas. Stuff
 that I would like to do that is not on the immediate list;</li>
 </ul>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id17" id="talks" name="talks">Talks</a></h2>
+<div class="section" id="talks">
+<h2><a class="toc-backref" href="#id17">Talks</a></h2>
 <ul class="simple">
-<li>PyCon 2006 Presentation <a class="reference" href="doc/talks/pycon2006.pdf">(PDF)</a></li>
+<li>PyCon 2006 Presentation <a class="reference external" href="doc/talks/pycon2006.pdf">(PDF)</a></li>
 </ul>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id18" id="test-drive-nabu" name="test-drive-nabu">Test Drive Nabu</a></h2>
+<div class="section" id="test-drive-nabu">
+<h2><a class="toc-backref" href="#id18">Test Drive Nabu</a></h2>
 <ul class="simple">
-<li><a class="reference" href="doc/nabu-beta.html">Test Drive</a>: test drive Nabu on our server;</li>
+<li><a class="reference external" href="doc/nabu-beta.html">Test Drive</a>: test drive Nabu on our server;</li>
 </ul>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id19" id="download" name="download">Download</a></h1>
-<p>You can download the <a class="reference" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name
-<tt class="docutils literal"><span class="pre">nabu</span></tt>.  Usage instructions can be found <a class="reference" href="doc/nabu-usage.html">here</a>.</p>
-<p>Snapshots of the latest Nabu source code can be found in the <a class="reference" href="/downloads/nabu">Download Area</a>.  It consists mostly of server code, but it also contains
+<div class="section" id="download">
+<h1><a class="toc-backref" href="#id19">Download</a></h1>
+<p>You can download the <a class="reference external" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name
+<tt class="docutils literal"><span class="pre">nabu</span></tt>.  Usage instructions can be found <a class="reference external" href="doc/nabu-usage.html">here</a>.</p>
+<p>Snapshots of the latest Nabu source code can be found in the <a class="reference external" href="/downloads/nabu">Download Area</a>.  It consists mostly of server code, but it also contains
 the publisher client.  When I get some feedback I will decide on the version
 number.</p>
 <div class="important">
@@ -372,20 +373,21 @@ correspond to a beta stability for a 1.0 release.  I'm already using the system
 on personal projects (works for me), and I'm committed to fix bugs reported by
 others.  When I get some feedback I will select version number (probably 1.0).</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id20" id="reporting-bugs" name="reporting-bugs">Reporting Bugs</a></h1>
-<p>Send email to the author: Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.</p>
+<div class="section" id="reporting-bugs">
+<h1><a class="toc-backref" href="#id20">Reporting Bugs</a></h1>
+<p>Send email to the author: Martin Blais &lt;<a class="reference external" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id21" id="links" name="links">Links</a></h1>
+<div class="section" id="links">
+<h1><a class="toc-backref" href="#id21">Links</a></h1>
 <p>Some links to projects with similar goals, or that have some kind of conceptual
 relation:</p>
 <ul class="simple">
-<li><a class="reference" href="http://www.devon-technologies.com/products/devonthink/">DEVONthink</a></li>
+<li><a class="reference external" href="http://www.devon-technologies.com/products/devonthink/">DEVONthink</a></li>
+<li><a class="reference external" href="http://www.picorp.com/">PI Corporation</a></li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id22" id="installation-and-dependencies" name="installation-and-dependencies">Installation and Dependencies</a></h1>
+<div class="section" id="installation-and-dependencies">
+<h1><a class="toc-backref" href="#id22">Installation and Dependencies</a></h1>
 <dl class="docutils">
 <dt>Nabu Publisher Client</dt>
 <dd><p class="first">A single file written in Python.</p>
@@ -409,8 +411,8 @@ to a CGI script with XML-RPC (very simple) or within your own server system
 (if you can write a little bit of Python code, still very simple).  On the
 server, you must have:</p>
 <ul class="last simple">
-<li><a class="reference" href="http://python.org">Python-2.4</a> or greater;</li>
-<li><a class="reference" href="http://docutils.sourceforge.net">docutils</a>;</li>
+<li><a class="reference external" href="http://python.org">Python-2.4</a> or greater;</li>
+<li><a class="reference external" href="http://docutils.sourceforge.net">docutils</a>;</li>
 <li>if you use a database backend, whatever SQL DBAPI connector.
 Right now the application works using pyscopg2, but it could be ported very
 easily to another DBAPI-2.0 connector object, or to write to files.</li>
@@ -428,16 +430,16 @@ database.</p>
 </dd>
 </dl>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id23" id="copyright-and-license" name="copyright-and-license">Copyright and License</a></h1>
+<div class="section" id="copyright-and-license">
+<h1><a class="toc-backref" href="#id23">Copyright and License</a></h1>
 <p>Copyright (C) 2005  Martin Blais.
-This code is distributed under the <a class="reference" href="COPYING">GNU General Public License</a>.</p>
+This code is distributed under the <a class="reference external" href="COPYING">GNU General Public License</a>.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id24" id="acknowledgements" name="acknowledgements">Acknowledgements</a></h1>
+<div class="section" id="acknowledgements">
+<h1><a class="toc-backref" href="#id24">Acknowledgements</a></h1>
 <p>This project uses two important libraries to do its thing:</p>
 <ul class="simple">
-<li>the <a class="reference" href="http://docutils.sourceforge.net">Docutils</a> project (written mostly by
+<li>the <a class="reference external" href="http://docutils.sourceforge.net">Docutils</a> project (written mostly by
 Dave Goodger), which provides the reStructuredText parser, the internal
 document structure, and the HTML writer (and more).  Docutils is a major
 facilitator for this system--without it this idea probably would not have seen
@@ -445,9 +447,9 @@ the light of day;</li>
 </ul>
 <p>It is also built in the Python language.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id25" id="author" name="author">Author</a></h1>
-<p>Martin Blais &lt;<a class="reference" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</p>
+<div class="section" id="author">
+<h1><a class="toc-backref" href="#id25">Author</a></h1>
+<p>Martin Blais &lt;<a class="reference external" href="mailto:blais&#64;furius.ca">blais&#64;furius.ca</a>&gt;</p>
 <!-- "Text files are forever" -->
 <!-- - -Martin -->
 </div>

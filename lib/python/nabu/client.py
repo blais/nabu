@@ -765,6 +765,7 @@ def opts_global(parser):
 
 
     group1.add_option('-s', '--server-url', action='store', metavar='URL',
+                      default='',
                       help="URL to server handler.")
 
     group1.add_option('-u', '--user', action='store',
