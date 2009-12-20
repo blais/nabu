@@ -118,7 +118,8 @@ class Extractor(extract.Extractor):
 
                 isbn = flist.pop('isbn', None)
                 if isbn:
-                    url = book_isbn_template % re.sub('(978-|-)', '', astext(isbn))
+                    amz_asin = re.sub('^978-', '', astext(isbn)).replace('_', '')
+                    url = book_isbn_template % amz_asin
                 else:
                     booktitle = flist.get('title', '')
                     url = (book_search_template %
