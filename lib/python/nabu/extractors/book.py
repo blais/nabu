@@ -125,7 +125,11 @@ class Extractor(extract.Extractor):
                     # http://affiliate-blog.amazon.co.uk/2006/12/13digitisbn_how.html
                     # You'll have to use the e-commerce services in order to do this (this sucks).
                     # In the meantime we use a heuristic, which will work most of the time.
-                    amz_asin = re.sub('[^0-9]', '', toI10(astext(isbn)))
+                    tisbn = astext(isbn)
+                    try:
+                        amz_asin = re.sub('[^0-9]', '', toI10(tisbn))
+                    except:
+                        amz_asin = tisbn
                     url = book_isbn_template % amz_asin
                 else:
                     booktitle = flist.get('title', '')
