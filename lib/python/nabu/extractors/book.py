@@ -17,6 +17,7 @@ from xml.sax.saxutils import escape
 # nabu imports
 from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
+import nabu.external.isbn import toI10
 
 # docutils imports
 from docutils.nodes import                                      \
@@ -118,7 +119,13 @@ class Extractor(extract.Extractor):
 
                 isbn = flist.pop('isbn', None)
                 if isbn:
-                    amz_asin = re.sub('^978-?', '', astext(isbn)).replace('_', '')
+                    # Note: ASINs for older books are often the same as 10-char ISBNs.
+                    # For newer books, they may not be.
+                    # New 13-char ISBNs cannot be linked directly; a search has to be made.
+                    # http://affiliate-blog.amazon.co.uk/2006/12/13digitisbn_how.html
+                    # You'll have to use the e-commerce services in order to do this (this sucks).
+                    # In the meantime we use a heuristic, which will work most of the time.
+                    amz_asin = re.sub('[^0-9]', '', toI10(astext(isbn)))
                     url = book_isbn_template % amz_asin
                 else:
                     booktitle = flist.get('title', '')
