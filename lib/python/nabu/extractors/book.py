@@ -4,15 +4,13 @@
 # This file is distributed under the terms of the GNU GPL license.
 # For more information: http://furius.ca/nabu.
 #
-# $Id$
-#
 
 """
 Extract book entries.
 """
 
 # stdlib imports
-import sys
+import sys, re
 from urllib import quote_plus
 from xml.sax.saxutils import escape
 
@@ -120,7 +118,7 @@ class Extractor(extract.Extractor):
 
                 isbn = flist.pop('isbn', None)
                 if isbn:
-                    url = book_isbn_template % astext(isbn)
+                    url = book_isbn_template % re.sub('[^0-9]', '', astext(isbn))
                 else:
                     booktitle = flist.get('title', '')
                     url = (book_search_template %
