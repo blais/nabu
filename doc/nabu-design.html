@@ -66,7 +66,7 @@
 <li>compare the CRCs with the files on disk;</li>
 <li>send the files that need to be updated to the server.</li>
 </ul>
-<p>You can find it in module <tt class="docutils literal"><span class="pre">publish</span></tt>.</p>
+<p>You can find it in module <tt class="docutils literal">publish</tt>.</p>
 </div>
 <div class="section" id="server-handler">
 <h2><a class="toc-backref" href="#id3">Server (Handler)</a></h2>
@@ -81,7 +81,7 @@ as a library from the finder), this could be used to fill a local database.
 Normally, we expect it to be set up over a network connection, using XML-RPC,
 with a simple CGI hook on a web server, or incorporated within some web
 application framework.</p>
-<p>You can find it in module <tt class="docutils literal"><span class="pre">server</span></tt>.</p>
+<p>You can find it in module <tt class="docutils literal">server</tt>.</p>
 </div>
 <div class="section" id="uploaded-sources-storage">
 <h2><a class="toc-backref" href="#id4">Uploaded Sources Storage</a></h2>
@@ -91,7 +91,7 @@ document tree (stored as a pickled stream usually in a database blob).  You can
 create concrete implementations of the Source Storage to store this data in your
 favourite format and place.  There is a default implementation that uses a SQL
 DBAPI-2.0 connection to store in an SQL database.</p>
-<p>You can find it in module <tt class="docutils literal"><span class="pre">sources</span></tt>.</p>
+<p>You can find it in module <tt class="docutils literal">sources</tt>.</p>
 </div>
 <div class="section" id="extractors-and-extractor-storage">
 <h2><a class="toc-backref" href="#id5">Extractors and Extractor Storage</a></h2>
@@ -104,20 +104,20 @@ to abstract the storage mechanism.</p>
 <p>Thus, code for an extractor generally includes: a docutils transform -derived
 class (the extractor itself), and a class derived from ExtractorStorage for this
 extractor.</p>
-<p>You can find the base classes in module <tt class="docutils literal"><span class="pre">extract</span></tt>.  The extractors are
-available in the <tt class="docutils literal"><span class="pre">nabu.extractors</span></tt> package.</p>
+<p>You can find the base classes in module <tt class="docutils literal">extract</tt>.  The extractors are
+available in the <tt class="docutils literal">nabu.extractors</tt> package.</p>
 </div>
 </div>
 <div class="section" id="other-modules">
 <h1><a class="toc-backref" href="#id6">Other Modules</a></h1>
 <div class="section" id="processing-the-extractors">
 <h2><a class="toc-backref" href="#id7">Processing the Extractors</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">process</span></tt> module contains some code to apply the transforms on an existing
+<p>The <tt class="docutils literal">process</tt> module contains some code to apply the transforms on an existing
 document tree.</p>
 </div>
 <div class="section" id="debugging-the-contents">
 <h2><a class="toc-backref" href="#id8">Debugging the Contents</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">contents</span></tt> module contains code to display a basic dump of the various
+<p>The <tt class="docutils literal">contents</tt> module contains code to display a basic dump of the various
 contents of the uploaded sources storage via the web.</p>
 </div>
 </div>

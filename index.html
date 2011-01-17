@@ -14,8 +14,6 @@
   
 </div>
 
-<div id="download-link"><a href="/downloads/nabu">Download</a></div>
-
 <div class="document" id="nabu-a-publishing-system-using-text-files">
 <h1 class="title">nabu: a Publishing System using Text Files</h1>
 
@@ -97,7 +95,7 @@ conventions) and that stores this information (including the document) in a
 remote database for later retrieval.  The processing and extraction of the
 document is handled on a server, and there is a small and simple client that is
 used to push the files to the server for processing and storage (think
-<tt class="docutils literal"><span class="pre">rsync</span></tt>).  The client requires only Python to work.  The presentation layer is
+<tt class="docutils literal">rsync</tt>).  The client requires only Python to work.  The presentation layer is
 left unspecified: you can use whichever web application framework you like to
 present the extracted data in the way that you prefer.</p>
 <div class="figure">
@@ -212,7 +210,7 @@ designed for your mother.  In order to be able to use this efficiently, you must
 <p>I suspect that this will cater to people who are already familiar with
 computers.</p>
 <p>For more details, see the design document and project proposal under the
-<tt class="docutils literal"><span class="pre">doc</span></tt> subdirectory.</p>
+<tt class="docutils literal">doc</tt> subdirectory.</p>
 </div>
 </div>
 <div class="section" id="features">
@@ -358,10 +356,13 @@ that I would like to do that is not on the immediate list;</li>
 <div class="section" id="download">
 <h1><a class="toc-backref" href="#id19">Download</a></h1>
 <p>You can download the <a class="reference external" href="/nabu/bin/nabu">Nabu Publisher Client</a> and save it under the name
-<tt class="docutils literal"><span class="pre">nabu</span></tt>.  Usage instructions can be found <a class="reference external" href="doc/nabu-usage.html">here</a>.</p>
-<p>Snapshots of the latest Nabu source code can be found in the <a class="reference external" href="/downloads/nabu">Download Area</a>.  It consists mostly of server code, but it also contains
-the publisher client.  When I get some feedback I will decide on the version
-number.</p>
+<tt class="docutils literal">nabu</tt>.  Usage instructions can be found <a class="reference external" href="doc/nabu-usage.html">here</a>.</p>
+<p>A Mercurial repository can be found at:</p>
+<blockquote>
+<a class="reference external" href="https://hg.furius.ca/public/nabu/">https://hg.furius.ca/public/nabu/</a></blockquote>
+<p><a class="reference external" href="/web-furius/downloading.html">Click here for download instructions.</a></p>
+<p>It consists mostly of server code, but it also contains the publisher
+client. When I get some feedback I will decide on the version number.</p>
 <div class="important">
 <p class="first admonition-title">Important</p>
 <p class="last">You will need a recent snapshot of the docutils svn development

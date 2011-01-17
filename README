@@ -355,10 +355,14 @@ You can download the `Nabu Publisher Client`__ and save it under the name
 __ /nabu/bin/nabu
 
 
-Snapshots of the latest Nabu source code can be found in the `Download Area
-</downloads/nabu>`_.  It consists mostly of server code, but it also contains
-the publisher client.  When I get some feedback I will decide on the version
-number.
+A Mercurial repository can be found at:
+
+  https://hg.furius.ca/public/nabu/
+
+`Click here for download instructions. </web-furius/downloading.html>`_
+
+It consists mostly of server code, but it also contains the publisher
+client. When I get some feedback I will decide on the version number.
 
 .. important:: You will need a recent snapshot of the docutils svn development
    	       tree (after stamp 3624) to be able to install and run a server.

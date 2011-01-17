@@ -99,7 +99,7 @@ Recent books read:
 </pre>
 <p>We would like to avoid having to say that the field list is for a book; it would
 be nice if the parser could just figure that out by itself.  For example, the
-empty <tt class="docutils literal"><span class="pre">:book:</span></tt> field in the first example above should not be mandatory for
+empty <tt class="docutils literal">:book:</tt> field in the first example above should not be mandatory for
 the book reference to be detected.</p>
 <div class="note">
 <p class="first admonition-title">Note</p>
@@ -137,7 +137,7 @@ not work because it gets parsed as a single field list:</p>
 <h1><a class="toc-backref" href="#id8">Looking at the Document Structure</a></h1>
 <p>Here is a pseudo-xml rendering of how the above example gets parsed by docutils
 into a tree of nodes.  This is the tree that we will have to visit to extract
-the references from.  You can use docutils' <tt class="docutils literal"><span class="pre">rst2pseudoxml.py</span></tt> tool to
+the references from.  You can use docutils' <tt class="docutils literal">rst2pseudoxml.py</tt> tool to
 generate such a tree to be able to visualize the document structure, and to help
 design and write your extractor/visitor:</p>
 <pre class="literal-block">
@@ -221,7 +221,7 @@ design and write your extractor/visitor:</p>
 two classes:</p>
 <ol class="arabic">
 <li><p class="first">an extractor class, which is essentially a class derived from the docutils
-<tt class="docutils literal"><span class="pre">Transform</span></tt> class, whose role is to visit the parsed document tree and to
+<tt class="docutils literal">Transform</tt> class, whose role is to visit the parsed document tree and to
 find the stuff that it wants to find.  In our example, this class will be
 running a visitor to look for docutils field lists nodes and it will check
 the field names to find out if they are for books;</p>
@@ -239,7 +239,7 @@ BibTeX format and store them sequentially in a file for later use.</p>
 <div class="section" id="example-code">
 <h1><a class="toc-backref" href="#id10">Example code</a></h1>
 <p>All the code for implementing the book algorithm above fits neatly in a short
-file.  Let's name it <tt class="docutils literal"><span class="pre">book.py</span></tt>.</p>
+file.  Let's name it <tt class="docutils literal">book.py</tt>.</p>
 <div class="section" id="imports">
 <h2><a class="toc-backref" href="#id11">Imports</a></h2>
 <p>We start our Python script with a brief description and some imports:</p>
@@ -253,13 +253,13 @@ Extract book entries.
 from nabu import extract
 from nabu.extractors.flvis import FieldListVisitor
 </pre>
-<p>We import the <tt class="docutils literal"><span class="pre">nabu.extract</span></tt> module which contains the base class that we
+<p>We import the <tt class="docutils literal">nabu.extract</tt> module which contains the base class that we
 need.  We also import a utility class that knows how to visit docutils field
 lists <a class="footnote-reference" href="#id5" id="id3">[2]</a>.</p>
 </div>
 <div class="section" id="the-extractor-class">
 <h2><a class="toc-backref" href="#id12">The Extractor Class</a></h2>
-<p>We then define the extractor class, which is a docutils <tt class="docutils literal"><span class="pre">Transform</span></tt>:</p>
+<p>We then define the extractor class, which is a docutils <tt class="docutils literal">Transform</tt>:</p>
 <pre class="literal-block">
 class BookExtractor(extract.Extractor):
     &quot;&quot;&quot;
@@ -299,8 +299,8 @@ extractors get to run.  This is important for extractors which modify the
 document tree (the document tree can be stored and then served on a web server
 just like extracted content--in fact, there is a trivial extractor provided that
 does just that.  This can be easily leveraged to implement a Wiki or a Blog).</p>
-<p>We then implement the <tt class="docutils literal"><span class="pre">apply()</span></tt> method which is called by docutils, after it
-sets the <tt class="docutils literal"><span class="pre">.document</span></tt> attribute on the extractor (that is part of how
+<p>We then implement the <tt class="docutils literal">apply()</tt> method which is called by docutils, after it
+sets the <tt class="docutils literal">.document</tt> attribute on the extractor (that is part of how
 transforms are run by docutils):</p>
 <pre class="literal-block">
 ...
@@ -316,7 +316,7 @@ transforms are run by docutils):</p>
 extractor storage object that is configured on the publisher handler.</p>
 <p>Note that we use a special FieldListVisitor class that we've built to simplify
 visiting generic field lists.  You could use any of the docutils visitors here
-instead.  We run the visitor on the document by calling the <tt class="docutils literal"><span class="pre">walk()</span></tt> method.
+instead.  We run the visitor on the document by calling the <tt class="docutils literal">walk()</tt> method.
 This special visitor accumulates all the field lists in the document into a
 dictionary that we then process and implement our heuristic to find the field
 lists that match our criteria:</p>
@@ -338,7 +338,7 @@ lists that match our criteria:</p>
                 self.store(flist) # store the book
 </pre>
 <p>Next, we implement a store method that converts the field value nodes returned
-by the <tt class="docutils literal"><span class="pre">FieldListVisitor</span></tt> into Unicode text and calls our associated storage
+by the <tt class="docutils literal">FieldListVisitor</tt> into Unicode text and calls our associated storage
 object to actually put the data somewhere:</p>
 <pre class="literal-block">
 ...
@@ -356,12 +356,12 @@ object to actually put the data somewhere:</p>
 <p>This class is in charge of storing the information identified by the extractor
 and is called by it when it finds a new instance to store.  Different storage
 classes can be created for different backends.</p>
-<p>Note that we declared a <tt class="docutils literal"><span class="pre">unid</span></tt> field that is required not to be null.  This is
+<p>Note that we declared a <tt class="docutils literal">unid</tt> field that is required not to be null.  This is
 necessary to make it possible to remove the objects from a source document that
 is being reprocessed.  We first remove all the old objects (this is done
 automatically) and then the reprocessing adds the new set back into the
 database.  All information extracted from a document is required to be
-associated with the source document using this unique id field <tt class="docutils literal"><span class="pre">unid</span></tt>.</p>
+associated with the source document using this unique id field <tt class="docutils literal">unid</tt>.</p>
 <p>Next, we write the extractor storage class:</p>
 <pre class="literal-block">
 class BookStorage(extract.SQLExtractorStorage):
@@ -398,15 +398,15 @@ class BookStorage(extract.SQLExtractorStorage):
 
         self.connection.commit()
 </pre>
-<p>Here we derive it from the special <tt class="docutils literal"><span class="pre">SQLExtractorStorage</span></tt> that Nabu provides
+<p>Here we derive it from the special <tt class="docutils literal">SQLExtractorStorage</tt> that Nabu provides
 for storing stuff in databases using SQL.  Knowing which schemas the
 storage class uses, this base class simply implements the protocol to initialize
 the database connection for the wrapper objects, implements the protocol for
 clearing objects extracted from a specific document, and to reset the tables
 (see the source code if desired, it is very very simple).  The expected schema
-classes are specified in the class attribute <tt class="docutils literal"><span class="pre">sql_tables</span></tt>.</p>
+classes are specified in the class attribute <tt class="docutils literal">sql_tables</tt>.</p>
 <p>The class basically just creates a new book reference entry by instantiating the
-<tt class="docutils literal"><span class="pre">Book</span></tt> schema class.  It fills in default empty values for the entries that
+<tt class="docutils literal">Book</tt> schema class.  It fills in default empty values for the entries that
 have not been found by the extractor (we could have implemented this in the
 extractor itself--this is by choice of contract between the extractor and the
 storage object).</p>
@@ -417,8 +417,8 @@ storage object).</p>
 <h1><a class="toc-backref" href="#id14">Testing Your Extractor</a></h1>
 <p>Before setting up your Nabu publisher handler with the new extractor, you can
 test it using the <tt class="docutils literal"><span class="pre">nabu-test-extractor</span></tt> code provided with Nabu (installed
-under <tt class="docutils literal"><span class="pre">nabu/lib/python/nabu/testextr.py</span></tt>).</p>
-<p>Run it like this, on a test document in reStructuredText format <tt class="docutils literal"><span class="pre">reading.txt</span></tt>,
+under <tt class="docutils literal">nabu/lib/python/nabu/testextr.py</tt>).</p>
+<p>Run it like this, on a test document in reStructuredText format <tt class="docutils literal">reading.txt</tt>,
 which presumably contains book references (create your own test document with
 your favourite books):</p>
 <pre class="literal-block">
@@ -585,7 +585,7 @@ extractors as you want.  Nabu comes with a small library of extractors which
 will grow as I leverage it more and more for my own applications, and with
 contribution from other people if they care to send them to me.</p>
 <p>You can find other extractors--including this one--in the Nabu source
-distribution under <tt class="docutils literal"><span class="pre">nabu/lib/python/nabu/extractors</span></tt>.</p>
+distribution under <tt class="docutils literal">nabu/lib/python/nabu/extractors</tt>.</p>
 <p>If you have found any part of this document unclear and you still do not
 understand the nature of Nabu after reading this example, please feel free to
 contact the author with questions.</p>
@@ -593,7 +593,7 @@ contact the author with questions.</p>
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>If the field list appears at the top of the document, it will have been
-parsed by the bibliographic fields parser and thus the <tt class="docutils literal"><span class="pre">:author:</span></tt> field
+parsed by the bibliographic fields parser and thus the <tt class="docutils literal">:author:</tt> field
 will have been converted into an author node, and a tiny little bit more
 work would have to be done to look into those fields if we want a book
 reference to be specifiable at the top of the document as the
