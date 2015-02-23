@@ -65,6 +65,7 @@ present the extracted data in the way that you prefer.
       author="Martin Blais",
       author_email="blais@furius.ca",
       url="http://furius.ca/nabu",
+      download_url="http://bitbucket.org/blais/nabu",
       package_dir = {'': 'lib/python'},
       packages = ['nabu', 'nabu.extractors'],
      )
@@ -73,4 +74,3 @@ present the extracted data in the way that you prefer.
       # FIXME: distutils follows the symlink and installs both bin/nabu and
       # lib/python/nabu/client.py in /usr/bin.  I want to it install just
       # 'bin/nabu'. How do I do that?
-

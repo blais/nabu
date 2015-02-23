@@ -357,9 +357,8 @@ __ /nabu/bin/nabu
 
 A Mercurial repository can be found at:
 
-  https://hg.furius.ca/public/nabu/
+  http://bitbucket.org/blais/nabu
 
-`Click here for download instructions. </web-furius/downloading.html>`_
 
 It consists mostly of server code, but it also contains the publisher
 client. When I get some feedback I will decide on the version number.
@@ -472,4 +471,3 @@ Martin Blais <blais@furius.ca>
 .. _docutils: http://docutils.sourceforge.net
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Test Drive: doc/nabu-beta.html
-
