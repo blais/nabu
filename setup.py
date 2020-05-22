@@ -65,7 +65,7 @@ present the extracted data in the way that you prefer.
       author="Martin Blais",
       author_email="blais@furius.ca",
       url="http://furius.ca/nabu",
-      download_url="http://bitbucket.org/blais/nabu",
+      download_url="http://github.com/blais/nabu",
       package_dir = {'': 'lib/python'},
       packages = ['nabu', 'nabu.extractors'],
      )
